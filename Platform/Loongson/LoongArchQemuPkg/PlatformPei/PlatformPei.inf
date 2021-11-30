@@ -1,0 +1,83 @@
+
+## @file
+#  Platform PEI driver
+#
+#  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = PlatformPei
+  FILE_GUID                      = 4c0e81e5-e8e3-4eef-b24b-19b686e9ab53
+  MODULE_TYPE                    = PEIM
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = InitializePlatform
+
+[Sources]
+#  Fv.c
+#  MemDetect.c
+#  Platform.c
+  Fv.c
+  MemDetect.c
+  Platform.c
+#  UnlockScache.c
+#  FsbConfig.c
+#  ChipsetConfig.c
+
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  EmbeddedPkg/EmbeddedPkg.dec
+  Platform/Loongson/LoongArchQemuPkg/Loongson.dec
+  OvmfPkg/OvmfPkg.dec
+
+[Ppis]
+  gEfiPeiMasterBootModePpiGuid
+
+[Guids]
+  gEfiMemoryTypeInformationGuid
+
+[LibraryClasses]
+  DebugLib
+  BaseMemoryLib
+  HobLib
+  IoLib
+  PeiResourcePublicationLib
+  PeiServicesLib
+  PeiServicesTablePointerLib
+  PeimEntryPoint
+  QemuFwCfgLib
+  PcdLib
+  TimerLib
+
+[Pcd]
+  gLoongArchQemuPkgTokenSpaceGuid.PcdLocalCpuCount
+  gLoongArchQemuPkgTokenSpaceGuid.PcdMaximumCpuCount
+  gLoongArchQemuPkgTokenSpaceGuid.PcdRamSize
+  gLoongArchQemuPkgTokenSpaceGuid.PcdCpusPerNode
+  gLoongArchQemuPkgTokenSpaceGuid.PcdNumaNodes
+
+[FixedPcd]
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashPeiFvBase
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashPeiFvSize
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashDxeFvOffset
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashDxeFvBase
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashDxeFvSize
+  
+  gLoongArchQemuPkgTokenSpaceGuid.PcdRamRegionsBottom
+  gLoongArchQemuPkgTokenSpaceGuid.PcdUefiRamTop
+  gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamBase
+  gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamSize
+  gLoongArchQemuPkgTokenSpaceGuid.PcdGuidedExtractHandlerTableSize
+  gEfiMdePkgTokenSpaceGuid.PcdGuidedExtractHandlerTableAddress
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVariableStoreSize
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize
+  gEmbeddedTokenSpaceGuid.PcdPrePiCpuMemorySize
+  gEmbeddedTokenSpaceGuid.PcdPrePiCpuIoSize
+
+[Depex]
+  TRUE
