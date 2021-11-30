@@ -1,0 +1,68 @@
+## @file
+#
+#  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  DEC_SPECIFICATION              = 0x00010005
+  PACKAGE_NAME                   = LoongArchQemuPkg
+  PACKAGE_GUID                   = b51d765a-41da-45fc-a537-de3ee785c0f6
+  PACKAGE_VERSION                = 0.1
+
+################################################################################
+#
+# Include Section - list of Include Paths that are provided by this package.
+#                   Comments are used for Keywords and Module Types.
+#
+# Supported Module Types:
+#  BASE SEC PEI_CORE PEIM DXE_CORE DXE_DRIVER DXE_RUNTIME_DRIVER DXE_SMM_DRIVER DXE_SAL_DRIVER UEFI_DRIVER UEFI_APPLICATION
+#
+################################################################################
+[Includes.common]
+  Include                        # Root include for the package
+
+[LibraryClasses.common]
+  ##  @libraryclass  Access QEMU's firmware configuration interface
+  QemuFwCfgLib                    | Include/Library/QemuFwCfgLib.h
+
+[Guids]
+  gLoongArchQemuPkgTokenSpaceGuid  = { 0x0e0383ce, 0x0151, 0x4d01, { 0x80, 0x0e, 0x3f, 0xef, 0x8b, 0x27, 0x6d, 0x52 } }
+  gEfiLoongsonBootparamsTableGuid  = { 0x4660f721, 0x2ec5, 0x416a, { 0x89, 0x9a, 0x43, 0x18, 0x02, 0x50, 0xa0, 0xc9 } }
+
+[Protocols]
+
+[PcdsFixedAtBuild, PcdsDynamic]
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashPeiFvBase|0x0|UINT64|0x00000003
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashPeiFvSize|0x0|UINT32|0x00000004
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashDxeFvOffset|0x0|UINT64|0x00000007
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashDxeFvBase|0x0|UINT64|0x00000008
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashDxeFvSize|0x0|UINT32|0x00000009
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashSecModuleBase|0x0|UINT64|0x0000000a
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashSecModuleSize|0x0|UINT32|0x0000000b
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashEventLogBase|0x0|UINT64|0x0000000c
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashEventLogSize|0x0|UINT32|0x0000000d
+  gLoongArchQemuPkgTokenSpaceGuid.PcdGuidedExtractHandlerTableSize|0|UINT32|0x00000016
+  gLoongArchQemuPkgTokenSpaceGuid.PcdGuidedExtractHandlerTableAddress|0|UINT32|0x00000017
+
+  gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamBase|0|UINT64|0x0000001c
+  gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamSize|0|UINT32|0x0000001d
+  gLoongArchQemuPkgTokenSpaceGuid.PcdUefiRamTop|0x0|UINT64|0x0000001e
+  gLoongArchQemuPkgTokenSpaceGuid.PcdRamRegionsBottom|0x0|UINT64|0x00000022
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashSecFvBase|0x0|UINT64|0x00000028
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashSecFvSize|0x0|UINT32|0x00000029
+
+[PcdsFixedAtBuild.LOONGARCH64]
+   gEmbeddedTokenSpaceGuid.PcdPrePiCpuMemorySize|32|UINT8|0x00000010
+   gEmbeddedTokenSpaceGuid.PcdPrePiCpuIoSize|0|UINT8|0x00000011
+
+[PcdsDynamic]
+  gLoongArchQemuPkgTokenSpaceGuid.PcdLocalCpuCount|0x1|UINT16|0x00000040
+  gLoongArchQemuPkgTokenSpaceGuid.PcdRamSize|0x40000000|UINT64|0x00000041
+  gLoongArchQemuPkgTokenSpaceGuid.PcdMaximumCpuCount|0x1|UINT16|0x00000044
+  gLoongArchQemuPkgTokenSpaceGuid.PcdCpusPerNode|0x1|UINT16|0x00000045
+  gLoongArchQemuPkgTokenSpaceGuid.PcdNumaNodes|0x1|UINT64|0x00000046
+
+[PcdsFeatureFlag]

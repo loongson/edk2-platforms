@@ -1,0 +1,35 @@
+## @file
+#  initialized fw_cfg library.
+#
+#  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = QemuFwCfgSecLib
+  FILE_GUID                      = cdf9a9d5-7422-4dcb-b41d-607151ad320b
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = QemuFwCfgLib
+
+
+[Sources]
+  QemuFwCfgLibInternal.h
+  QemuFwCfgLib.c
+  QemuFwCfg.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  OvmfPkg/OvmfPkg.dec
+  Platform/Loongson/LoongArchQemuPkg/Loongson.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  IoLib
+  MemoryAllocationLib
+
