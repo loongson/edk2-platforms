@@ -1,0 +1,49 @@
+## @file
+#  SEC Driver
+#
+#  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = SecMain
+  FILE_GUID                      = 57d02d4f-5a5d-4bfa-b7d6-ba0a4d2c72ce
+  MODULE_TYPE                    = SEC
+  VERSION_STRING                 = 1.0
+
+[Sources.LOONGARCH64]
+  LoongArch64/Start.S
+  SecMain.c
+
+[Packages]
+  Platform/Loongson/LoongArchQemuPkg/Loongson.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  DebugLib
+  BaseMemoryLib
+  PcdLib
+  DebugAgentLib
+  IoLib
+  PeCoffLib
+  PeCoffGetEntryPointLib
+  PeCoffExtraActionLib
+
+[Ppis]
+  gEfiTemporaryRamSupportPpiGuid                # PPI ALWAYS_PRODUCED
+
+[FixedPcd]
+  gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamBase
+  gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamSize
+  gLoongArchQemuPkgTokenSpaceGuid.PcdGuidedExtractHandlerTableAddress
+  gLoongArchQemuPkgTokenSpaceGuid.PcdGuidedExtractHandlerTableSize
+
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashSecFvBase
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashSecFvSize
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashPeiFvBase
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashPeiFvSize
