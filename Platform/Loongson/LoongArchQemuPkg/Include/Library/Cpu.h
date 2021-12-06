@@ -132,10 +132,10 @@
 #define LOONGARCH_CSR_CNTC         0x43    /* Timer offset */
 #define LOONGARCH_CSR_TINTCLR      0x44    /* Timer interrupt clear */
 
-#define loongarch_csr_readq(val, reg);          \
+#define loongarch_csr_readq(val, reg)           \
 do {                                            \
         UINT64 __res;                           \
-        /* DWRCSR reg, val */                   \
+        /* csrrd val, reg */                    \
         __asm__ __volatile__(                   \
                 "csrrd  %0, %1 \n\t"            \
                 :"=r"(__res)                    \
