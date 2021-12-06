@@ -132,10 +132,10 @@
 #define LOONGARCH_CSR_CNTC         0x43    /* Timer offset */
 #define LOONGARCH_CSR_TINTCLR      0x44    /* Timer interrupt clear */
 
-#define loongarch_csr_readq(val, reg);          \
+#define loongarch_csr_readq(val, reg)           \
 do {                                            \
         UINT64 __res;                           \
-        /* DWRCSR reg, val */                   \
+        /* csrrd rd, csr_num */                 \
         __asm__ __volatile__(                   \
                 "csrrd  %0, %1 \n\t"            \
                 :"=r"(__res)                    \
@@ -148,7 +148,7 @@ do {                                            \
 #define loongarch_csr_writeq(val, reg)          \
 do {                                            \
         UINT64 __val = val;                     \
-        /* DWRCSR reg, val */                   \
+        /* csrwr rd, csr_num */                 \
         __asm__ __volatile__(                   \
                 "csrwr  %0, %1 \n\t"            \
                 : "=r"(__val)                   \
@@ -160,7 +160,7 @@ do {                                            \
 #define LoongArchGetCpucfg(val, reg)            \
 do {                                            \
         UINT64 __res;                           \
-        /* cpucfg val, reg */                   \
+        /* cpucfg rd, rj */                   \
         __asm__ __volatile__(                   \
                 "cpucfg  %0, %1 \n\t"           \
                 :"=r"(__res)                    \

@@ -1071,7 +1071,7 @@ RootBridgeIoMap (
     return Status;
   }
 
-  PhysicalAddress = (EFI_PHYSICAL_ADDRESS)MIPSPHYADDR((UINTN) HostAddress);
+  PhysicalAddress = (EFI_PHYSICAL_ADDRESS)PHYADDR((UINTN) HostAddress);
   DEBUG((EFI_D_INFO, "==========HostAddress 0x%llx, PhysicalAddress 0x%llx\n", (UINTN)HostAddress, PhysicalAddress));
 
   if (!RootBridge->DmaAbove4G && ((PhysicalAddress + *NumberOfBytes) > SIZE_4GB)) {
