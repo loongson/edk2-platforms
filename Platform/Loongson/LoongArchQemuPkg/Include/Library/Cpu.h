@@ -132,6 +132,7 @@
 #define LOONGARCH_CSR_CNTC         0x43    /* Timer offset */
 #define LOONGARCH_CSR_TINTCLR      0x44    /* Timer interrupt clear */
 
+
 #define loongarch_csr_readq(val, reg)           \
 do {                                            \
         UINT64 __res;                           \
@@ -160,7 +161,7 @@ do {                                            \
 #define LoongArchGetCpucfg(val, reg)            \
 do {                                            \
         UINT64 __res;                           \
-        /* cpucfg rd, rj */                   \
+        /* cpucfg rd, rj */                     \
         __asm__ __volatile__(                   \
                 "cpucfg  %0, %1 \n\t"           \
                 :"=r"(__res)                    \
