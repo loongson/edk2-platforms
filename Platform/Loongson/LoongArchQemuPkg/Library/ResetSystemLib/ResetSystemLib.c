@@ -15,21 +15,18 @@
 #include <Library/PcdLib.h>
 #include <Library/DebugLib.h>
 #include <Library/UefiRuntimeLib.h>
+#include <LoongArchQemuPlatform.h>
 
-/* Acpi pm device */
-#define LS7A_PCH_REG_BASE             0x10000000UL
-#define LS7A_ACPI_REG_BASE            (LS7A_PCH_REG_BASE  + 0x000D0000)
-#define LS7A_PM_CNT_BLK               (0x14) /* 2 bytes */
-#define LS7A_GPE0_RESET_REG           (0x30) /* 4 bytes */
-
-#define ACPI_BITMASK_SLEEP_TYPE       0x1C00
-#define ACPI_BITMASK_SLEEP_ENABLE     0x2000
-
-static UINTN LoongArchQemuAcpiBase (VOID)
+UINTN
+LoongArchQemuAcpiBase (VOID)
 {
   VOID *Address = (VOID*) LS7A_ACPI_REG_BASE;
 
   if (EfiGoneVirtual ()) {
+    /**The RTC controller address and the ResetSystem controller address are in the same page.
+       The function KVMToolRTCMapMemory has placed the entire page address in the memory mapping table,
+       do not add additional.
+     * */
     EfiConvertPointer (0, &Address);
     DEBUG ((DEBUG_INFO, "%a: virtual -> 0x%x\n", __FUNCTION__, Address));
   } else {
@@ -39,26 +36,28 @@ static UINTN LoongArchQemuAcpiBase (VOID)
   return (UINTN) Address;
 }
 
-static VOID LoongArchQemuReset(VOID)
+VOID
+LoongArchQemuReset (VOID)
 {
 
   UINTN Address;
 
   DEBUG ((DEBUG_INFO, "%a: LoongArchQemu reset via acpi\n", __FUNCTION__));
 
-  Address = LoongArchQemuAcpiBase();
+  Address = LoongArchQemuAcpiBase ();
   MmioWrite8 (Address + LS7A_GPE0_RESET_REG, 1);
   CpuDeadLoop ();
 }
 
-static VOID LoongArchQemuShutdown(VOID)
+VOID
+LoongArchQemuShutdown (VOID)
 {
   UINTN  Address;
 
   //
   // sleep with S5
   //
-  Address = LoongArchQemuAcpiBase();
+  Address = LoongArchQemuAcpiBase ();
   MmioWrite16 (Address + LS7A_PM_CNT_BLK, ACPI_BITMASK_SLEEP_ENABLE);
   CpuDeadLoop ();
 }
@@ -71,9 +70,10 @@ static VOID LoongArchQemuShutdown(VOID)
 
  If this function returns, it means that the system does not support cold reset.
 **/
-VOID EFIAPI ResetCold (VOID)
+VOID
+EFIAPI ResetCold (VOID)
 {
-  LoongArchQemuReset();
+  LoongArchQemuReset ();
 }
 
 /**
@@ -82,9 +82,10 @@ VOID EFIAPI ResetCold (VOID)
 
  If this function returns, it means that the system does not support warm reset.
 **/
-VOID EFIAPI ResetWarm (VOID)
+VOID
+EFIAPI ResetWarm (VOID)
 {
-  LoongArchQemuReset();
+  LoongArchQemuReset ();
 }
 
 /**
@@ -105,7 +106,7 @@ ResetPlatformSpecific (
   IN VOID    *ResetData
   )
 {
-  LoongArchQemuReset();
+  LoongArchQemuReset ();
 }
 
 /**
@@ -114,9 +115,10 @@ ResetPlatformSpecific (
 
  If this function returns, it means that the system does not support shutdown reset.
 **/
-VOID EFIAPI ResetShutdown (VOID)
+VOID
+EFIAPI ResetShutdown (VOID)
 {
-  LoongArchQemuShutdown();
+  LoongArchQemuShutdown ();
 }
 
 

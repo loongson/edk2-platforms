@@ -47,10 +47,11 @@ PeiFvInitialization (
   //
   // Let PEI know about the DXE FV so it can find the DXE Core
   //
-  DEBUG ((EFI_D_INFO, "DXEFV base:%p size:%x\n", (VOID *)(UINTN)PcdGet64 (PcdFlashDxeFvBase), PcdGet32 (PcdFlashDxeFvSize)));
+  DEBUG ((EFI_D_INFO, "DXEFV base:%p size:%x\n", (VOID *) (UINTN)PcdGet64 (PcdFlashDxeFvBase),
+    PcdGet32 (PcdFlashDxeFvSize)));
   PeiServicesInstallFvInfoPpi (
     NULL,
-    (VOID *)(UINTN) PcdGet64 (PcdFlashDxeFvBase),
+    (VOID *) (UINTN)PcdGet64 (PcdFlashDxeFvBase),
     PcdGet32 (PcdFlashDxeFvSize),
     NULL,
     NULL

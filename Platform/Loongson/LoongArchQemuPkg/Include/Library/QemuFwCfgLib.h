@@ -7,8 +7,8 @@
 
 **/
 
-#ifndef __FW_CFG_LIB__
-#define __FW_CFG_LIB__
+#ifndef QEMU_FW_CFG_LIB_
+#define QEMU_FW_CFG_LIB_
 
 #include <IndustryStandard/QemuFwCfg.h>
 

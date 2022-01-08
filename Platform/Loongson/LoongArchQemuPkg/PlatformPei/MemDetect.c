@@ -38,13 +38,15 @@ PublishPeiMemory (
   )
 {
   EFI_STATUS  Status;
-  UINT64      Base, Size, RamTop;
+  UINT64      Base;
+  UINT64      Size;
+  UINT64      RamTop;
 
   //
   // Determine the range of memory to use during PEI
   //
-  Base = PcdGet64(PcdSecPeiTempRamBase) + PcdGet32(PcdSecPeiTempRamSize);
-  RamTop = PcdGet64(PcdUefiRamTop);
+  Base = PcdGet64 (PcdSecPeiTempRamBase) + PcdGet32 (PcdSecPeiTempRamSize);
+  RamTop = PcdGet64 (PcdUefiRamTop);
   Size = RamTop - Base;
 
   //
@@ -53,7 +55,7 @@ PublishPeiMemory (
   Status = PublishSystemMemory (Base, Size);
   ASSERT_EFI_ERROR (Status);
 
-  DEBUG((EFI_D_INFO, "Publish Memory Initialize done.\n"));
+  DEBUG ((EFI_D_INFO, "Publish Memory Initialize done.\n"));
   return Status;
 }
 
@@ -66,15 +68,16 @@ InitializeRamRegions (
   VOID
   )
 {
-  UINT64 Base, End;
+  UINT64 Base;
+  UINT64 End;
 
   //
   // DDR memory space address range
   // 0x00000000 - 0x10000000  lower 256M memory space
   // 0x90000000 - BASE_4GB    if there is
   // BASE_4GB   - 
-  Base = PcdGet64(PcdRamRegionsBottom);
-  End  = Base + PcdGet64(PcdRamSize) - 0x10000000;
+  Base = PcdGet64 (PcdRamRegionsBottom);
+  End  = Base + PcdGet64 (PcdRamSize) - 0x10000000;
 
   //
   // Create memory HOBs.
@@ -94,17 +97,17 @@ InitializeRamRegions (
   // Lock the scope of the cache.
   //
   BuildMemoryAllocationHob (
-          PcdGet64 (PcdSecPeiTempRamBase),
-          PcdGet32 (PcdSecPeiTempRamSize),
-          EfiACPIMemoryNVS
-          );
+    PcdGet64 (PcdSecPeiTempRamBase),
+    PcdGet32 (PcdSecPeiTempRamSize),
+    EfiACPIMemoryNVS
+    );
 
   //
   // SEC stores its table of GUIDed section handlers here.
   //
   BuildMemoryAllocationHob (
-          PcdGet64 (PcdGuidedExtractHandlerTableAddress),
-          PcdGet32 (PcdGuidedExtractHandlerTableSize),
-          EfiACPIMemoryNVS
-          );
+    PcdGet64 (PcdGuidedExtractHandlerTableAddress),
+    PcdGet32 (PcdGuidedExtractHandlerTableSize),
+    EfiACPIMemoryNVS
+    );
 }

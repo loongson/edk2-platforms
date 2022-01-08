@@ -17,18 +17,13 @@
   ENTRY_POINT                    = InitializePlatform
 
 [Sources]
-#  Fv.c
-#  MemDetect.c
-#  Platform.c
   Fv.c
   MemDetect.c
   Platform.c
-#  UnlockScache.c
-#  FsbConfig.c
-#  ChipsetConfig.c
 
 
 [Packages]
+  ArmVirtPkg/ArmVirtPkg.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   EmbeddedPkg/EmbeddedPkg.dec
@@ -40,6 +35,7 @@
 
 [Guids]
   gEfiMemoryTypeInformationGuid
+  gFdtHobGuid
 
 [LibraryClasses]
   DebugLib
@@ -55,11 +51,9 @@
   TimerLib
 
 [Pcd]
-  gLoongArchQemuPkgTokenSpaceGuid.PcdLocalCpuCount
-  gLoongArchQemuPkgTokenSpaceGuid.PcdMaximumCpuCount
   gLoongArchQemuPkgTokenSpaceGuid.PcdRamSize
-  gLoongArchQemuPkgTokenSpaceGuid.PcdCpusPerNode
-  gLoongArchQemuPkgTokenSpaceGuid.PcdNumaNodes
+  gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceTreeBase
+  gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceTreePadding
 
 [FixedPcd]
   gLoongArchQemuPkgTokenSpaceGuid.PcdFlashPeiFvBase

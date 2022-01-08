@@ -13,7 +13,6 @@
 #include <Library/DebugLib.h>
 #include "Library/StableTimer.h"
 #include "Library/Cpu.h"
-#include "TimerLibInternal.h"
 
 UINT32 StableTimerFreq = 0;
 
@@ -38,17 +37,23 @@ CalcConstFreq (
 {
   UINT32 Res;
   UINT32 BaseFreq;
-  UINT32 Cfm, Cfd;
+  UINT32 Cfm;
+  UINT32 Cfd;
 
-  LoongArchGetCpucfg(BaseFreq, LOONGARCH_CPUCFG4);
-  LoongArchGetCpucfg(Res, LOONGARCH_CPUCFG5);
+  LoongArchGetCpucfg (BaseFreq, LOONGARCH_CPUCFG4);
+  LoongArchGetCpucfg (Res, LOONGARCH_CPUCFG5);
   Cfm = Res & 0xffff;
   Cfd = (Res >> 16) & 0xffff;
 
-  if (!BaseFreq || !Cfm || !Cfd)
+  if ((!BaseFreq)
+    || (!Cfm)
+    || (!Cfd))
+  {
     return 0;
-  else
+  }
+  else {
     return (BaseFreq * Cfm / Cfd);
+  }
 }
 
 UINT32
@@ -59,7 +64,7 @@ GetFreq (
 {
   if (StableTimerFreq) {
   } else {
-    StableTimerFreq = CalcConstFreq();
+    StableTimerFreq = CalcConstFreq ();
   }
 
   return StableTimerFreq;
@@ -82,16 +87,19 @@ MicroSecondDelay (
   )
 {
 
-  UINTN Count, Ticks, Start, End;
+  UINTN Count;
+  UINTN Ticks;
+  UINTN Start;
+  UINTN End;
 
-  Count = GetFreq();
+  Count = GetFreq ();
   Count = (Count * MicroSeconds) / 1000000;
-  Start = CsrReadTime();
+  Start = CsrReadTime ();
   End = Start + Count;
 
   do {
-    Ticks = CsrReadTime();
-  } while(Ticks < End);
+    Ticks = CsrReadTime ();
+  } while (Ticks < End);
 
   return MicroSeconds;
 }
@@ -114,12 +122,12 @@ NanoSecondDelay (
 {
   UINT32  MicroSeconds;
 
-  if(NanoSeconds % 1000 == 0){
+  if (NanoSeconds % 1000 == 0) {
     MicroSeconds = NanoSeconds/1000;
-  }else{
+  }else {
     MicroSeconds = NanoSeconds/1000 + 1;
   }
-  MicroSecondDelay(MicroSeconds);
+  MicroSecondDelay (MicroSeconds);
 
   return NanoSeconds;
 }
@@ -131,7 +139,7 @@ NanoSecondDelay (
   counter can either count up by 1 or count down by 1. If the physical
   performance counter counts by a larger increment, then the counter values
   must be translated. The properties of the counter can be retrieved from
-  GetPerformanceCounterProperties().
+  GetPerformanceCounterProperties ().
 
   @return The current value of the free running performance counter.
 
@@ -142,7 +150,7 @@ GetPerformanceCounter (
   VOID
   )
 {
-  return CsrReadTime();
+  return CsrReadTime ();
 }
 /**
   Retrieves the 64-bit frequency in Hz and the range of performance counter
@@ -182,7 +190,7 @@ GetPerformanceCounterProperties (
     *EndValue = BIT48 - 1;
   }
 
-  return GetFreq();
+  return GetFreq ();
 }
 
 /**

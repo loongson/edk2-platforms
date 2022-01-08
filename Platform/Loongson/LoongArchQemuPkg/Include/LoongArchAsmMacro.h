@@ -7,8 +7,8 @@
 
  **/
 
-#ifndef __LOONGARCH_ASM_MACRO_H__
-#define __LOONGARCH_ASM_MACRO_H__
+#ifndef LOONGARCH_ASM_MACRO_H_
+#define LOONGARCH_ASM_MACRO_H_
 
 #include <Base.h>
 

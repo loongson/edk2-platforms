@@ -7,13 +7,19 @@
 
 **/
 
+#include <Protocol/Cpu.h>
+#include "Library/Cpu.h"
+#include <Library/DebugLib.h>
+#include <Library/StableTimer.h>
 #include "Timer.h"
 #include <Library/TimerLib.h>
+#include <Library/UefiBootServicesTableLib.h>
 
 //
 // The handle onto which the Timer Architectural Protocol will be installed
 //
-EFI_HANDLE                mTimerHandle = NULL;
+EFI_HANDLE            mTimerHandle = NULL;
+EFI_EVENT             EfiExitBootServicesEvent = (EFI_EVENT)NULL;
 
 //
 // The Timer Architectural Protocol that this driver produces
@@ -57,10 +63,13 @@ SetPitCount (
   IN UINT64  Count
   )
 {
-  if(Count <= 4) {
+  if (Count <= 4) {
     return;
   }
-  loongarch_csr_writeq ((Count & 0xfffffffffffcULL) | LISA_CSR_TMCFG_EN | LISA_CSR_TMCFG_PERIOD, LISA_CSR_TMCFG);
+
+  Count &= LOONGARCH_CSR_TMCFG_TIMEVAL;
+  Count |= LOONGARCH_CSR_TMCFG_EN | LOONGARCH_CSR_TMCFG_PERIOD;
+  loongarch_csr_writeq (Count, LOONGARCH_CSR_TMCFG); 
 }
 
 /**
@@ -136,11 +145,15 @@ TimerDriverRegisterHandler (
   //
   // Check for invalid parameters
   //
-  if (NotifyFunction == NULL && mTimerNotifyFunction == NULL) {
+  if ((NotifyFunction == NULL)
+    && (mTimerNotifyFunction == NULL))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
-  if (NotifyFunction != NULL && mTimerNotifyFunction != NULL) {
+  if ((NotifyFunction != NULL)
+    && mTimerNotifyFunction != NULL)
+  {
     return EFI_ALREADY_STARTED;
   }
 
@@ -190,7 +203,7 @@ TimerDriverSetTimerPeriod (
     //
     // Disable timer interrupt for a TimerPeriod of 0
     //
-    mCpu->DisableInterrupt(mCpu);
+    mCpu->DisableInterrupt (mCpu);
   } else {
 
     TimerCount = TimerPeriod * StableTimerFreq / 10000000ULL;
@@ -252,10 +265,26 @@ TimerDriverGetTimerPeriod (
 }
 
 /**
+    Disable the timer
+**/
+VOID
+EFIAPI
+ExitBootServicesEvent (
+  IN EFI_EVENT  Event,
+  IN VOID       *Context
+  )
+{
+  /*
+   * Disable timer interrupt when exiting boot service
+   */
+  loongarch_csr_writeq (0, LOONGARCH_CSR_TMCFG);
+}
+
+/**
 
   This function generates a soft timer interrupt. If the platform does not support soft
   timer interrupts, then EFI_UNSUPPORTED is returned. Otherwise, EFI_SUCCESS is returned.
-  If a handler has been registered through the EFI_TIMER_ARCH_PROTOCOL.RegisterHandler()
+  If a handler has been registered through the EFI_TIMER_ARCH_PROTOCOL.RegisterHandler ()
   service, then a soft timer interrupt will be generated. If the timer interrupt is
   enabled when this service is called, then the registered handler will be invoked. The
   registered handler should not be able to distinguish a hardware-generated timer
@@ -323,8 +352,8 @@ StableTimerDriverInitialize (
   //
   // Calculate const frequence
   //
-  StableTimerFreq = CalcConstFreq();
-  DEBUG((EFI_D_INFO, "===========Stable timer freq %d Hz=============\n", StableTimerFreq));
+  StableTimerFreq = CalcConstFreq ();
+  DEBUG ((EFI_D_INFO, "===========Stable timer freq %d Hz=============\n", StableTimerFreq));
 
   //
   // Install interrupt handler for Stable Timer #0 (ISA IRQ0)
@@ -336,7 +365,7 @@ StableTimerDriverInitialize (
   //
   // Enable TI local timer interrupt
   //
-  CpuSetIP(1 << 11);
+  CpuSetIP (1 << 11);
 
   //
   // Force the timer to be enabled at its default period
@@ -353,6 +382,11 @@ StableTimerDriverInitialize (
                   NULL
                   );
 
+  ASSERT_EFI_ERROR (Status);
+
+  // Register for an ExitBootServicesEvent
+  Status = gBS->CreateEvent (EVT_SIGNAL_EXIT_BOOT_SERVICES, TPL_NOTIFY, ExitBootServicesEvent, NULL, 
+                  &EfiExitBootServicesEvent);
   ASSERT_EFI_ERROR (Status);
 
   return Status;

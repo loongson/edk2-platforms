@@ -7,7 +7,18 @@
 **/
 
 #include <string.h>
+#include "Library/Cpu.h"
+#include <Library/BaseMemoryLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiLib.h>
+#include <Library/CacheMaintenanceLib.h>
+#include <Library/DebugLib.h>
 #include "CpuDxe.h"
+#include <Library/PeCoffGetEntryPointLib.h>
+#include <Library/UefiLib.h>
+#include <Guid/DebugImageInfoTable.h>
+
+
 
 EFI_EXCEPTION_CALLBACK  gExceptionHandlers[MAX_LOONGARCH_EXCEPTION + 1];
 EFI_EXCEPTION_CALLBACK  gDebuggerExceptionHandlers[MAX_LOONGARCH_EXCEPTION + 1];
@@ -42,7 +53,9 @@ RegisterInterruptHandler (
     return EFI_UNSUPPORTED;
   }
 
-  if ((InterruptHandler != NULL) && (gExceptionHandlers[InterruptType] != NULL)) {
+  if ((InterruptHandler != NULL) 
+    && (gExceptionHandlers[InterruptType] != NULL))
+  {
     return EFI_ALREADY_STARTED;
   }
 
@@ -56,67 +69,135 @@ RegisterInterruptHandler (
  */
 INT32
 EFIAPI
-GetExceptionType(IN EFI_SYSTEM_CONTEXT frame)
+GetExceptionType (IN EFI_SYSTEM_CONTEXT frame)
 {
   INT32 tmp;
-#define CSR_ECODE_SHIFT 16
-#define CSR_ECODE 0x3f0000
-  tmp = (frame.SystemContextLoongArch64->ESTAT & CSR_ECODE) >> CSR_ECODE_SHIFT;
-  switch(tmp) {
+
+  tmp = frame.SystemContextLoongArch64->ESTAT & CSR_ESTAT_EXC;
+  tmp = tmp >> CSR_ESTAT_EXC_SHIFT;
+  switch (tmp) {
   case EXC_INT:
     return (EXC_INT);
   default:
-    return(EXC_BAD);
+    return (EXC_BAD);
   }
 }
 
 /*
  *To Invoke the Handler Function
  */
-VOID
+STATIC VOID
 EFIAPI
-CommonCExceptionHandler (
+InterruptHandler (
   IN     INT32           ExceptionType,
   IN OUT EFI_SYSTEM_CONTEXT           SystemContext
   )
 {
   INT32 Pending;
   /*irq [13-0] NMI IPI TI PCOV hw IP10-IP2 soft IP1-IP0*/
-  Pending = ((SystemContext.SystemContextLoongArch64->ESTAT) & (SystemContext.SystemContextLoongArch64->ECFG) & 0x1fff);
-  if(Pending & (1 << 11/*TI*/))
-  {
+  Pending = ((SystemContext.SystemContextLoongArch64->ESTAT) & 
+             (SystemContext.SystemContextLoongArch64->ECFG) & 0x1fff);
+  if (Pending & (1 << 11/*TI*/)) {
       gExceptionHandlers[ExceptionType] (ExceptionType, SystemContext);
   } else {
       DEBUG ((EFI_D_INFO, "Pending: 0x%0x, ExceptionType: 0x%0x\n", Pending, ExceptionType));
   }
 }
 
-int exc_times = 0;
+/**
+  Use the EFI Debug Image Table to lookup the FaultAddress and find which PE/COFF image
+  it came from. As long as the PE/COFF image contains a debug directory entry a
+  string can be returned. For ELF and Mach-O images the string points to the Mach-O or ELF
+  image. Microsoft tools contain a pointer to the PDB file that contains the debug information.
+
+  @param  FaultAddress         Address to find PE/COFF image for.
+  @param  ImageBase            Return load address of found image
+  @param  PeCoffSizeOfHeaders  Return the size of the PE/COFF header for the image that was found
+
+  @retval NULL                 FaultAddress not in a loaded PE/COFF image.
+  @retval                      Path and file name of PE/COFF image.
+
+**/
+CHAR8 *
+GetImageName (
+  IN  UINTN  FaultAddress,
+  OUT UINTN  *ImageBase,
+  OUT UINTN  *PeCoffSizeOfHeaders
+  )
+{
+  EFI_STATUS                          Status;
+  EFI_DEBUG_IMAGE_INFO_TABLE_HEADER   *DebugTableHeader;
+  EFI_DEBUG_IMAGE_INFO                *DebugTable;
+  UINTN                               Entry;
+  CHAR8                               *Address;
+
+  Status = EfiGetSystemConfigurationTable (&gEfiDebugImageInfoTableGuid, (VOID **)&DebugTableHeader);
+  if (EFI_ERROR (Status)) {
+    return NULL;
+  }
+
+  DebugTable = DebugTableHeader->EfiDebugImageInfoTable;
+  if (DebugTable == NULL) {
+    return NULL;
+  }
+
+  Address = (CHAR8 *)(UINTN)FaultAddress;
+  for (Entry = 0; Entry < DebugTableHeader->TableSize; Entry++, DebugTable++) {
+    if (DebugTable->NormalImage != NULL) {
+      if ((DebugTable->NormalImage->ImageInfoType == EFI_DEBUG_IMAGE_INFO_TYPE_NORMAL) &&
+          (DebugTable->NormalImage->LoadedImageProtocolInstance != NULL)) {
+        if ((Address >= (CHAR8 *)DebugTable->NormalImage->LoadedImageProtocolInstance->ImageBase) &&
+            (Address <= ((CHAR8 *)DebugTable->NormalImage->LoadedImageProtocolInstance->ImageBase + DebugTable->NormalImage->LoadedImageProtocolInstance->ImageSize))) {
+          *ImageBase = (UINTN)DebugTable->NormalImage->LoadedImageProtocolInstance->ImageBase;
+          *PeCoffSizeOfHeaders = PeCoffGetSizeOfHeaders ((VOID *)(UINTN)*ImageBase);
+          return PeCoffLoaderGetPdbPointer (DebugTable->NormalImage->LoadedImageProtocolInstance->ImageBase);
+        }
+      }
+   }
+  }
+
+  return NULL;
+}
+
+STATIC
+CONST CHAR8 *
+BaseName (
+  IN  CONST CHAR8 *FullName
+  )
+{
+  CONST CHAR8 *Str;
+
+  Str = FullName + AsciiStrLen (FullName);
+
+  while (--Str > FullName) {
+    if (*Str == '/' || *Str == '\\') {
+      return Str + 1;
+    }
+  }
+  return Str;
+}
+
 VOID
 EFIAPI
-mException(
+mException (
 IN OUT EFI_SYSTEM_CONTEXT           SystemContext
 )
 {
   INT32           ExceptionType;
-  ExceptionType = GetExceptionType(SystemContext);
+  ExceptionType = GetExceptionType (SystemContext);
+  CHAR8  *Pdb;
+  UINTN  ImageBase, epc;
+  UINTN  PeCoffSizeOfHeader;
 
-	exc_times++;
-  if(ExceptionType == 0) { // Timer
-	if (exc_times == 1000) {
-			DEBUG ((DEBUG_ERROR, "\nSystemContext.SystemContextLoongArch64 address 0x%llx\n",SystemContext.SystemContextLoongArch64));
-			DEBUG ((DEBUG_ERROR, "CRMD   0x%llx\n",  SystemContext.SystemContextLoongArch64->CRMD));
-			DEBUG ((DEBUG_ERROR, "PRMD   0x%llx\n",  SystemContext.SystemContextLoongArch64->PRMD));
-			DEBUG ((DEBUG_ERROR, "ECFG  0x%llx\n",  SystemContext.SystemContextLoongArch64->ECFG));
-			DEBUG ((DEBUG_ERROR, "ESTAT   0x%llx\n",  SystemContext.SystemContextLoongArch64->ESTAT));
-			DEBUG ((DEBUG_ERROR, "ERA    0x%llx\n",  SystemContext.SystemContextLoongArch64->ERA));
-			DEBUG ((DEBUG_ERROR, "BADV    0x%llx\n",  SystemContext.SystemContextLoongArch64->BADV));
-			DEBUG ((DEBUG_ERROR, "BADI 0x%llx\n",  SystemContext.SystemContextLoongArch64->BADI));
-		exc_times = 0;
-	}
-    CommonCExceptionHandler(ExceptionType, SystemContext);
+
+  if (ExceptionType == EXC_INT) { // Timer
+    /* 
+     * handle interrupt exception
+     */
+    InterruptHandler (ExceptionType, SystemContext);
   } else { // Others
-    DEBUG ((DEBUG_ERROR, "\nSystemContext.SystemContextLoongArch64 address 0x%llx\n",SystemContext.SystemContextLoongArch64));
+    epc = SystemContext.SystemContextLoongArch64->ERA;
+
     DEBUG ((DEBUG_ERROR, "CRMD   0x%llx\n",  SystemContext.SystemContextLoongArch64->CRMD));
     DEBUG ((DEBUG_ERROR, "PRMD   0x%llx\n",  SystemContext.SystemContextLoongArch64->PRMD));
     DEBUG ((DEBUG_ERROR, "ECFG  0x%llx\n",  SystemContext.SystemContextLoongArch64->ECFG));
@@ -124,9 +205,19 @@ IN OUT EFI_SYSTEM_CONTEXT           SystemContext
     DEBUG ((DEBUG_ERROR, "ERA    0x%llx\n",  SystemContext.SystemContextLoongArch64->ERA));
     DEBUG ((DEBUG_ERROR, "BADV    0x%llx\n",  SystemContext.SystemContextLoongArch64->BADV));
     DEBUG ((DEBUG_ERROR, "BADI 0x%llx\n",  SystemContext.SystemContextLoongArch64->BADI));
-    DEBUG ((DEBUG_ERROR, "RA 0x%llx\n",  SystemContext.SystemContextLoongArch64->ERA));
 
-    while(1);
+
+    Pdb = GetImageName (epc, &ImageBase, &PeCoffSizeOfHeader);
+    if (Pdb != NULL) {
+      DEBUG ((DEBUG_ERROR, "PC 0x%012lx (0x%012lx+0x%08x) [ 0] %a\n",
+        epc, ImageBase,
+        epc - ImageBase, BaseName (Pdb)));
+    } else {
+      DEBUG ((DEBUG_ERROR, "PC 0x%012lx\n", epc));
+    }
+
+
+    while (1);
   }
 }
 
@@ -137,9 +228,9 @@ InitializeExceptions (
 {
   EFI_STATUS           Status;
   BOOLEAN              IrqEnabled;
+  EFI_PHYSICAL_ADDRESS Address;
 
-  Status = EFI_SUCCESS;
-  ZeroMem (gExceptionHandlers,sizeof(*gExceptionHandlers));
+  ZeroMem (gExceptionHandlers, sizeof (*gExceptionHandlers));
 
   //
   // Disable interrupts
@@ -151,24 +242,25 @@ InitializeExceptions (
   // EFI does not use the FIQ, but a debugger might so we must disable
   // as we take over the exception vectors.
   //
+  Status = gBS->AllocatePages (
+                  AllocateAnyPages,
+                 EfiRuntimeServicesData,
+                 1,
+                 &Address
+                 );
+  if (EFI_ERROR (Status)) {
+         return Status;
+  }
 
-  // We do not copy the Exception Table at PcdGet32(PcdCpuVectorBaseAddress). We just set Vector
-  // Base Address to point into CpuDxe code.
-
-  SetEbase();
-  SetTLBEbase();
-
-  InvalidateInstructionCacheRange((char *)GEN_EXC_VEC,(LoongArchExceptionEnd - LoongArchException) );
   DEBUG ((EFI_D_INFO, "set ebase\n"));
   DEBUG ((EFI_D_INFO, "LoongArchException address: 0x%x\n", LoongArchException));
   DEBUG ((EFI_D_INFO, "LoongArchExceptionEnd address: 0x%x\n", LoongArchExceptionEnd));
-  CopyMem((char *)GEN_EXC_VEC,LoongArchException, (LoongArchExceptionEnd - LoongArchException));
-  CopyMem((char *)TLB_MISS_EXC_VEC,LoongArchException, (LoongArchExceptionEnd - LoongArchException));
-  /*ls3a5000 no BEV*/
-  //puSetStatusRegister(0, SR_BOOT_EXC_VEC);
-  InvalidateInstructionCacheRange((char *)GEN_EXC_VEC,(LoongArchExceptionEnd - LoongArchException) );
-// InvalidateInstructionCacheRange((char *)TLB_MISS_EXC_VEC,(LoongArchExceptionEnd - LoongArchException) );
-  DEBUG ((EFI_D_INFO, "InitializeExceptions,IrqEnabled = %x\n",IrqEnabled));
+  CopyMem ((char *)Address, LoongArchException, (LoongArchExceptionEnd - LoongArchException));
+  InvalidateInstructionCacheRange ((char *)Address, (LoongArchExceptionEnd - LoongArchException));
+
+  SetEbase (Address);
+
+  DEBUG ((EFI_D_INFO, "InitializeExceptions, IrqEnabled = %x\n", IrqEnabled));
   if (IrqEnabled) {
     //
     // Restore interrupt state

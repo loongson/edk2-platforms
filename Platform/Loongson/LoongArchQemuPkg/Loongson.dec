@@ -18,7 +18,8 @@
 #                   Comments are used for Keywords and Module Types.
 #
 # Supported Module Types:
-#  BASE SEC PEI_CORE PEIM DXE_CORE DXE_DRIVER DXE_RUNTIME_DRIVER DXE_SMM_DRIVER DXE_SAL_DRIVER UEFI_DRIVER UEFI_APPLICATION
+#  BASE SEC PEI_CORE PEIM DXE_CORE DXE_DRIVER DXE_RUNTIME_DRIVER DXE_SMM_DRIVER 
+#  DXE_SAL_DRIVER UEFI_DRIVER UEFI_APPLICATION
 #
 ################################################################################
 [Includes.common]
@@ -46,6 +47,8 @@
   gLoongArchQemuPkgTokenSpaceGuid.PcdFlashEventLogSize|0x0|UINT32|0x0000000d
   gLoongArchQemuPkgTokenSpaceGuid.PcdGuidedExtractHandlerTableSize|0|UINT32|0x00000016
   gLoongArchQemuPkgTokenSpaceGuid.PcdGuidedExtractHandlerTableAddress|0|UINT32|0x00000017
+  gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceTreeBase|0x0|UINT64|0x00000018
+  gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceTreePadding|256|UINT32|0x0000001B 
 
   gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamBase|0|UINT64|0x0000001c
   gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamSize|0|UINT32|0x0000001d
@@ -59,10 +62,8 @@
    gEmbeddedTokenSpaceGuid.PcdPrePiCpuIoSize|0|UINT8|0x00000011
 
 [PcdsDynamic]
-  gLoongArchQemuPkgTokenSpaceGuid.PcdLocalCpuCount|0x1|UINT16|0x00000040
   gLoongArchQemuPkgTokenSpaceGuid.PcdRamSize|0x40000000|UINT64|0x00000041
-  gLoongArchQemuPkgTokenSpaceGuid.PcdMaximumCpuCount|0x1|UINT16|0x00000044
-  gLoongArchQemuPkgTokenSpaceGuid.PcdCpusPerNode|0x1|UINT16|0x00000045
-  gLoongArchQemuPkgTokenSpaceGuid.PcdNumaNodes|0x1|UINT64|0x00000046
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFwCfgSelectorAddress|0x0|UINT64|0x00000019
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFwCfgDataAddress|0x0|UINT64|0x0000001A
 
 [PcdsFeatureFlag]

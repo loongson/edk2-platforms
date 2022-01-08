@@ -9,52 +9,33 @@
 
 #include <IndustryStandard/Pci22.h>
 #include <Library/BootLogoLib.h>
-#include <Library/DevicePathLib.h>
 #include <Library/PcdLib.h>
 #include <Library/QemuBootOrderLib.h>
 #include <Library/UefiBootManagerLib.h>
-#include <Protocol/DevicePath.h>
 #include <Protocol/FirmwareVolume2.h>
-#include <Protocol/GraphicsOutput.h>
 #include <Protocol/LoadedImage.h>
 #include <Protocol/PciIo.h>
-#include <Protocol/PciRootBridgeIo.h>
-#include <Guid/EventGroup.h>
-#include <Guid/RootBridgesConnectedEventGroup.h>
-
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/DebugLib.h>
+#include <Library/MemoryAllocationLib.h>
+#include <Library/UefiLib.h>
+#include <Library/BaseMemoryLib.h>
 #include "PlatformBm.h"
 
-#define DP_NODE_LEN(Type) { (UINT8)sizeof (Type), (UINT8)(sizeof (Type) >> 8) }
-
-
-#pragma pack (1)
-typedef struct {
-  VENDOR_DEVICE_PATH         SerialDxe;
-  UART_DEVICE_PATH           Uart;
-  VENDOR_DEFINED_DEVICE_PATH TermType;
-  EFI_DEVICE_PATH_PROTOCOL   End;
-} PLATFORM_SERIAL_CONSOLE;
-#pragma pack ()
-
-#define SERIAL_DXE_FILE_GUID { \
-          0xD3987D4B, 0x971A, 0x435F, \
-          { 0x8C, 0xAF, 0x49, 0x67, 0xEB, 0x62, 0x72, 0x41 } \
-          }
-
 STATIC PLATFORM_SERIAL_CONSOLE mSerialConsole = {
-  //
-  // VENDOR_DEVICE_PATH SerialDxe
-  //
-  {
-    { HARDWARE_DEVICE_PATH, HW_VENDOR_DP, DP_NODE_LEN (VENDOR_DEVICE_PATH) },
-    SERIAL_DXE_FILE_GUID
-  },
+    //
+    // VENDOR_DEVICE_PATH SerialDxe
+    //
+    {
+        { HARDWARE_DEVICE_PATH, HW_VENDOR_DP, DP_NODE_LEN (VENDOR_DEVICE_PATH) },
+        SERIAL_DXE_FILE_GUID
+    },
 
-  //
-  // UART_DEVICE_PATH Uart
-  //
-  {
-    { MESSAGING_DEVICE_PATH, MSG_UART_DP, DP_NODE_LEN (UART_DEVICE_PATH) },
+    //
+    // UART_DEVICE_PATH Uart
+    //
+    {
+        { MESSAGING_DEVICE_PATH, MSG_UART_DP, DP_NODE_LEN (UART_DEVICE_PATH) },
     0,                                      // Reserved
     FixedPcdGet64 (PcdUartDefaultBaudRate), // BaudRate
     FixedPcdGet8 (PcdUartDefaultDataBits),  // DataBits
@@ -84,14 +65,6 @@ STATIC PLATFORM_SERIAL_CONSOLE mSerialConsole = {
   }
 };
 
-
-#pragma pack (1)
-typedef struct {
-  USB_CLASS_DEVICE_PATH    Keyboard;
-  EFI_DEVICE_PATH_PROTOCOL End;
-} PLATFORM_USB_KEYBOARD;
-#pragma pack ()
-
 STATIC PLATFORM_USB_KEYBOARD mUsbKeyboard = {
   //
   // USB_CLASS_DEVICE_PATH Keyboard
@@ -117,40 +90,6 @@ STATIC PLATFORM_USB_KEYBOARD mUsbKeyboard = {
   }
 };
 
-
-/**
-  Check if the handle satisfies a particular condition.
-
-  @param[in] Handle      The handle to check.
-  @param[in] ReportText  A caller-allocated string passed in for reporting
-                         purposes. It must never be NULL.
-
-  @retval TRUE   The condition is satisfied.
-  @retval FALSE  Otherwise. This includes the case when the condition could not
-                 be fully evaluated due to an error.
-**/
-typedef
-BOOLEAN
-(EFIAPI *FILTER_FUNCTION) (
-  IN EFI_HANDLE   Handle,
-  IN CONST CHAR16 *ReportText
-  );
-
-
-/**
-  Process a handle.
-
-  @param[in] Handle      The handle to process.
-  @param[in] ReportText  A caller-allocated string passed in for reporting
-                         purposes. It must never be NULL.
-**/
-typedef
-VOID
-(EFIAPI *CALLBACK_FUNCTION)  (
-  IN EFI_HANDLE   Handle,
-  IN CONST CHAR16 *ReportText
-  );
-
 /**
   Locate all handles that carry the specified protocol, filter them with a
   callback function, and pass each handle that passes the filter to another
@@ -164,7 +103,6 @@ VOID
   @param[in] Process       The callback function to pass each handle to that
                            clears the filter.
 **/
-STATIC
 VOID
 FilterAndProcess (
   IN EFI_GUID          *ProtocolGuid,
@@ -194,7 +132,7 @@ FilterAndProcess (
     STATIC CHAR16 Fallback[] = L"<device path unavailable>";
 
     //
-    // The ConvertDevicePathToText() function handles NULL input transparently.
+    // The ConvertDevicePathToText () function handles NULL input transparently.
     //
     DevicePathText = ConvertDevicePathToText (
                        DevicePathFromHandle (Handles[Idx]),
@@ -205,7 +143,9 @@ FilterAndProcess (
       DevicePathText = Fallback;
     }
 
-    if (Filter == NULL || Filter (Handles[Idx], DevicePathText)) {
+    if ((Filter == NULL)
+      || (Filter (Handles[Idx], DevicePathText)))
+    {
       Process (Handles[Idx], DevicePathText);
     }
 
@@ -220,7 +160,6 @@ FilterAndProcess (
 /**
   This FILTER_FUNCTION checks if a handle corresponds to a PCI display device.
 **/
-STATIC
 BOOLEAN
 EFIAPI
 IsPciDisplay (
@@ -256,7 +195,6 @@ IsPciDisplay (
   This CALLBACK_FUNCTION attempts to connect a handle non-recursively, asking
   the matching driver to produce all first-level child handles.
 **/
-STATIC
 VOID
 EFIAPI
 Connect (
@@ -281,7 +219,6 @@ Connect (
   This CALLBACK_FUNCTION retrieves the EFI_DEVICE_PATH_PROTOCOL from the
   handle, and adds it to ConOut and ErrOut.
 **/
-STATIC
 VOID
 EFIAPI
 AddOutput (
@@ -317,12 +254,11 @@ AddOutput (
     ReportText));
 }
 
-STATIC
 VOID
 PlatformRegisterFvBootOption (
-  EFI_GUID                         *FileGuid,
-  CHAR16                           *Description,
-  UINT32                           Attributes
+  IN EFI_GUID                         *FileGuid,
+  IN CHAR16                           *Description,
+  IN UINT32                           Attributes
   )
 {
   EFI_STATUS                        Status;
@@ -381,7 +317,7 @@ PlatformRegisterFvBootOption (
 
 
 /**
-  Remove all MemoryMapped(...)/FvFile(...) and Fv(...)/FvFile(...) boot options
+  Remove all MemoryMapped (...)/FvFile (...) and Fv (...)/FvFile (...) boot options
   whose device paths do not resolve exactly to an FvFile in the system.
 
   This removes any boot options that point to binaries built into the firmware
@@ -391,10 +327,9 @@ PlatformRegisterFvBootOption (
   - the FILE_GUID of the pointed-to binary changed,
   - the referenced binary is no longer built into the firmware.
 
-  EfiBootManagerFindLoadOption() used in PlatformRegisterFvBootOption() only
+  EfiBootManagerFindLoadOption () used in PlatformRegisterFvBootOption () only
   avoids exact duplicates.
 **/
-STATIC
 VOID
 RemoveStaleFvFileOptions (
   VOID
@@ -413,24 +348,26 @@ RemoveStaleFvFileOptions (
     EFI_HANDLE               FvHandle;
 
     //
-    // If the device path starts with neither MemoryMapped(...) nor Fv(...),
+    // If the device path starts with neither MemoryMapped (...) nor Fv (...),
     // then keep the boot option.
     //
     Node1 = BootOptions[Index].FilePath;
-    if (!(DevicePathType (Node1) == HARDWARE_DEVICE_PATH &&
-          DevicePathSubType (Node1) == HW_MEMMAP_DP) &&
-        !(DevicePathType (Node1) == MEDIA_DEVICE_PATH &&
-          DevicePathSubType (Node1) == MEDIA_PIWG_FW_VOL_DP)) {
+    if (!(DevicePathType (Node1) == HARDWARE_DEVICE_PATH
+      && DevicePathSubType (Node1) == HW_MEMMAP_DP)
+      && !(DevicePathType (Node1) == MEDIA_DEVICE_PATH
+      && DevicePathSubType (Node1) == MEDIA_PIWG_FW_VOL_DP))
+    {
       continue;
     }
 
     //
-    // If the second device path node is not FvFile(...), then keep the boot
+    // If the second device path node is not FvFile (...), then keep the boot
     // option.
     //
     Node2 = NextDevicePathNode (Node1);
-    if (DevicePathType (Node2) != MEDIA_DEVICE_PATH ||
-        DevicePathSubType (Node2) != MEDIA_PIWG_FW_FILE_DP) {
+    if ((DevicePathType (Node2) != MEDIA_DEVICE_PATH)
+      || (DevicePathSubType (Node2) != MEDIA_PIWG_FW_FILE_DP))
+    {
       continue;
     }
 
@@ -490,7 +427,7 @@ RemoveStaleFvFileOptions (
     DEBUG_CODE (
       CHAR16 *DevicePathString;
 
-      DevicePathString = ConvertDevicePathToText(BootOptions[Index].FilePath,
+      DevicePathString = ConvertDevicePathToText (BootOptions[Index].FilePath,
                            FALSE, FALSE);
       DEBUG ((
         EFI_ERROR (Status) ? EFI_D_WARN : EFI_D_VERBOSE,
@@ -510,7 +447,6 @@ RemoveStaleFvFileOptions (
 }
 
 
-STATIC
 VOID
 PlatformRegisterOptionsAndKeys (
   VOID
@@ -668,7 +604,7 @@ PlatformBootManagerAfterConsole (
   EfiBootManagerConnectAll ();
   DEBUG ((EFI_D_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
 
-  SetBootParams();
+  SetBootParams ();
   //
   // Process QEMU's -kernel command line option. Note that the kernel booted
   // this way should receive ACPI tables, which is why we connect all devices
@@ -711,7 +647,7 @@ PlatformBootManagerAfterConsole (
 VOID
 EFIAPI
 PlatformBootManagerWaitCallback (
-  UINT16          TimeoutRemain
+  IN UINT16          TimeoutRemain
   )
 {
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL_UNION Black;
@@ -764,7 +700,7 @@ PlatformBootManagerUnableToBoot (
   // a last resort -- the end-user will likely not see any DEBUG messages
   // logged in this situation.
   //
-  // AsciiPrint() will NULL-check gST->ConOut internally. We check gST->ConIn
+  // AsciiPrint () will NULL-check gST->ConOut internally. We check gST->ConIn
   // here to see if it makes sense to request and wait for a keypress.
   //
   if (gST->ConIn != NULL) {

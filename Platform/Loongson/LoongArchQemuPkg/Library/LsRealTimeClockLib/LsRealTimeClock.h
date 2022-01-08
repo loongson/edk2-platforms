@@ -8,8 +8,8 @@
 **/
 
 
-#ifndef __LS_REAL_TIME_CLOCK_H__
-#define __LS_REAL_TIME_CLOCK_H__
+#ifndef LS_REAL_TIME_CLOCK_H_
+#define LS_REAL_TIME_CLOCK_H_
 
 #define TOY_WRITE0_REG        0x24
 #define TOY_WRITE1_REG        0x28
