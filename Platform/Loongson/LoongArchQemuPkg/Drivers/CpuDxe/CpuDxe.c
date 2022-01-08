@@ -9,6 +9,12 @@
 
 
 #include <Guid/IdleLoopEvent.h>
+#include <Uefi.h>
+#include <Library/CacheMaintenanceLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/CpuLib.h>
+#include <Library/DebugLib.h>
+#include <Library/BaseLib.h>
 #include "CpuDxe.h"
 
 BOOLEAN mInterruptState   = FALSE;
@@ -52,13 +58,13 @@ CpuFlushCpuDataCache (
 
   switch (FlushType) {
     case EfiCpuFlushTypeWriteBack:
-      WriteBackDataCacheRange ((VOID *)(UINTN)Start, (UINTN)Length);
+      WriteBackDataCacheRange ((VOID *) (UINTN)Start, (UINTN)Length);
       break;
     case EfiCpuFlushTypeInvalidate:
-      InvalidateDataCacheRange ((VOID *)(UINTN)Start, (UINTN)Length);
+      InvalidateDataCacheRange ((VOID *) (UINTN)Start, (UINTN)Length);
       break;
     case EfiCpuFlushTypeWriteBackInvalidate:
-      WriteBackInvalidateDataCacheRange ((VOID *)(UINTN)Start, (UINTN)Length);
+      WriteBackInvalidateDataCacheRange ((VOID *) (UINTN)Start, (UINTN)Length);
       break;
     default:
       return EFI_INVALID_PARAMETER;
@@ -220,8 +226,9 @@ CpuSetMemoryAttributes (
   IN UINT64                    EfiAttributes
   )
 {
-    return EFI_UNSUPPORTED;
+  return EFI_SUCCESS;
 }
+
 /**
   Callback function for idle events.
 
@@ -271,10 +278,10 @@ CpuDxeInitialize (
   InitializeExceptions (&Cpu);
 
   Status = gBS->InstallMultipleProtocolInterfaces (
-                &CpuHandle,
-                &gEfiCpuArchProtocolGuid,           &Cpu,
-                NULL
-                );
+                  &CpuHandle,
+                  &gEfiCpuArchProtocolGuid, &Cpu,
+                  NULL
+                  );
 
   //
   // Setup a callback for idle events

@@ -7,8 +7,8 @@
 
 **/
 
-#ifndef __QEMU_FW_CFG_LIB_INTERNAL_H__
-#define __QEMU_FW_CFG_LIB_INTERNAL_H__
+#ifndef QEMU_FW_CFG_LIB_INTERNAL_H_
+#define QEMU_FW_CFG_LIB_INTERNAL_H_
 
 #define FW_CFG_SELECTOR    0x1e020000
 #define FW_CFG_DATA        0x1e020008

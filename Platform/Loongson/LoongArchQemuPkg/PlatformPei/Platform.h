@@ -7,8 +7,8 @@
 
 **/
 
-#ifndef _PLATFORM_PEI_H_INCLUDED_
-#define _PLATFORM_PEI_H_INCLUDED_
+#ifndef PLATFORM_H_
+#define PLATFORM_H_
 
 #include <IndustryStandard/Pci22.h>
 

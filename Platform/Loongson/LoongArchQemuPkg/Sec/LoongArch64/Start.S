@@ -44,7 +44,7 @@ slave_main:
 
     # enable IPI interrupt
     li.d      t0, (1 << 12)
-    csrxchg   t0, t0, LOONGARCH_CSR_EXCFG
+    csrxchg   t0, t0, LOONGARCH_CSR_ECFG
 
 1:
     # wait for wakeup
@@ -61,7 +61,7 @@ slave_main:
 
     # disable IPI interrupt
     li.d      t0, (1 << 12)
-    csrxchg   zero, t0, LOONGARCH_CSR_EXCFG
+    csrxchg   zero, t0, LOONGARCH_CSR_ECFG
 
     # read mail buf and jump to specified entry
     li.d      t1, LOONGSON_CSR_MAIL_BUF0

@@ -9,12 +9,11 @@
 #------------------------------------------------------------------------------
 
 #include "Library/Cpu.h"
-#include "TimerLibInternal.h"
 #include "LoongArchAsmMacro.h"
 
 ASM_FUNC(CpuSetIP)
-    csrrd   t0, LOONGARCH_CSR_EXCFG 
+    csrrd   t0, LOONGARCH_CSR_ECFG 
     or      t0, t0, a0
-    csrwr   t0, LOONGARCH_CSR_EXCFG
+    csrwr   t0, LOONGARCH_CSR_ECFG
     jirl    zero, ra,0
 

@@ -7,26 +7,10 @@
 
 **/
 
-#ifndef __CPU_DXE_H__
-#define __CPU_DXE_H__
+#ifndef CPU_DXE_H_
+#define CPU_DXE_H_
 
-#include <Uefi.h>
-#include "Library/Cpu.h"
-#include <Library/BaseMemoryLib.h>
-#include <Library/DebugLib.h>
-#include <Library/PcdLib.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/DxeServicesTableLib.h>
-#include <Library/CacheMaintenanceLib.h>
-#include <Library/PeCoffGetEntryPointLib.h>
-#include <Library/UefiLib.h>
-#include <Library/CpuLib.h>
-#include <Library/DebugLib.h>
-
-#include <Guid/DebugImageInfoTable.h>
 #include <Protocol/Cpu.h>
-#include <Protocol/DebugSupport.h>
-#include <Protocol/LoadedImage.h>
 
 
 #define EFI_MEMORY_CACHETYPE_MASK     (EFI_MEMORY_UC  | \
@@ -111,51 +95,7 @@ mException(
   IN OUT EFI_SYSTEM_CONTEXT           SystemContext
   );
 
-/*EFI_STATUS
-SyncCacheConfig (
-  IN  EFI_CPU_ARCH_PROTOCOL *CpuProtocol
-  );
-
-EFI_STATUS
-ConvertSectionToPages (
-  IN EFI_PHYSICAL_ADDRESS  BaseAddress
-  );
-*/
-
-EFI_STATUS
-SetMemoryAttributes (
-  IN EFI_PHYSICAL_ADDRESS      BaseAddress,
-  IN UINT64                    Length,
-  IN UINT64                    Attributes,
-  IN EFI_PHYSICAL_ADDRESS      VirtualMask
-  );
-
-EFI_STATUS
-GetMemoryRegion (
-  IN OUT UINTN                   *BaseAddress,
-  OUT    UINTN                   *RegionLength,
-  OUT    UINTN                   *RegionAttributes
-  );
-
-VOID
-GetRootTranslationTableInfo (
-  IN  UINTN    T0SZ,
-  OUT UINTN   *TableLevel,
-  OUT UINTN   *TableEntryCount
-  );
-
-EFI_STATUS
-SetGcdMemorySpaceAttributes (
-  IN EFI_GCD_MEMORY_SPACE_DESCRIPTOR    *MemorySpaceMap,
-  IN UINTN                               NumberOfDescriptors,
-  IN EFI_PHYSICAL_ADDRESS                BaseAddress,
-  IN UINT64                              Length,
-  IN UINT64                              Attributes
-  );
-
-extern char LoongArchException[], LoongArchExceptionEnd[];
-extern VOID _Go(VOID);
-extern UINT64 SetEbase(VOID);
-extern UINT64 SetTLBEbase(VOID);
+extern CHAR8 LoongArchException[], LoongArchExceptionEnd[];
+extern UINT64 SetEbase(EFI_PHYSICAL_ADDRESS addr);
 
 #endif // __CPU_DXE_H__

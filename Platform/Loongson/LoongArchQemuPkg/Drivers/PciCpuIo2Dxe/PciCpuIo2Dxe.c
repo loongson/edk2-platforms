@@ -1,8 +1,7 @@
 /** @file
   Produces the CPU I/O 2 Protocol.
 
-Copyright (c) 2009 - 2012, Intel Corporation. All rights reserved.<BR>
-Copyright (c) 2016, Linaro Ltd. All rights reserved.<BR>
+  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
 
 SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -17,8 +16,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #include <Library/IoLib.h>
 #include <Library/PcdLib.h>
 #include <Library/UefiBootServicesTableLib.h>
-
-#define MAX_IO_PORT_ADDRESS   0xFFFF
+#include "PciCpuIo2Dxe.h"
 
 //
 // Handle for the CPU I/O 2 Protocol
@@ -86,7 +84,6 @@ STATIC CONST UINT8 mOutStride[] = {
                                  and Count is not valid for this PI system.
 
 **/
-STATIC
 EFI_STATUS
 CpuIoCheckParameter (
   IN BOOLEAN                    MmioOperation,
@@ -117,7 +114,9 @@ CpuIoCheckParameter (
   // For FIFO type, the target address won't increase during the access,
   // so treat Count as 1
   //
-  if (Width >= EfiCpuIoWidthFifoUint8 && Width <= EfiCpuIoWidthFifoUint64) {
+  if ((Width >= EfiCpuIoWidthFifoUint8)
+    && (Width <= EfiCpuIoWidthFifoUint64))
+  {
     Count = 1;
   }
 
@@ -125,14 +124,16 @@ CpuIoCheckParameter (
   // Check to see if Width is in the valid range for I/O Port operations
   //
   Width = (EFI_CPU_IO_PROTOCOL_WIDTH) (Width & 0x03);
-  if (!MmioOperation && (Width == EfiCpuIoWidthUint64)) {
+  if ((!MmioOperation)
+    && (Width == EfiCpuIoWidthUint64))
+  {
     return EFI_INVALID_PARAMETER;
   }
 
   //
   // Check to see if Address is aligned
   //
-  if ((Address & (UINT64)(mInStride[Width] - 1)) != 0) {
+  if ((Address & (UINT64) (mInStride[Width] - 1)) != 0) {
     return EFI_UNSUPPORTED;
   }
 
@@ -215,7 +216,6 @@ CpuIoCheckParameter (
                                  and Count is not valid for this PI system.
 
 **/
-STATIC
 EFI_STATUS
 EFIAPI
 CpuMemoryServiceRead (
@@ -295,7 +295,6 @@ CpuMemoryServiceRead (
                                  and Count is not valid for this PI system.
 
 **/
-STATIC
 EFI_STATUS
 EFIAPI
 CpuMemoryServiceWrite (
@@ -376,7 +375,6 @@ CpuMemoryServiceWrite (
                                  and Count is not valid for this PI system.
 
 **/
-STATIC
 EFI_STATUS
 EFIAPI
 CpuIoServiceRead (
@@ -397,7 +395,6 @@ CpuIoServiceRead (
   if (EFI_ERROR (Status)) {
     return Status;
   }
-
   Address += PcdGet64 (PcdPciIoTranslation);
 
   //
@@ -459,7 +456,6 @@ CpuIoServiceRead (
                                  and Count is not valid for this PI system.
 
 **/
-STATIC
 EFI_STATUS
 EFIAPI
 CpuIoServiceWrite (

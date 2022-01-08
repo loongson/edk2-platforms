@@ -20,28 +20,18 @@
 #define RLOGSIZE 3
 
 
-    .data
-/*  Register area outgoing */
-
-/*  return value and jump buffer used when exiting program returns. */
-    .global retvalue
-retvalue:
-    .word   0
-    .globl  go_return_jump
-    .common go_return_jump, 12*8
-
 /*
  *  Main exception handler. Not really a leaf routine but not a normal
  *  function either. Save away the entire cpu state end enter exception mode.
  */
 ASM_FUNC(Exception_handler)
 
-    // store registers in space
-    nop
+    csrrd   sp, LOONGARCH_CSR_KS1
 
-    csrrd   t0, 0x30
-    nop
-    addi.d  sp, sp, -1024
+    addi.d  t0, $r0, -0x10
+    and     sp, sp, t0
+    addi.d  sp, sp,  -((CSR_NUM + BASE_NUM)  * RSIZE)
+
     st.d   ra, sp, RA_NUM * RSIZE
     st.d   gp, sp, GP_NUM * RSIZE
     st.d   a0, sp, A0_NUM * RSIZE
@@ -52,7 +42,6 @@ ASM_FUNC(Exception_handler)
     st.d   a5, sp, A5_NUM * RSIZE
     st.d   a6, sp, A6_NUM * RSIZE
     st.d   a7, sp, A7_NUM * RSIZE
-    st.d   t0, sp, T0_NUM * RSIZE
     st.d   t1, sp, T1_NUM * RSIZE
     st.d   t2, sp, T2_NUM * RSIZE
     st.d   t3, sp, T3_NUM * RSIZE
@@ -72,20 +61,29 @@ ASM_FUNC(Exception_handler)
     st.d   s6, sp, S6_NUM * RSIZE
     st.d   s7, sp, S7_NUM * RSIZE
     st.d   s8, sp, S8_NUM * RSIZE
+
+    /*
+     * save t0/sp from scratch registers on stack
+     */
+    csrrd  t0, LOONGARCH_CSR_KS0
+    st.d   t0, sp, T0_NUM * RSIZE
+    csrrd  t0, LOONGARCH_CSR_KS1
+    st.d   t0, sp, SP_NUM * RSIZE
+
     csrrd   t1, LOONGARCH_CSR_CRMD
     st.d   t1, sp, (LOONGARCH_CSR_CRMD + BASE_NUM)  * RSIZE
     csrrd   t1, LOONGARCH_CSR_PRMD
     st.d   t1, sp, (LOONGARCH_CSR_PRMD + BASE_NUM)  * RSIZE
-    csrrd   t1, LOONGARCH_CSR_EXCFG
-    st.d   t1, sp, (LOONGARCH_CSR_EXCFG + BASE_NUM) * RSIZE
-    csrrd   t1, LOONGARCH_CSR_EXST
-    st.d   t1, sp, (LOONGARCH_CSR_EXST + BASE_NUM)  * RSIZE
+    csrrd   t1, LOONGARCH_CSR_ECFG
+    st.d   t1, sp, (LOONGARCH_CSR_ECFG + BASE_NUM) * RSIZE
+    csrrd   t1, LOONGARCH_CSR_ESTAT
+    st.d   t1, sp, (LOONGARCH_CSR_ESTAT + BASE_NUM)  * RSIZE
     csrrd   t1, LOONGARCH_CSR_EPC
     st.d   t1, sp, (LOONGARCH_CSR_EPC+ BASE_NUM)    * RSIZE
     csrrd   t1, LOONGARCH_CSR_BADV
     st.d   t1, sp, (LOONGARCH_CSR_BADV + BASE_NUM)  * RSIZE
-    csrrd   t1, LOONGARCH_CSR_BADINST
-    st.d   t1, sp, (LOONGARCH_CSR_BADINST + BASE_NUM)  * RSIZE
+    csrrd   t1, LOONGARCH_CSR_BADI
+    st.d   t1, sp, (LOONGARCH_CSR_BADI + BASE_NUM)  * RSIZE
 
     or      a0, sp, zero
     bl      mException
@@ -95,8 +93,8 @@ ASM_FUNC(Exception_handler)
 
     ld.d    t1, sp, (LOONGARCH_CSR_PRMD + BASE_NUM) * RSIZE
     csrwr   t1, LOONGARCH_CSR_PRMD
-    ld.d    t1, sp, (LOONGARCH_CSR_EXCFG + BASE_NUM) * RSIZE
-    csrwr   t1, LOONGARCH_CSR_EXCFG
+    ld.d    t1, sp, (LOONGARCH_CSR_ECFG + BASE_NUM) * RSIZE
+    csrwr   t1, LOONGARCH_CSR_ECFG
     ld.d    t1, sp, (LOONGARCH_CSR_EPC + BASE_NUM) * RSIZE
     csrwr   t1, LOONGARCH_CSR_EPC
     ld.d    ra, sp, RA_NUM * RSIZE
@@ -129,32 +127,33 @@ ASM_FUNC(Exception_handler)
     ld.d    s6, sp, S6_NUM * RSIZE
     ld.d    s7, sp, S7_NUM * RSIZE
     ld.d    s8, sp, S8_NUM * RSIZE
-    addi.d  sp, sp, 1024
+
+    ld.d    sp, sp, SP_NUM * RSIZE
+//    addi.d  sp, sp, 1024
     ertn
 
 /*
  *  Exception trampoline copied down to RAM after initialization.
  */
 ASM_FUNC(LoongArchException)
-    csrwr   t0, 0x30
+    csrwr   t0, LOONGARCH_CSR_KS0
+    csrwr   sp, LOONGARCH_CSR_KS1
     la      t0, Exception_handler
     jirl    zero, t0, 0
 .globl  LoongArchExceptionEnd
 LoongArchExceptionEnd:
 
-
-ASM_FUNC(SetTLBEbase)
-    li.d    t0, 0x0
-    csrwr   t0, 0x88
-    jirl    zero, ra, 0
-
 ASM_FUNC(SetEbase)
-    /*clear Vint cofigure*/
-    csrrd   t0, 0x4
-    li.d     t1, ~0x70000
+    /*
+     * clear Vint cofigure
+     * all exceptions share the same interrupt entry
+     */
+    csrrd   t0, LOONGARCH_CSR_ECFG
+    li.d    t1, ~0x70000
     and     t0, t0, t1
-    csrwr   t0, 0x4
+    csrwr   t0, LOONGARCH_CSR_ECFG
+
     /*set ebase*/
-    li.d     t0, 0x0
-    csrwr   t0, 0xc
+    csrwr   a0, LOONGARCH_CSR_EBASE
+    csrwr   a0, LOONGARCH_CSR_TLBREBASE
     jirl    zero, ra, 0

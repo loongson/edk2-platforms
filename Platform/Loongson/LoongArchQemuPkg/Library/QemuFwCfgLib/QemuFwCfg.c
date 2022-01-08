@@ -38,9 +38,9 @@ QemuFwCfgIsAvailable (
   QemuFwCfgSelectItem (QemuFwCfgItemInterfaceVersion);
   Revision = QemuFwCfgRead32 ();
   DEBUG ((EFI_D_INFO, "FW CFG Revision: 0x%x\n", Revision));
-  if ((Signature != SIGNATURE_32 ('Q', 'E', 'M', 'U')) ||
-      (Revision < 1)
-     ) {
+  if ((Signature != SIGNATURE_32 ('Q', 'E', 'M', 'U'))
+    || (Revision < 1))
+  {
     DEBUG ((EFI_D_INFO, "QemuFwCfg interface not supported.\n"));
     return FALSE;
   }
@@ -93,7 +93,7 @@ InternalQemuFwCfgDmaIsAvailable (
 
   @param[in]     Size     Size in bytes to transfer or skip.
 
-  @param[in,out] Buffer   Buffer to read data into or write data from. Ignored,
+  @param[in, out] Buffer   Buffer to read data into or write data from. Ignored,
                           and may be NULL, if Size is zero, or Control is
                           FW_CFG_DMA_CTL_SKIP.
 

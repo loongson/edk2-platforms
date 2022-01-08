@@ -55,7 +55,7 @@
   #
   # Disable deprecated APIs.
   #
-  GCC:*_*_*_CC_FLAGS = -D DISABLE_NEW_DEPRECATED_INTERFACES
+  GCC:*_*_*_CC_FLAGS = -D DISABLE_NEW_DEPRECATED_INTERFACES  -Wno-pointer-to-int-cast  
 
 !include NetworkPkg/NetworkBuildOptions.dsc.inc
 
@@ -112,7 +112,7 @@
   DxeServicesTableLib              | MdePkg/Library/DxeServicesTableLib/DxeServicesTableLib.inf
   PeCoffGetEntryPointLib           | MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
   PciLib                           | MdePkg/Library/BasePciLibPciExpress/BasePciLibPciExpress.inf
-  PciExpressLib                    | MdePkg/Library/BasePciExpressLib/BasePciExpressLib.inf
+  PciExpressLib                    | ArmVirtPkg/Library/BaseCachingPciExpressLib/BaseCachingPciExpressLib.inf
   PciCapLib                        | OvmfPkg/Library/BasePciCapLib/BasePciCapLib.inf
   PciCapPciSegmentLib              | OvmfPkg/Library/BasePciCapPciSegmentLib/BasePciCapPciSegmentLib.inf
   PciCapPciIoLib                   | OvmfPkg/Library/UefiPciCapPciIoLib/UefiPciCapPciIoLib.inf
@@ -139,9 +139,12 @@
   VariablePolicyLib                | MdeModulePkg/Library/VariablePolicyLib/VariablePolicyLib.inf
   VariablePolicyHelperLib          | MdeModulePkg/Library/VariablePolicyHelperLib/VariablePolicyHelperLib.inf
   SortLib                          | MdeModulePkg/Library/UefiSortLib/UefiSortLib.inf
-#  FdtLib                           | EmbeddedPkg/Library/FdtLib/FdtLib.inf
-#  PciPcdProducerLib|ArmVirtPkg/Library/FdtPciPcdProducerLib/FdtPciPcdProducerLib.inf
+  FdtLib                           | EmbeddedPkg/Library/FdtLib/FdtLib.inf
+  PciPcdProducerLib|OvmfPkg/Fdt/FdtPciPcdProducerLib/FdtPciPcdProducerLib.inf
   PciSegmentLib|MdePkg/Library/BasePciSegmentLibPci/BasePciSegmentLibPci.inf
+  PciHostBridgeLib|OvmfPkg/Fdt/FdtPciHostBridgeLib/FdtPciHostBridgeLib.inf
+  PciHostBridgeUtilityLib|ArmVirtPkg/Library/ArmVirtPciHostBridgeUtilityLib/ArmVirtPciHostBridgeUtilityLib.inf
+
 !if $(HTTP_BOOT_ENABLE) == TRUE
   HttpLib                          | MdeModulePkg/Library/DxeHttpLib/DxeHttpLib.inf
 !endif
@@ -160,6 +163,13 @@
   QemuBootOrderLib                 | OvmfPkg/Library/QemuBootOrderLib/QemuBootOrderLib.inf
   QemuFwCfgSimpleParserLib         | OvmfPkg/Library/QemuFwCfgSimpleParserLib/QemuFwCfgSimpleParserLib.inf
 #  QemuLoadImageLib                 | OvmfPkg/Library/GenericQemuLoadImageLib/GenericQemuLoadImageLib.inf
+
+  #
+  # Virtio Support
+  #
+  VirtioLib                        | OvmfPkg/Library/VirtioLib/VirtioLib.inf
+  FrameBufferBltLib                | MdeModulePkg/Library/FrameBufferBltLib/FrameBufferBltLib.inf
+  QemuFwCfgLib                     | OvmfPkg/Library/QemuFwCfgLib/QemuFwCfgLibMmio.inf
 
 [LibraryClasses.common.SEC]
   DebugLib                         | MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
@@ -182,6 +192,7 @@
   PeCoffGetEntryPointLib           | MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
   DebugLib                         | MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
   PeCoffLib                        | MdePkg/Library/BasePeCoffLib/BasePeCoffLib.inf
+  QemuFwCfgLib                     | Platform/Loongson/LoongArchQemuPkg/Library/QemuFwCfgLib/QemuFwCfgLib.inf
 
 [LibraryClasses.common.PEIM]
   HobLib                           | MdePkg/Library/PeiHobLib/PeiHobLib.inf
@@ -198,6 +209,7 @@
   ExtractGuidedSectionLib          | MdePkg/Library/PeiExtractGuidedSectionLib/PeiExtractGuidedSectionLib.inf
   PcdLib                           | MdePkg/Library/PeiPcdLib/PeiPcdLib.inf
   QemuFwCfgS3Lib                   | OvmfPkg/Library/QemuFwCfgS3Lib/PeiQemuFwCfgS3LibFwCfg.inf
+  QemuFwCfgLib                     | Platform/Loongson/LoongArchQemuPkg/Library/QemuFwCfgLib/QemuFwCfgLib.inf
 
 [LibraryClasses.common.DXE_CORE]
   HobLib                           | MdePkg/Library/DxeCoreHobLib/DxeCoreHobLib.inf
@@ -249,13 +261,6 @@
   DebugLib                         | MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
   ExtractGuidedSectionLib          | MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
 
-  #
-  # Virtio Support
-  #
-[LibraryClasses.common]
-  VirtioLib                        | OvmfPkg/Library/VirtioLib/VirtioLib.inf
-  FrameBufferBltLib                | MdeModulePkg/Library/FrameBufferBltLib/FrameBufferBltLib.inf
-  QemuFwCfgLib                     | Platform/Loongson/LoongArchQemuPkg/Library/QemuFwCfgLib/QemuFwCfgLib.inf
 
 ################################################################################
 #
@@ -300,14 +305,12 @@
   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask                        | 0x2f
 !endif
 #######################################################################################
-  gEfiMdePkgTokenSpaceGuid.PcdPciIoTranslation                         | 0x18000000
-  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress                    | 0x20000000
-
   gLoongArchQemuPkgTokenSpaceGuid.PcdRamRegionsBottom                  | 0x90000000
   gEfiMdePkgTokenSpaceGuid.PcdGuidedExtractHandlerTableAddress         | 0x90000000
   gLoongArchQemuPkgTokenSpaceGuid.PcdGuidedExtractHandlerTableSize     | 0x10000
   gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamBase                 | 0x90010000
   gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamSize                 | 0x10000
+  gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceTreeBase                    | 0x1c400000
   #
   # minimal memory for uefi bios should be 512M
   # 0x00000000 - 0x10000000
@@ -326,8 +329,10 @@
 ################################################################################
 [PcdsDynamicDefault]
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase         | 0
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase64       | 0 
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64       | 0
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase       | 0
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase64     | 0
   gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved         | 0
   gEfiMdeModulePkgTokenSpaceGuid.PcdPciDisableBusEnumeration           | FALSE
   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution          | 800
@@ -341,11 +346,15 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion                      | 0x0300
   gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosDocRev                       | 0x0
 
-  gLoongArchQemuPkgTokenSpaceGuid.PcdLocalCpuCount                     | 0x1
   gLoongArchQemuPkgTokenSpaceGuid.PcdRamSize                           | 0x40000000
-  gLoongArchQemuPkgTokenSpaceGuid.PcdMaximumCpuCount                   | 0x1
-  gLoongArchQemuPkgTokenSpaceGuid.PcdCpusPerNode                       | 0x4
-  gLoongArchQemuPkgTokenSpaceGuid.PcdNumaNodes                         | 0x0
+
+  ## If TRUE, OvmfPkg/AcpiPlatformDxe will not wait for PCI
+  #  enumeration to complete before installing ACPI tables.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdPciDisableBusEnumeration           |TRUE
+  gEfiMdePkgTokenSpaceGuid.PcdPciIoTranslation                         |0x0
+  # set PcdPciExpressBaseAddress to MAX_UINT64, which signifies that this
+  # PCD and PcdPciDisableBusEnumeration above have not been assigned yet
+  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress                    |0xFFFFFFFFFFFFFFFF
 
   #
   # IPv4 and IPv6 PXE Boot support.
@@ -491,12 +500,9 @@
   #
   # PCI
   #
-#  ArmVirtPkg/FdtClientDxe/FdtClientDxe.inf
   Platform/Loongson/LoongArchQemuPkg/Drivers/PciCpuIo2Dxe/PciCpuIo2Dxe.inf
-  MdeModulePkg/Bus/Pci/PciHostBridgeDxe/PciHostBridgeDxe.inf {
-    <LibraryClasses>
-     PciHostBridgeLib | Platform/Loongson/LoongArchQemuPkg/Library/PciHostBridgeLib/PciHostBridgeLib.inf
-  }
+  EmbeddedPkg/Drivers/FdtClientDxe/FdtClientDxe.inf
+  MdeModulePkg/Bus/Pci/PciHostBridgeDxe/PciHostBridgeDxe.inf
   MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
   OvmfPkg/VirtioPciDeviceDxe/VirtioPciDeviceDxe.inf
   OvmfPkg/Virtio10Dxe/Virtio10.inf
@@ -535,7 +541,7 @@
   # ACPI Support
   #
   MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
-  OvmfPkg/AcpiPlatformDxe/QemuFwCfgAcpiPlatformDxe.inf
+  OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe.inf
 
   #
   #app

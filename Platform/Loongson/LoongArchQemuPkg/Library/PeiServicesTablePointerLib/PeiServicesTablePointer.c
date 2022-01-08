@@ -18,7 +18,7 @@
   Caches the pointer to the PEI Services Table specified by PeiServicesTablePointer
   in a platform specific manner.
 
-  If PeiServicesTablePointer is NULL, then ASSERT().
+  If PeiServicesTablePointer is NULL, then ASSERT ().
 
   @param    PeiServicesTablePointer   The address of PeiServices pointer.
 **/
@@ -28,7 +28,7 @@ SetPeiServicesTablePointer (
   IN CONST EFI_PEI_SERVICES ** PeiServicesTablePointer
   )
 {
-  loongarch_csr_writeq((UINTN)PeiServicesTablePointer, LOONGARCH_CSR_KS0);
+  loongarch_csr_writeq ((UINTN)PeiServicesTablePointer, LOONGARCH_CSR_KS0);
 }
 
 /**
@@ -38,7 +38,7 @@ SetPeiServicesTablePointer (
   as specified in the CPU binding section of the Platform Initialization Pre-EFI
   Initialization Core Interface Specification.
 
-  If the cached PEI Services Table pointer is NULL, then ASSERT().
+  If the cached PEI Services Table pointer is NULL, then ASSERT ().
 
   @return  The pointer to PeiServices.
 
@@ -51,7 +51,7 @@ GetPeiServicesTablePointer (
 {
   UINTN  val;
 
-  loongarch_csr_readq(val, LOONGARCH_CSR_KS0);
+  loongarch_csr_readq (val, LOONGARCH_CSR_KS0);
   return (CONST EFI_PEI_SERVICES **)val;
 }
 
@@ -71,7 +71,7 @@ migration actions are required for Itanium or ARM CPUs.
 **/
 VOID
 EFIAPI
-MigratePeiServicesTablePointer(
+MigratePeiServicesTablePointer (
 VOID
 )
 {

@@ -34,8 +34,6 @@
 
 [Pcd]
   gLoongArchQemuPkgTokenSpaceGuid.PcdRamSize
-  gLoongArchQemuPkgTokenSpaceGuid.PcdCpusPerNode
-  gLoongArchQemuPkgTokenSpaceGuid.PcdNumaNodes
 
 [Guids]
   gEfiLoongsonBootparamsTableGuid                               ## SOMETIMES_PRODUCES ## SystemTable

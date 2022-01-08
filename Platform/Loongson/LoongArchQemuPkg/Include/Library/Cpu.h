@@ -5,61 +5,52 @@
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
-#ifndef _LOONGARCH_CPU_H_
-#define _LOONGARCH_CPU_H_
+#ifndef LOONGARCH_CPU_H_
+#define LOONGARCH_CPU_H_
 
-#define _LOCORE
-
-//add
 /* Exception types decoded by machdep exception decoder */
-#define EXC_BAD         1       /* Undecodeable */
 #define EXC_INT         0       /* HW interrupt */
+#define EXC_BAD         1       /* Undecodeable */
 #define EXC_BPT         2       /* Breakpoint */
 #define EXC_TRC         3       /* Trace (not all arches) */
 #define EXC_WTCH        4       /* Watch (not all arches) */
-#define EXC_RES 5
-
-//
-// Location of exception vectors.
-//
-#define TLB_MISS_EXC_VEC  0x0
-#define GEN_EXC_VEC       0x0
+#define EXC_RES         5
 
 #define COPY_SIGCODE    // copy sigcode above user stack in exec
-#define zero	$r0	/* wired zero */
-#define ra	$r1	/* return address */
-#define gp	$r2	/* global pointer - caller saved for PIC */
-#define sp	$r3	/* stack pointer */
-#define v0	$r4	/* return value - caller saved */
-#define v1	$r5
-#define a0	$r4	/* argument registers */
-#define a1	$r5
-#define a2	$r6
-#define a3	$r7
-#define a4	$r8	/* arg reg 64 bit; caller saved in 32 bit */
-#define a5	$r9
-#define a6	$r10
-#define a7	$r11
-#define t0	$r12	/* caller saved */
-#define t1	$r13
-#define t2	$r14
-#define t3	$r15
-#define t4	$r16	/* callee saved */
-#define t5	$r17
-#define t6	$r18
-#define t7	$r19
-#define t8	$r20	/* caller saved */
-#define tp	$r21	/* TLS */
-#define fp	$r22	/* frame pointer */
-#define s0	$r23	/* callee saved */
-#define s1	$r24
-#define s2	$r25
-#define s3	$r26
-#define s4	$r27
-#define s5	$r28
-#define s6	$r29
-#define s7	$r30
-#define s8	$r31	/* callee saved */
+#define zero  $r0 /* wired zero */
+#define ra    $r1 /* return address */
+#define gp    $r2 /* global pointer - caller saved for PIC */
+#define sp    $r3 /* stack pointer */
+#define v0    $r4 /* return value - caller saved */
+#define v1    $r5
+#define a0    $r4 /* argument registers */
+#define a1    $r5
+#define a2    $r6
+#define a3    $r7
+#define a4    $r8 /* arg reg 64 bit; caller saved in 32 bit */
+#define a5    $r9
+#define a6    $r10
+#define a7    $r11
+#define t0    $r12 /* caller saved */
+#define t1    $r13
+#define t2    $r14
+#define t3    $r15
+#define t4    $r16 /* callee saved */
+#define t5    $r17
+#define t6    $r18
+#define t7    $r19
+#define t8    $r20 /* caller saved */
+#define tp    $r21 /* TLS */
+#define fp    $r22 /* frame pointer */
+#define s0    $r23 /* callee saved */
+#define s1    $r24
+#define s2    $r25
+#define s3    $r26
+#define s4    $r27
+#define s5    $r28
+#define s6    $r29
+#define s7    $r30
+#define s8    $r31 /* callee saved */
 
 //
 // Location of the saved registers relative to ZERO.
@@ -97,18 +88,33 @@
 #define S6_NUM     29
 #define S7_NUM     30
 #define S8_NUM     31
-#define BASE_NUM 32
 
 #define LOONGARCH_CSR_CRMD      0
 #define LOONGARCH_CSR_PRMD      1
-#define LOONGARCH_CSR_EXCFG     4
-#define LOONGARCH_CSR_EXST      5
+#define LOONGARCH_CSR_ECFG      4
+
+/* Exception status */
+#define LOONGARCH_CSR_ESTAT     5
+#define CSR_ESTAT_ESUBCODE_SHIFT       22
+#define CSR_ESTAT_ESUBCODE_WIDTH       9
+#define CSR_ESTAT_ESUBCODE             ((unsigned long)(0x1ff) << CSR_ESTAT_ESUBCODE_SHIFT)
+#define CSR_ESTAT_EXC_SHIFT            16
+#define CSR_ESTAT_EXC_WIDTH            6
+#define CSR_ESTAT_EXC                  ((unsigned long)(0x3f) << CSR_ESTAT_EXC_SHIFT)
+#define CSR_ESTAT_IS_SHIFT             0
+#define CSR_ESTAT_IS_WIDTH             15
+#define CSR_ESTAT_IS                   ((unsigned long)(0x7fff) << CSR_ESTAT_IS_SHIFT)
+
 #define LOONGARCH_CSR_EPC       6
 #define LOONGARCH_CSR_BADV      7
 #define LOONGARCH_CSR_BADINST   8
+#define LOONGARCH_CSR_BADI      8
 #define LOONGARCH_CSR_EBASE     0xc     /* Exception entry base address */
 #define LOONGARCH_CSR_CPUNUM    0x20    /* CPU core number */
 
+/* register number save in stack on exception */
+#define BASE_NUM                32
+#define CSR_NUM                 10
 #define BOOTCORE_ID      0
 
 #define LOONGSON_IOCSR_IPI_STATUS  0x1000
@@ -128,9 +134,17 @@
 #define LOONGARCH_CSR_KS0          0x30
 #define LOONGARCH_CSR_KS1          0x31
 
+/* Stable timer registers */
+#define LOONGARCH_CSR_TMCFG             0x41
+#define LOONGARCH_CSR_TMCFG_EN          (1ULL << 0)
+#define LOONGARCH_CSR_TMCFG_PERIOD      (1ULL << 1)
+#define LOONGARCH_CSR_TMCFG_TIMEVAL     (0x3fffffffffffULL << 2)
 #define LOONGARCH_CSR_TVAL         0x42    /* Timer value */
 #define LOONGARCH_CSR_CNTC         0x43    /* Timer offset */
 #define LOONGARCH_CSR_TINTCLR      0x44    /* Timer interrupt clear */
+
+/* TLB refill exception base address */
+#define LOONGARCH_CSR_TLBREBASE    0x88
 
 #define loongarch_csr_readq(val, reg)           \
 do {                                            \

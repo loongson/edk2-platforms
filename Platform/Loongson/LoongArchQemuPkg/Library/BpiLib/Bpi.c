@@ -12,13 +12,10 @@
 #include <Library/MemoryAllocationLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/UefiBootServicesTableLib.h>
-#include <IndustryStandard/LinuxBzimage.h>
 #include <Protocol/GraphicsOutput.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/QemuFwCfgLib.h>
 #include "Bpi.h"
-
-#define DEBUG_BPI
 
 VOID
 BpiChecksum (
@@ -29,7 +26,7 @@ BpiChecksum (
   UINTN ChecksumOffset;
 
   //
-  // CheckSum's offset in EXT_LIST is the same as in EXT_LIST's container(Buffer).
+  // CheckSum's offset in EXT_LIST is the same as in EXT_LIST's container (Buffer).
   //
   ChecksumOffset = OFFSET_OF (EXT_LIST, CheckSum);
 
@@ -47,16 +44,16 @@ BpiChecksum (
 VOID
 EFIAPI
 AddToList (
-  struct BootParamsInterface *Bpi,
-  EXT_LIST *Header
+  IN BootParamsInterface *Bpi,
+  OUT EXT_LIST *Header
   )
 {
   EXT_LIST *LastHeader;
 
-  if(Bpi->ExtList == NULL) {
+  if (Bpi->ExtList == NULL) {
     Bpi->ExtList = Header;
   } else {
-    for(LastHeader = Bpi->ExtList; LastHeader->next; LastHeader = LastHeader->next) {
+    for (LastHeader = Bpi->ExtList; LastHeader->next; LastHeader = LastHeader->next) {
     }
     LastHeader->next = Header;
     BpiChecksum ((UINT8 *)LastHeader, LastHeader->Length);
@@ -69,7 +66,7 @@ AddToList (
 VOID
 EFIAPI
 ShowList (
-  struct BootParamsInterface *Bpi
+  IN BootParamsInterface *Bpi
   )
 {
   EXT_LIST *LastHeader;
@@ -78,7 +75,8 @@ ShowList (
     DEBUG ((EFI_D_INFO, "List is null\n"));
   } else {
     for (LastHeader = Bpi->ExtList; LastHeader; LastHeader = LastHeader->next) {
-      DEBUG ((EFI_D_INFO, "Header: 0x%llx, Legth: 0x%x, CheckSum: 0x%x\n", LastHeader, LastHeader->Length, LastHeader->CheckSum));
+      DEBUG ((EFI_D_INFO, "Header: 0x%llx, Legth: 0x%x, CheckSum: 0x%x\n", LastHeader, LastHeader->Length, 
+            LastHeader->CheckSum));
     }
   }
 }
@@ -87,71 +85,66 @@ ShowList (
 VOID
 EFIAPI
 InitMemMap (
-  struct BootParamsInterface *Bpi,
-  MEM_MAP *mMemMap
+  IN OUT BootParamsInterface *Bpi,
+  OUT MEM_MAP *mMemMap
   )
 {
   UINT64   RamSize;
   UINT8    Data[8] = {'M', 'E', 'M'};
-  int      i = 0;
+  INTN      i = 0;
   EFI_STATUS           Status;
   FIRMWARE_CONFIG_ITEM FwCfgItem;
   UINTN                FwCfgSize;
   EFI_LA_MEMMAP_ENTRY  LaMemMapEntry;
-  EFI_LA_MEMMAP_ENTRY  *StartEntry, *pEntry;
+  EFI_LA_MEMMAP_ENTRY  *StartEntry;
+  EFI_LA_MEMMAP_ENTRY  *pEntry;
   UINTN                Processed;
 
-  SetMem (&mMemMap->Header, sizeof(EXT_LIST), 0);
+  SetMem (&mMemMap->Header, sizeof (EXT_LIST), 0);
 
-  CopyMem (&mMemMap->Header.Signature, Data, sizeof(EXT_LIST));
+  CopyMem (&mMemMap->Header.Signature, Data, sizeof (EXT_LIST));
   mMemMap->Header.Revision = 0;
   mMemMap->Header.Length = sizeof (MEM_MAP);
 
-#define MAP_ENTRY(Entry, Type, Start, Size) \
-   mMemMap->Map[(Entry)].MemType = (Type), \
-   mMemMap->Map[(Entry)].MemStart = (Start), \
-   mMemMap->Map[(Entry)].MemSize = (Size), \
-   Entry++
+  RamSize = PcdGet64 (PcdRamSize); //in Byte
 
-  RamSize = PcdGet64(PcdRamSize); //in Byte
-
-  ASSERT(RamSize != 0);
-  DEBUG((EFI_D_INFO, "RamSize %lld Byte\n", RamSize));
+  ASSERT (RamSize != 0);
+  DEBUG ((EFI_D_INFO, "RamSize %lld Byte\n", RamSize));
 
   /*
    * 1. The lowest 2M region cannot record in MemMap, cause Linux ram region should begin with usable ram.
-   *    MAP_ENTRY(i, SYSTEM_RAM_RESERVED, 0x0, 0x200000);  // 0x0-0x200000
+   *    MAP_ENTRY (i, SYSTEM_RAM_RESERVED, 0x0, 0x200000);  // 0x0-0x200000
    */
 
   /* 2. Available SYSTEM_RAM area. */
-  MAP_ENTRY(i, SYSTEM_RAM, 0x200000, 0xf000000 - 0x200000);  // 0x200000~0xf000000
+  MAP_ENTRY (i, SYSTEM_RAM, 0x200000, 0xf000000 - 0x200000);  // 0x200000~0xf000000
 
   /* 3. Reserved low memory highest 16M. */
-  MAP_ENTRY(i, SYSTEM_RAM_RESERVED, 0xf000000, 0x1000000);  // 0xf000000~0x10000000
+  MAP_ENTRY (i, SYSTEM_RAM_RESERVED, 0xf000000, 0x1000000);  // 0xf000000~0x10000000
   /*
    * 0x90000000 -- 0xC0000000 is used by uefi bios
    */
-  //MAP_ENTRY(i, SYSTEM_RAM, 0x90000000, 0x30000000);
+  //MAP_ENTRY (i, SYSTEM_RAM, 0x90000000, 0x30000000);
 
 
   /* Read memmap from QEMU when RamSize is larger than 1G */
   if (RamSize > SIZE_1GB) {
     Status = QemuFwCfgFindFile ("etc/memmap", &FwCfgItem, &FwCfgSize);
     if (EFI_ERROR (Status)) {
-      DEBUG((EFI_D_ERROR, "fw read etc/la_memmap error Status %d \n", Status));
+      DEBUG ((EFI_D_ERROR, "fw read etc/la_memmap error Status %d \n", Status));
     }
     if (FwCfgSize % sizeof LaMemMapEntry != 0) {
-      DEBUG((EFI_D_ERROR, "no LaMemMapEntry FwCfgSize:%d\n", FwCfgSize));
+      DEBUG ((EFI_D_ERROR, "no LaMemMapEntry FwCfgSize:%d\n", FwCfgSize));
     }
 
     QemuFwCfgSelectItem (FwCfgItem);
-    StartEntry = AllocateZeroPool(FwCfgSize);
+    StartEntry = AllocateZeroPool (FwCfgSize);
     QemuFwCfgReadBytes (FwCfgSize, StartEntry);
     for (Processed = 0; Processed < (FwCfgSize / sizeof LaMemMapEntry); Processed++) {
       pEntry = StartEntry + Processed;
       DEBUG ((
         EFI_D_INFO,
-        "%a:%d Base=0x%Lx Length=0x%Lx Type=%u sizeof(LaMemMapEntry):%d, Processed:%d, FwCfgSize:%d\n",
+        "%a:%d Base=0x%Lx Length=0x%Lx Type=%u sizeof (LaMemMapEntry):%d, Processed:%d, FwCfgSize:%d\n",
         __FUNCTION__,
         __LINE__,
         pEntry->BaseAddr,
@@ -161,29 +154,30 @@ InitMemMap (
         Processed,
         FwCfgSize
         ));
-      MAP_ENTRY(i, pEntry->Type, pEntry->BaseAddr, pEntry->Length);
+      MAP_ENTRY (i, pEntry->Type, pEntry->BaseAddr, pEntry->Length);
     }
   }
-#undef MAP_ENTRY
 
   mMemMap->MapCount = i;
-  AddToList(Bpi, &mMemMap->Header);
+  AddToList (Bpi, &mMemMap->Header);
 #ifdef DEBUG_BPI
-  int j;
+  INTN j;
   for (j = 0; j < i; j++) {
-    DEBUG ((EFI_D_INFO, "%d: type: 0x%x, start: 0x%llx, size: 0x%llx\n", j, mMemMap->Map[j].MemType, mMemMap->Map[j].MemStart, mMemMap->Map[j].MemSize));
+    DEBUG ((EFI_D_INFO, "%d: type: 0x%x, start: 0x%llx, size: 0x%llx\n", j, mMemMap->Map[j].MemType,
+           mMemMap->Map[j].MemStart, mMemMap->Map[j].MemSize));
   }
 #endif
 }
 
-STATIC VOID
+VOID
 FindBits (
-  UINT64 Mask,
-  UINT8 *Pos,
-  UINT8 *Size
+  IN UINT64 Mask,
+  OUT UINT8 *Pos,
+  OUT UINT8 *Size
   )
 {
-  UINT8 First, Len;
+  UINT8 First;
+  UINT8 Len;
 
   First = 0;
   Len = 0;
@@ -203,18 +197,17 @@ FindBits (
   *Size = Len;
 }
 
-STATIC
 EFI_STATUS
 SetupGraphicsFromGop (
-  struct screen_info           *Si,
-  EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop
+  OUT SCREEN_INFO           *Si,
+  IN EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop
   )
 {
   EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *Info;
   EFI_STATUS                           Status;
   UINTN                                Size;
 
-  Status = Gop->QueryMode(Gop, Gop->Mode->Mode, &Size, &Info);
+  Status = Gop->QueryMode (Gop, Gop->Mode->Mode, &Size, &Info);
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -264,13 +257,13 @@ SetupGraphicsFromGop (
     Si->rsvd_pos = 24;
     Si->lfb_linelength = (UINT16) (Info->PixelsPerScanLine * 4);
   } else if (Info->PixelFormat == PixelBitMask) {
-    FindBits(Info->PixelInformation.RedMask,
+    FindBits (Info->PixelInformation.RedMask,
       &Si->red_pos, &Si->red_size);
-    FindBits(Info->PixelInformation.GreenMask,
+    FindBits (Info->PixelInformation.GreenMask,
       &Si->green_pos, &Si->green_size);
-    FindBits(Info->PixelInformation.BlueMask,
+    FindBits (Info->PixelInformation.BlueMask,
       &Si->blue_pos, &Si->blue_size);
-    FindBits(Info->PixelInformation.ReservedMask,
+    FindBits (Info->PixelInformation.ReservedMask,
       &Si->rsvd_pos, &Si->rsvd_size);
     Si->lfb_depth = Si->red_size + Si->green_size +
       Si->blue_size + Si->rsvd_size;
@@ -291,10 +284,9 @@ SetupGraphicsFromGop (
   return Status;
 }
 
-STATIC
 EFI_STATUS
 SetupGraphics (
-  IN OUT struct screen_info *si
+  IN OUT SCREEN_INFO *si
   )
 {
   EFI_STATUS                      Status;
@@ -303,7 +295,7 @@ SetupGraphics (
   UINTN                           Index;
   EFI_GRAPHICS_OUTPUT_PROTOCOL    *Gop;
 
-  ZeroMem ((VOID*)si, sizeof(struct screen_info));
+  ZeroMem ((VOID*)si, sizeof (SCREEN_INFO));
 
   Status = gBS->LocateHandleBuffer (
                   ByProtocol,
@@ -334,37 +326,37 @@ SetupGraphics (
   return EFI_NOT_FOUND;
 }
 
-STATIC VOID
+VOID
 EFIAPI
 InitScreenInfo (
-  struct BootParamsInterface *Bpi,
-  SInfo *si
+  IN BootParamsInterface *Bpi,
+  OUT SInfo *si
   )
 {
 
 //  UINTN   Addr;
   UINT8   Data[8] = {'S', 'I', 'N', 'F', 'O'};
 
-  SetMem (&si->Header, sizeof(EXT_LIST), 0);
+  SetMem (&si->Header, sizeof (EXT_LIST), 0);
 
-  CopyMem (&si->Header.Signature, Data, sizeof(UINT64));
+  CopyMem (&si->Header.Signature, Data, sizeof (UINT64));
   si->Header.Revision = 0;
   si->Header.Length = sizeof (SInfo);
 
-  SetupGraphics(&si->si);
-  AddToList(Bpi, &si->Header);
+  SetupGraphics (&si->si);
+  AddToList (Bpi, &si->Header);
 }
 
-STATIC VOID
+VOID
 EFIAPI
 InitializeBpi (
-  IN struct BootParamsInterface *Bpi,
+  IN BootParamsInterface *Bpi,
   IN EFI_SYSTEM_TABLE   *SystemTable
   )
 {
   DEBUG ((EFI_D_INFO, "New BPI addr: 0x%llx\n", (UINTN)Bpi));
-  UINT8 Data[8] = {'B', 'P', 'I', '_', '0', '_', '1'};
-  CopyMem (&Bpi->Signature, Data, sizeof(UINT64));
+  UINT8 Data[8] = {'B', 'P', 'I', '0', '1', '0', '0', '1'};
+  CopyMem (&Bpi->Signature, Data, sizeof (UINT64));
   Bpi->SystemTable = SystemTable;
   Bpi->ExtList = NULL;
 }
@@ -376,17 +368,17 @@ SetBootParams (VOID)
   EFI_STATUS                 Status;
   UINTN                      Size;
   VOID                       *BufferAddress;
-  struct BootParamsInterface *Bpi;
+  BootParamsInterface *Bpi;
   MEM_MAP                    *mMemMap;
   SInfo                      *si;
   EFI_SYSTEM_TABLE           *SystemTable;
 
   SystemTable = gST;
-  Size  = sizeof (struct BootParamsInterface);
+  Size  = sizeof (BootParamsInterface);
   Size += sizeof (MEM_MAP);
-  Size += sizeof(SInfo);
+  Size += sizeof (SInfo);
 
-  Status = SystemTable->BootServices->AllocatePool(
+  Status = SystemTable->BootServices->AllocatePool (
                                         EfiRuntimeServicesData,
                                         Size,
                                         &BufferAddress
@@ -396,17 +388,17 @@ SetBootParams (VOID)
   }
 
   ZeroMem (BufferAddress, Size);
-  Bpi = (struct BootParamsInterface *) BufferAddress;
+  Bpi = (BootParamsInterface *) BufferAddress;
   InitializeBpi (Bpi, SystemTable);
 
-  mMemMap = (MEM_MAP *)(Bpi + 1);
+  mMemMap = (MEM_MAP *) (Bpi + 1);
   InitMemMap (Bpi, mMemMap);
 
-  si = (SInfo*)(mMemMap + 1);
-  InitScreenInfo(Bpi, si);
+  si = (SInfo*) (mMemMap + 1);
+  InitScreenInfo (Bpi, si);
 
 #ifdef DEBUG_BPI
-  ShowList(Bpi);
+  ShowList (Bpi);
 #endif
   Status = SystemTable->BootServices->InstallConfigurationTable (
                                         &gEfiLoongsonBootparamsTableGuid,

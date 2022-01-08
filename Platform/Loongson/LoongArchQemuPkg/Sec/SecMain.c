@@ -81,7 +81,7 @@ FindFfsSectionInstance (
   //
   // Loop through the FFS file sections within the PEI Core FFS file
   //
-  EndOfSection = (EFI_PHYSICAL_ADDRESS)(UINTN) Sections;
+  EndOfSection = (EFI_PHYSICAL_ADDRESS) (UINTN) Sections;
   EndOfSections = EndOfSection + SizeOfSections;
   for (;;) {
     if (EndOfSection == EndOfSections) {
@@ -92,7 +92,7 @@ FindFfsSectionInstance (
       return EFI_VOLUME_CORRUPTED;
     }
 
-    Section = (EFI_COMMON_SECTION_HEADER*)(UINTN) CurrentAddress;
+    Section = (EFI_COMMON_SECTION_HEADER*) (UINTN) CurrentAddress;
 
     Size = SECTION_SIZE (Section);
     if (Size < sizeof (*Section)) {
@@ -185,7 +185,7 @@ FindFfsFileAndSection (
     return EFI_VOLUME_CORRUPTED;
   }
 
-  CurrentAddress = (EFI_PHYSICAL_ADDRESS)(UINTN) Fv;
+  CurrentAddress = (EFI_PHYSICAL_ADDRESS) (UINTN) Fv;
   EndOfFirmwareVolume = CurrentAddress + Fv->FvLength;
 
   //
@@ -198,7 +198,7 @@ FindFfsFileAndSection (
       return EFI_VOLUME_CORRUPTED;
     }
 
-    File = (EFI_FFS_FILE_HEADER*)(UINTN) CurrentAddress;
+    File = (EFI_FFS_FILE_HEADER*) (UINTN) CurrentAddress;
     Size = *(UINT32*) File->Size & 0xffffff;
     if (Size < (sizeof (*File) + sizeof (EFI_COMMON_SECTION_HEADER))) {
       return EFI_VOLUME_CORRUPTED;
@@ -222,7 +222,9 @@ FindFfsFileAndSection (
                SectionType,
                FoundSection
                );
-    if (!EFI_ERROR (Status) || (Status == EFI_VOLUME_CORRUPTED)) {
+    if (!EFI_ERROR (Status)
+      || (Status == EFI_VOLUME_CORRUPTED))
+    {
       return Status;
     }
   }
@@ -323,7 +325,7 @@ FindAndReportEntryPoints (
 **/
 VOID
 EFIAPI
-SecStartupPhase2(
+SecStartupPhase2 (
   IN VOID                     *Context
   )
 {
@@ -338,16 +340,16 @@ SecStartupPhase2(
   // is enabled.
   //
   BootFv = (EFI_FIRMWARE_VOLUME_HEADER *)SecCoreData->BootFirmwareVolumeBase;
-  FindAndReportEntryPoints(&BootFv, &PeiCoreEntryPoint);
+  FindAndReportEntryPoints (&BootFv, &PeiCoreEntryPoint);
   SecCoreData->BootFirmwareVolumeBase = BootFv;
   SecCoreData->BootFirmwareVolumeSize = (UINTN) BootFv->FvLength;
 
-  DEBUG((EFI_D_INFO, "Find Pei EntryPoint=%p\n", PeiCoreEntryPoint));
+  DEBUG ((EFI_D_INFO, "Find Pei EntryPoint=%p\n", PeiCoreEntryPoint));
 
   //
   // Transfer the control to the PEI core
   //
-  DEBUG((EFI_D_INFO, "SecStartupPhase2 %p\n", PeiCoreEntryPoint));
+  DEBUG ((EFI_D_INFO, "SecStartupPhase2 %p\n", PeiCoreEntryPoint));
 
   (*PeiCoreEntryPoint) (SecCoreData, (EFI_PEI_PPI_DESCRIPTOR *)&mPrivateDispatchTable);
 
@@ -360,7 +362,7 @@ SecStartupPhase2(
 
 VOID
 EFIAPI
-SecCoreStartupWithStack(
+SecCoreStartupWithStack (
   IN EFI_FIRMWARE_VOLUME_HEADER       *BootFv,
   IN VOID                             *TopOfCurrentStack
   )
@@ -368,19 +370,19 @@ SecCoreStartupWithStack(
   EFI_SEC_PEI_HAND_OFF             SecCoreData;
   EFI_FIRMWARE_VOLUME_HEADER       *BootPeiFv = (EFI_FIRMWARE_VOLUME_HEADER*) BootFv;
 
-  DEBUG((EFI_D_INFO, "Entering C environment\n"));
+  DEBUG ((EFI_D_INFO, "Entering C environment\n"));
 
-  ProcessLibraryConstructorList(NULL, NULL);
+  ProcessLibraryConstructorList (NULL, NULL);
 
   DEBUG ((EFI_D_INFO,
-    "SecCoreStartupWithStack(0x%lx, 0x%lx)\n",
+    "SecCoreStartupWithStack (0x%lx, 0x%lx)\n",
     (UINTN)BootFv,
     (UINTN)TopOfCurrentStack
     ));
   DEBUG ((EFI_D_INFO,
-      "(0x%lx, 0x%lx)\n",
-        (UINTN)(PcdGet64(PcdSecPeiTempRamBase)),
-        (UINTN)(PcdGet32(PcdSecPeiTempRamSize))
+    "(0x%lx, 0x%lx)\n",
+    (UINTN) (PcdGet64 (PcdSecPeiTempRamBase)),
+    (UINTN) (PcdGet32 (PcdSecPeiTempRamSize))
     ));
 
   // |-------------|       <-- TopOfCurrentStack
@@ -397,7 +399,7 @@ SecCoreStartupWithStack(
   //
   // Initialize SEC hand-off state
   //
-  SecCoreData.DataSize = sizeof(EFI_SEC_PEI_HAND_OFF);
+  SecCoreData.DataSize = sizeof (EFI_SEC_PEI_HAND_OFF);
 
   SecCoreData.TemporaryRamSize       = (UINTN) PcdGet32 (PcdSecPeiTempRamSize);
   SecCoreData.TemporaryRamBase       = (VOID *) PcdGet64 (PcdSecPeiTempRamBase);
@@ -411,20 +413,20 @@ SecCoreStartupWithStack(
   SecCoreData.BootFirmwareVolumeBase = BootPeiFv;
   SecCoreData.BootFirmwareVolumeSize = (UINTN) BootPeiFv->FvLength;
 
-  DEBUG((EFI_D_INFO,
+  DEBUG ((EFI_D_INFO,
     "&SecCoreData.BootFirmwareVolumeBase=%lx SecCoreData.BootFirmwareVolumeBase=%lx\n",
     (UINT64)&(SecCoreData.BootFirmwareVolumeBase),
-    (UINT64)(SecCoreData.BootFirmwareVolumeBase)));
-  DEBUG((EFI_D_INFO,
+    (UINT64) (SecCoreData.BootFirmwareVolumeBase)));
+  DEBUG ((EFI_D_INFO,
     "&SecCoreData.BootFirmwareVolumeSize=%lx SecCoreData.BootFirmwareVolumeSize=%lx\n",
     (UINT64)&(SecCoreData.BootFirmwareVolumeSize),
-    (UINT64)(SecCoreData.BootFirmwareVolumeSize)));
+    (UINT64) (SecCoreData.BootFirmwareVolumeSize)));
 
   //
   // Initialize Debug Agent to support source level debug in SEC/PEI phases before memory ready.
   //
   InitializeDebugAgent (DEBUG_AGENT_INIT_PREMEM_SEC, NULL, NULL);
-  SecStartupPhase2(&SecCoreData);
+  SecStartupPhase2 (&SecCoreData);
 }
 
 
@@ -444,17 +446,17 @@ TemporaryRamMigration (
   BASE_LIBRARY_JUMP_BUFFER         JumpBuffer;
 
   DEBUG ((EFI_D_INFO,
-    "TemporaryRamMigration(0x%Lx, 0x%Lx, 0x%Lx)\n",
+    "TemporaryRamMigration (0x%Lx, 0x%Lx, 0x%Lx)\n",
     TemporaryMemoryBase,
     PermanentMemoryBase,
     (UINT64)CopySize
     ));
 
-  OldHeap = (VOID*)(UINTN)TemporaryMemoryBase;
-  NewHeap = (VOID*)((UINTN)PermanentMemoryBase + (CopySize >> 1));
+  OldHeap = (VOID*) (UINTN)TemporaryMemoryBase;
+  NewHeap = (VOID*) ((UINTN)PermanentMemoryBase + (CopySize >> 1));
 
-  OldStack = (VOID*)((UINTN)TemporaryMemoryBase + (CopySize >> 1));
-  NewStack = (VOID*)(UINTN)PermanentMemoryBase;
+  OldStack = (VOID*) ((UINTN)TemporaryMemoryBase + (CopySize >> 1));
+  NewStack = (VOID*) (UINTN)PermanentMemoryBase;
 
   //DebugAgentContext.HeapMigrateOffset = (UINTN)NewHeap - (UINTN)OldHeap;
   //DebugAgentContext.StackMigrateOffset = (UINTN)NewStack - (UINTN)OldStack;
@@ -472,7 +474,7 @@ TemporaryRamMigration (
   //
   CopyMem (NewStack, OldStack, CopySize >> 1);
 
-  // Use SetJump()/LongJump() to switch to a new stack.
+  // Use SetJump ()/LongJump () to switch to a new stack.
   //
   if (SetJump (&JumpBuffer) == 0) {
     JumpBuffer.SP = JumpBuffer.SP - (UINTN)OldStack + (UINTN)NewStack ;
