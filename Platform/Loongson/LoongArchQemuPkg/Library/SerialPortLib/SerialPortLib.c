@@ -11,86 +11,10 @@
 #include <Library/Cpu.h>
 #include <Library/IoLib.h>
 #include <Library/SerialPortLib.h>
+#include <LoongArchQemuPlatform.h>
 
-//---------------------------------------------
-// UART Register Offsets
-//---------------------------------------------
-#define BAUD_LOW_OFFSET         0x00
-#define BAUD_HIGH_OFFSET        0x01
-#define IER_OFFSET              0x01
-#define LCR_SHADOW_OFFSET       0x01
-#define FCR_SHADOW_OFFSET       0x02
-#define IR_CONTROL_OFFSET       0x02
-#define FCR_OFFSET              0x02
-#define EIR_OFFSET              0x02
-#define BSR_OFFSET              0x03
-#define LCR_OFFSET              0x03
-#define MCR_OFFSET              0x04
-#define LSR_OFFSET              0x05
-#define MSR_OFFSET              0x06
-
-/* character format control register */
-#define	CFCR_DLAB	0x80	/* divisor latch */
-#define	CFCR_SBREAK	0x40	/* send break */
-#define	CFCR_PZERO	0x30	/* zero parity */
-#define	CFCR_PONE	0x20	/* one parity */
-#define	CFCR_PEVEN	0x10	/* even parity */
-#define	CFCR_PODD	0x00	/* odd parity */
-#define	CFCR_PENAB	0x08	/* parity enable */
-#define	CFCR_STOPB	0x04	/* 2 stop bits */
-#define	CFCR_8BITS	0x03	/* 8 data bits */
-#define	CFCR_7BITS	0x02	/* 7 data bits */
-#define	CFCR_6BITS	0x01	/* 6 data bits */
-#define	CFCR_5BITS	0x00	/* 5 data bits */
-/* modem control register */
-#define	MCR_LOOPBACK	0x10	/* loopback */
-#define	MCR_IENABLE	0x08	/* output 2 = int enable */
-#define	MCR_DRS		0x04	/* output 1 = xxx */
-#define	MCR_RTS		0x02	/* enable RTS */
-#define	MCR_DTR		0x01	/* enable DTR */
-
-/* line status register */
-#define	LSR_RCV_FIFO	0x80	/* error in receive fifo */
-#define	LSR_TSRE	0x40	/* transmitter empty */
-#define	LSR_TXRDY	0x20	/* transmitter ready */
-#define	LSR_BI		0x10	/* break detected */
-#define	LSR_FE		0x08	/* framing error */
-#define	LSR_PE		0x04	/* parity error */
-#define	LSR_OE		0x02	/* overrun error */
-#define	LSR_RXRDY	0x01	/* receiver ready */
-#define	LSR_RCV_MASK	0x1f
-
-/* 16550 UART register offsets and bitfields */
-#define R_UART_RXBUF          0
-#define R_UART_TXBUF          0
-#define R_UART_BAUD_LOW       0
-#define R_UART_BAUD_HIGH      1
-#define R_UART_FCR            2
-#define B_UART_FCR_FIFOE      BIT0
-#define B_UART_FCR_FIFO64     BIT5
-#define R_UART_LCR            3
-#define B_UART_LCR_DLAB       BIT7
-#define R_UART_MCR            4
-#define B_UART_MCR_DTRC       BIT0
-#define B_UART_MCR_RTS        BIT1
-#define R_UART_LSR            5
-#define B_UART_LSR_RXRDY      BIT0
-#define B_UART_LSR_TXRDY      BIT5
-#define B_UART_LSR_TEMT       BIT6
-#define R_UART_MSR            6
-#define B_UART_MSR_CTS        BIT4
-#define B_UART_MSR_DSR        BIT5
-#define B_UART_MSR_RI         BIT6
-#define B_UART_MSR_DCD        BIT7
-
-//---------------------------------------------
-// UART Settings
-//---------------------------------------------
-#define PHYS_TO_CACHED(x)       ((x))
-#define PHYS_TO_UNCACHED(x)     ((x))
-
-UINTN   gUartBase = PHYS_TO_UNCACHED(0x1fe001e0);
-UINTN   gBps      = 115200;
+UINTN   gUartBase = PHYS_TO_UNCACHED(UART_BASE_ADDRESS);
+UINTN   gBps      = UART_BPS;
 
 /**
   Initialize the serial device hardware.
@@ -113,10 +37,11 @@ SerialPortInitialize (
   //
   // wait for Tx fifo to completely drain */
   //
-  TimeOut = 1000000;
+  TimeOut = UART_WAIT_TIMOUT;
   while (!(MmioRead8 ((UINTN) gUartBase + LSR_OFFSET) & LSR_TSRE)) {
-    if (--TimeOut == 0)
+    if (--TimeOut == 0) {
       break;
+    }
   }
   //
   // Set communications format
@@ -145,7 +70,7 @@ SerialPortInitialize (
   The number of bytes actually written to the serial device is returned.
   If the return value is less than NumberOfBytes, then the write operation failed.
 
-  If Buffer is NULL, then ASSERT().
+  If Buffer is NULL, then ASSERT ().
 
   If NumberOfBytes is zero, then return 0.
 
@@ -194,7 +119,7 @@ SerialPortWrite (
   IN UINTN     NumberOfBytes
 )
 {
-  return UartCtlWrite(Buffer,NumberOfBytes,gUartBase);
+  return UartCtlWrite (Buffer, NumberOfBytes, gUartBase);
 }
 /**
   Reads data from a serial device into a buffer.
@@ -245,7 +170,7 @@ SerialPortRead (
   IN  UINTN     NumberOfBytes
 )
 {
-  return UartCtlRead(Buffer,NumberOfBytes,gUartBase);
+  return UartCtlRead (Buffer, NumberOfBytes, gUartBase);
 }
 /**
   Polls a serial device to see if there is any data waiting to be read.
@@ -342,7 +267,8 @@ SerialPortSetControl (
   // First determine the parameter is invalid.
   //
   if ((Control & (~(EFI_SERIAL_REQUEST_TO_SEND | EFI_SERIAL_DATA_TERMINAL_READY |
-                    EFI_SERIAL_HARDWARE_FLOW_CONTROL_ENABLE))) != 0) {
+                    EFI_SERIAL_HARDWARE_FLOW_CONTROL_ENABLE))) != 0) 
+  {
     return RETURN_UNSUPPORTED;
   }
 
@@ -523,7 +449,9 @@ UartCtlConfig (
     LcrData = (UINT8) (PcdGet8 (PcdSerialLineControl) & 0x3);
     *DataBits = LcrData + 5;
   } else {
-    if ((*DataBits < 5) || (*DataBits > 8)) {
+    if ((*DataBits < 5)
+      || (*DataBits > 8))
+    {
       return RETURN_INVALID_PARAMETER;
     }
     //
@@ -645,6 +573,6 @@ SerialPortSetAttributes (
 
   SerialRegisterBase = GetSerialRegisterBase ();
 
-  return  UartCtlConfig (&gBps,ReceiveFifoDepth,Timeout,Parity,DataBits,StopBits,\
-      SerialRegisterBase);
+  return  UartCtlConfig (&gBps, ReceiveFifoDepth, Timeout, Parity, DataBits, StopBits,
+            SerialRegisterBase);
 }

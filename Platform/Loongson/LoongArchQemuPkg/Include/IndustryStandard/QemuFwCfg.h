@@ -7,8 +7,8 @@
 
 **/
 
-#ifndef __FW_CFG_H__
-#define __FW_CFG_H__
+#ifndef QEMU_FW_CFG_H_
+#define QEMU_FW_CFG_H_
 
 #include <Base.h>
 

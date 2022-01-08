@@ -32,17 +32,17 @@ STATIC EFI_EVENT              mRtcVirtualAddrChangeEvent;
 STATIC UINTN                  mRtcBase = 0X100d0100;
 
 VOID
-static InitRtc (
+InitRtc (
   VOID
   )
 {
-  unsigned int  Val;
+ UINTN  Val;
 
   if (!mInitialized) {
     /* enable rtc */
-    Val  = MmioRead32(mRtcBase + RTC_CTRL_REG);
+    Val  = MmioRead32 (mRtcBase + RTC_CTRL_REG);
     Val |= TOY_ENABLE_BIT | OSC_ENABLE_BIT;
-    MmioWrite32(mRtcBase + RTC_CTRL_REG, Val);
+    MmioWrite32 (mRtcBase + RTC_CTRL_REG, Val);
     mInitialized = TRUE;
   }
 }
@@ -199,6 +199,85 @@ LibRtcVirtualNotifyEvent (
   return;
 }
 
+/** Add the RTC controller address range to the memory map.
+
+  @param [in]  ImageHandle  The handle to the image.
+  @param [in]  RtcPageBase  Base address of the RTC controller.
+
+  @retval EFI_SUCCESS             Success.
+  @retval EFI_INVALID_PARAMETER   A parameter is invalid.
+  @retval EFI_NOT_FOUND           Flash device not found.
+**/
+EFI_STATUS
+KvmtoolRtcMapMemory (
+  IN EFI_HANDLE               ImageHandle,
+  IN EFI_PHYSICAL_ADDRESS     RtcPageBase
+  )
+{
+  EFI_STATUS  Status;
+
+  Status = gDS->AddMemorySpace (
+                  EfiGcdMemoryTypeMemoryMappedIo,
+                  RtcPageBase,
+                  EFI_PAGE_SIZE,
+                  EFI_MEMORY_UC | EFI_MEMORY_RUNTIME
+                  );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((
+      DEBUG_ERROR, "Failed to add memory space. Status = %r\n",
+      Status
+      ));
+    return Status;
+  }
+
+  Status = gDS->AllocateMemorySpace (
+                  EfiGcdAllocateAddress,
+                  EfiGcdMemoryTypeMemoryMappedIo,
+                  0,
+                  EFI_PAGE_SIZE,
+                  &RtcPageBase,
+                  ImageHandle,
+                  NULL
+                  );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed to allocate memory space. Status = %r\n",
+      Status
+      ));
+    gDS->RemoveMemorySpace (
+           RtcPageBase,
+           EFI_PAGE_SIZE
+           );
+    return Status;
+  }
+
+  Status = gDS->SetMemorySpaceAttributes (
+                  RtcPageBase,
+                  EFI_PAGE_SIZE,
+                  EFI_MEMORY_UC | EFI_MEMORY_RUNTIME
+                  );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed to set memory attributes. Status = %r\n",
+      Status
+      ));
+
+    gDS->FreeMemorySpace (
+           RtcPageBase,
+           EFI_PAGE_SIZE
+           );
+
+    gDS->RemoveMemorySpace (
+           RtcPageBase,
+           EFI_PAGE_SIZE
+           );
+  }
+
+  return Status;
+}
+
 /**
   This is the declaration of an EFI image entry point. This can be the entry point to an application
   written to this specification, an EFI boot service driver, or an EFI runtime driver.
@@ -219,22 +298,15 @@ LibRtcInitialize (
   EFI_STATUS    Status;
   EFI_HANDLE    Handle;
 
-#if 0
-  // Declare the controller as EFI_MEMORY_RUNTIME
-  Status = gDS->AddMemorySpace (
-                  EfiGcdMemoryTypeMemoryMappedIo,
-                  mRtcBase, SIZE_64KB,
-                  EFI_MEMORY_UC | EFI_MEMORY_RUNTIME
-                  );
+  Status = KvmtoolRtcMapMemory (ImageHandle, (mRtcBase & ~EFI_PAGE_MASK));
   if (EFI_ERROR (Status)) {
+    DEBUG ((
+      DEBUG_ERROR,
+      "Failed to map memory for loongson 7A RTC. Status = %r\n",
+      Status
+      ));
     return Status;
   }
-
-  Status = gDS->SetMemorySpaceAttributes (mRtcBase, SIZE_64KB, EFI_MEMORY_UC | EFI_MEMORY_RUNTIME);
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
-#endif
 
   // Setup the setters and getters
   gRT->GetTime       = LibGetTime;

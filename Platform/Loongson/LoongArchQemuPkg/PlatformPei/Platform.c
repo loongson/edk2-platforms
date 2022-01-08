@@ -12,7 +12,6 @@
 // The package level header files this module uses
 //
 #include <PiPei.h>
-
 //
 // The Library classes this module consumes
 //
@@ -28,6 +27,8 @@
 #include <Guid/MemoryTypeInformation.h>
 #include <Library/QemuFwCfgLib.h>
 
+#include <Guid/FdtHob.h>
+#include <libfdt.h>
 #include <Ppi/MasterBootMode.h>
 
 #include "Platform.h"
@@ -59,10 +60,10 @@ AddReservedMemoryBaseSizeHob (
 {
   BuildResourceDescriptorHob (
     EFI_RESOURCE_MEMORY_RESERVED,
-      EFI_RESOURCE_ATTRIBUTE_PRESENT     |
-      EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
-      EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE |
-      EFI_RESOURCE_ATTRIBUTE_TESTED,
+    EFI_RESOURCE_ATTRIBUTE_PRESENT     |
+    EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
+    EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE |
+    EFI_RESOURCE_ATTRIBUTE_TESTED,
     MemoryBase,
     MemorySize
     );
@@ -76,13 +77,13 @@ AddMemoryBaseSizeHob (
 {
   BuildResourceDescriptorHob (
     EFI_RESOURCE_SYSTEM_MEMORY,
-      EFI_RESOURCE_ATTRIBUTE_PRESENT |
-      EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
-      EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE |
-      EFI_RESOURCE_ATTRIBUTE_WRITE_COMBINEABLE |
-      EFI_RESOURCE_ATTRIBUTE_WRITE_THROUGH_CACHEABLE |
-      EFI_RESOURCE_ATTRIBUTE_WRITE_BACK_CACHEABLE |
-      EFI_RESOURCE_ATTRIBUTE_TESTED,
+    EFI_RESOURCE_ATTRIBUTE_PRESENT |
+    EFI_RESOURCE_ATTRIBUTE_INITIALIZED |
+    EFI_RESOURCE_ATTRIBUTE_UNCACHEABLE |
+    EFI_RESOURCE_ATTRIBUTE_WRITE_COMBINEABLE |
+    EFI_RESOURCE_ATTRIBUTE_WRITE_THROUGH_CACHEABLE |
+    EFI_RESOURCE_ATTRIBUTE_WRITE_BACK_CACHEABLE |
+    EFI_RESOURCE_ATTRIBUTE_TESTED,
     MemoryBase,
     MemorySize
     );
@@ -95,7 +96,7 @@ AddMemoryRangeHob (
   EFI_PHYSICAL_ADDRESS        MemoryLimit
   )
 {
-  AddMemoryBaseSizeHob (MemoryBase, (UINT64)(MemoryLimit - MemoryBase));
+  AddMemoryBaseSizeHob (MemoryBase, (UINT64) (MemoryLimit - MemoryBase));
 }
 
 
@@ -104,14 +105,14 @@ MemMapInitialization (
   VOID
   )
 {
-  DEBUG((EFI_D_INFO, "==%a==\n", __func__));
+  DEBUG ((EFI_D_INFO, "==%a==\n", __func__));
   //
   // Create Memory Type Information HOB
   //
   BuildGuidDataHob (
     &gEfiMemoryTypeInformationGuid,
     mDefaultMemoryTypeInformation,
-    sizeof(mDefaultMemoryTypeInformation)
+    sizeof (mDefaultMemoryTypeInformation)
     );
 }
 
@@ -121,55 +122,34 @@ MiscInitialization (
   VOID
   )
 {
-  DEBUG((EFI_D_INFO, "==%a==\n", __func__));
+  DEBUG ((EFI_D_INFO, "==%a==\n", __func__));
   //
   // Creat CPU HOBs.
   //
   BuildCpuHob (PcdGet8 (PcdPrePiCpuMemorySize), PcdGet8 (PcdPrePiCpuIoSize));
 }
 
-
-/**
-  Fetch the number of boot CPUs from QEMU.
-**/
 VOID
-CpuCountInitialization (
-  VOID
-  )
+AddFdtHob (VOID)
 {
-  UINT16        ProcessorCount;
-  UINT16        MaxProcessorCount;
-  RETURN_STATUS PcdStatus;
+  VOID    *Base;
+  VOID    *NewBase;
+  UINTN   FdtSize;
+  UINTN   FdtPages;
+  UINT64  *FdtHobData;
 
-  QemuFwCfgSelectItem (QemuFwCfgItemSmpCpuCount);
-  ProcessorCount = QemuFwCfgRead16 ();
-  //ProcessorCount = 1;
-  QemuFwCfgSelectItem (QemuFwCfgItemMaximumCpuCount);
-  MaxProcessorCount = QemuFwCfgRead16 ();
-  //MaxProcessorCount = 1;
+  Base = (VOID*)(UINTN)PcdGet64 (PcdDeviceTreeBase);
+  ASSERT (Base != NULL);
 
-  DEBUG ((DEBUG_INFO, "%a: QEMU reports %d processor(s)\n", __FUNCTION__,
-    ProcessorCount));
-  DEBUG ((DEBUG_INFO, "%a: QEMU support maximum %d processor(s)\n", __FUNCTION__,
-    MaxProcessorCount));
-  //
-  // If the fw_cfg key or fw_cfg entirely is unavailable, no change to PCD.
-  //
-  if ((ProcessorCount == 0) || (MaxProcessorCount == 0)) {
-    return;
-  }
+  FdtSize = fdt_totalsize (Base) + PcdGet32 (PcdDeviceTreePadding);
+  FdtPages = EFI_SIZE_TO_PAGES (FdtSize);
+  NewBase = AllocatePages (FdtPages);
+  ASSERT (NewBase != NULL);
+  fdt_open_into (Base, NewBase, EFI_PAGES_TO_SIZE (FdtPages));
 
-  if (ProcessorCount > MaxProcessorCount) {
-    ProcessorCount = MaxProcessorCount;
-  }
-
-  //
-  // Otherwise, set them to PCD.
-  //
-  PcdStatus = PcdSet16S(PcdLocalCpuCount, ProcessorCount);
-  ASSERT_RETURN_ERROR (PcdStatus);
-  PcdStatus = PcdSet16S(PcdMaximumCpuCount, MaxProcessorCount);
-  ASSERT_RETURN_ERROR (PcdStatus);
+  FdtHobData = BuildGuidHob (&gFdtHobGuid, sizeof *FdtHobData);
+  ASSERT (FdtHobData != NULL);
+  *FdtHobData = (UINTN)NewBase;
 
 }
 
@@ -199,46 +179,8 @@ SystemMemorySizeInitialization (
   //
   // Otherwise, set RamSize to PCD.
   //
-  PcdStatus =  PcdSet64S(PcdRamSize, RamSize);
+  PcdStatus =  PcdSet64S (PcdRamSize, RamSize);
   ASSERT_RETURN_ERROR (PcdStatus);
-}
-
-/**
-  Fetch the numa info from QEMU.
-**/
-VOID
-NumaDataInitialization (
-  VOID
-  )
-{
-  UINT16 MaxCpus,i,NrCpusPerNode = 0;
-  UINT64 NumaNodes;
-  UINT64 NumaCfgSize ;
-  UINT64 *NumaCfgBuf ;
-
-  MaxCpus = PcdGet16 (PcdMaximumCpuCount);
-
-  QemuFwCfgSelectItem (QemuFwCfgItemNumaData);
-  NumaNodes = QemuFwCfgRead64 ();
-  //NumaNodes = 0;
-  if(NumaNodes ==  0)
-    return;
-
-  PcdSet64S(PcdNumaNodes, NumaNodes);
-  NumaCfgSize = (1 + MaxCpus + NumaNodes) * sizeof(*NumaCfgBuf);
-  NumaCfgBuf = AllocateZeroPool(NumaCfgSize);
-  QemuFwCfgSelectItem (QemuFwCfgItemNumaData);
-  QemuFwCfgReadBytes (NumaCfgSize, NumaCfgBuf);
-
-  //ZeroMem (NumaCfgBuf, NumaCfgSize);
-  for(i = 0;i < MaxCpus ;i++){
-    if(NumaCfgBuf[1+i] == 0)
-      NrCpusPerNode++;
-  }
-  PcdSet16S(PcdCpusPerNode, NrCpusPerNode);
-
-  DEBUG ((EFI_D_INFO, "max_cpus %d,nb_numa_nodes 0x%lx,NumaCfgSize 0x%lx\n",
-    MaxCpus,NumaNodes,NumaCfgSize));
 }
 
 /**
@@ -264,14 +206,13 @@ InitializePlatform (
   Status = PeiServicesInstallPpi (&mPpiListBootMode);
   ASSERT_EFI_ERROR (Status);
 
-  CpuCountInitialization ();
   SystemMemorySizeInitialization ();
-  NumaDataInitialization ();
   PublishPeiMemory ();
   PeiFvInitialization ();
   InitializeRamRegions ();
   MemMapInitialization ();
   MiscInitialization ();
+  AddFdtHob();
 
   return EFI_SUCCESS;
 }

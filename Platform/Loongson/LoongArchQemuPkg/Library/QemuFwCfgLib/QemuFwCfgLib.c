@@ -14,10 +14,37 @@
 #include <Library/QemuFwCfgLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/UefiBootServicesTableLib.h>
-
+#include <Library/PcdLib.h>
+#include <libfdt.h>
 #include "QemuFwCfgLibInternal.h"
 
+STATIC UINTN mFwCfgSelectorAddress;
+STATIC UINTN mFwCfgDataAddress;
 
+UINTN
+EFIAPI
+QemuGetFwCfgSelectorAddress (
+  VOID
+  )
+{
+  UINTN FwCfgSelectorAddress = mFwCfgSelectorAddress;
+  if (FwCfgSelectorAddress == 0) {
+    FwCfgSelectorAddress = (UINTN)PcdGet64 (PcdFwCfgSelectorAddress);
+  }
+  return FwCfgSelectorAddress;
+}
+UINTN
+EFIAPI
+QemuGetFwCfgDataAddress (
+  VOID
+  )
+{
+  UINTN FwCfgDataAddress = mFwCfgDataAddress;
+  if (FwCfgDataAddress == 0) {
+    FwCfgDataAddress = (UINTN)PcdGet64 (PcdFwCfgDataAddress);
+  }
+  return FwCfgDataAddress;
+}
 /**
   Selects a firmware configuration item for reading.
 
@@ -33,14 +60,14 @@ QemuFwCfgSelectItem (
   IN FIRMWARE_CONFIG_ITEM   QemuFwCfgItem
   )
 {
-  DEBUG ((EFI_D_INFO, "Select Item: 0x%x\n", (UINT16)(UINTN) QemuFwCfgItem));
-  MmioWrite16 (FW_CFG_SELECTOR, SwapBytes16((UINT16)(UINTN) QemuFwCfgItem));
+  UINTN FwCfgSelectorAddress;
+  FwCfgSelectorAddress = QemuGetFwCfgSelectorAddress ();
+  MmioWrite16 (FwCfgSelectorAddress, SwapBytes16((UINT16) (UINTN)QemuFwCfgItem));
 }
 
 /**
   Slow READ_BYTES_FUNCTION.
 **/
-STATIC
 VOID
 EFIAPI
 MmioReadBytes (
@@ -51,34 +78,33 @@ MmioReadBytes (
   UINTN Left;
   UINT8 *Ptr;
   UINT8 *End;
-
+  UINTN FwCfgDataAddress;
   Left = Size & 7;
 
   Size -= Left;
   Ptr = Buffer;
   End = Ptr + Size;
-
+  FwCfgDataAddress = QemuGetFwCfgDataAddress ();
   while (Ptr < End) {
-    *(UINT64 *)Ptr = MmioRead64 (FW_CFG_DATA);
+    *(UINT64 *)Ptr = MmioRead64 (FwCfgDataAddress);
     Ptr += 8;
   }
   if (Left & 4) {
-    *(UINT32 *)Ptr = MmioRead32 (FW_CFG_DATA);
+    *(UINT32 *)Ptr = MmioRead32 (FwCfgDataAddress);
     Ptr += 4;
   }
   if (Left & 2) {
-    *(UINT16 *)Ptr = MmioRead16 (FW_CFG_DATA);
+    *(UINT16 *)Ptr = MmioRead16 (FwCfgDataAddress);
     Ptr += 2;
   }
   if (Left & 1) {
-    *Ptr = MmioRead8 (FW_CFG_DATA);
+    *Ptr = MmioRead8 (FwCfgDataAddress);
   }
 }
 
 /**
   Slow WRITE_BYTES_FUNCTION.
 **/
-STATIC
 VOID
 EFIAPI
 MmioWriteBytes (
@@ -87,9 +113,10 @@ MmioWriteBytes (
   )
 {
   UINTN Idx;
-
+  UINTN FwCfgDataAddress;
+  FwCfgDataAddress = QemuGetFwCfgDataAddress ();
   for (Idx = 0; Idx < Size; ++Idx) {
-    MmioWrite8 (FW_CFG_DATA, ((UINT8 *)Buffer)[Idx]);
+    MmioWrite8 (FwCfgDataAddress, ((UINT8 *)Buffer)[Idx]);
   }
 }
 
@@ -107,7 +134,9 @@ InternalQemuFwCfgReadBytes (
   IN VOID                   *Buffer  OPTIONAL
   )
 {
-  if (InternalQemuFwCfgDmaIsAvailable () && Size <= MAX_UINT32) {
+  if ((InternalQemuFwCfgDmaIsAvailable ())
+    && (Size <= MAX_UINT32))
+  {
     InternalQemuFwCfgDmaBytes ((UINT32)Size, Buffer, FW_CFG_DMA_CTL_READ);
     return;
   }
@@ -159,7 +188,9 @@ QemuFwCfgWriteBytes (
   )
 {
   if (InternalQemuFwCfgIsAvailable ()) {
-    if (InternalQemuFwCfgDmaIsAvailable () && Size <= MAX_UINT32) {
+    if ((InternalQemuFwCfgDmaIsAvailable ())
+      && (Size <= MAX_UINT32))
+    {
       InternalQemuFwCfgDmaBytes ((UINT32)Size, Buffer, FW_CFG_DMA_CTL_WRITE);
       return;
     }
@@ -190,7 +221,9 @@ QemuFwCfgSkipBytes (
     return;
   }
 
-  if (InternalQemuFwCfgDmaIsAvailable () && Size <= MAX_UINT32) {
+  if ((InternalQemuFwCfgDmaIsAvailable ())
+    && (Size <= MAX_UINT32))
+  {
     InternalQemuFwCfgDmaBytes ((UINT32)Size, NULL, FW_CFG_DMA_CTL_SKIP);
     return;
   }
@@ -341,4 +374,75 @@ QemuFwCfgFindFile (
   }
 
   return RETURN_NOT_FOUND;
+}
+RETURN_STATUS
+EFIAPI
+QemuFwCfgInitialize (
+  VOID
+  )
+{
+  VOID              *DeviceTreeBase;
+  INT32             Node;
+  INT32             Prev;
+  CONST CHAR8       *Type;
+  INT32             Len;
+  CONST UINT64      *RegProp;
+  UINT64            FwCfgSelectorAddress;
+  UINT64            FwCfgDataAddress;
+  UINT64            FwCfgDataSize;
+  RETURN_STATUS     PcdStatus;
+
+  DeviceTreeBase = (VOID *) (UINTN)PcdGet64 (PcdDeviceTreeBase);
+  ASSERT (DeviceTreeBase != NULL);
+  //
+  // Make sure we have a valid device tree blob
+  //
+  ASSERT (fdt_check_header (DeviceTreeBase) == 0);
+
+  for (Prev = 0;; Prev = Node) {
+    Node = fdt_next_node (DeviceTreeBase, Prev, NULL);
+    if (Node < 0) {
+      break;
+    }
+
+    //
+    // Check for memory node
+    //
+    Type = fdt_getprop (DeviceTreeBase, Node, "compatible", &Len);
+    if ((Type) 
+      && (AsciiStrnCmp (Type, "qemu,fw-cfg-mmio", Len) == 0))
+    {
+      //
+      // Get the 'reg' property of this node. For now, we will assume
+      // two 8 byte quantities for base and size, respectively.
+      //
+      RegProp = fdt_getprop (DeviceTreeBase, Node, "reg", &Len);
+      if ((RegProp != 0)
+        && (Len == (2 * sizeof (UINT64))))
+      {
+        FwCfgDataAddress      = SwapBytes64 (RegProp[0]);
+        FwCfgDataSize         = SwapBytes64 (RegProp[1]);
+        FwCfgSelectorAddress  = FwCfgDataAddress + FwCfgDataSize;
+
+        mFwCfgSelectorAddress = FwCfgSelectorAddress;
+        mFwCfgDataAddress = FwCfgDataAddress;
+        PcdStatus = PcdSet64S (
+          PcdFwCfgSelectorAddress,
+          FwCfgSelectorAddress
+          );
+        ASSERT_RETURN_ERROR (PcdStatus);
+        PcdStatus = PcdSet64S (
+          PcdFwCfgDataAddress,
+          FwCfgDataAddress
+          );
+        ASSERT_RETURN_ERROR (PcdStatus);
+        break;
+      } else {
+        DEBUG ((DEBUG_ERROR, "%a: Failed to parse FDT QemuCfg node\n",
+          __FUNCTION__));
+        break;
+      }
+    }
+  }
+  return RETURN_SUCCESS;
 }

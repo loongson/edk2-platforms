@@ -6,14 +6,9 @@
 
 **/
 
-#ifndef _STABLETIMER_H_
-#define _STABLETIMER_H_
-
-/* timer : start with TM */
-#define LISA_CSR_TMCFG			0x41
-#define LISA_CSR_TMCFG_EN		(1ULL << 0)
-#define LISA_CSR_TMCFG_PERIOD		(1ULL << 1)
-#define LISA_CSR_TMCFG_TIMEVAL		(0x3fffffffffffULL << 2)
+#ifndef STABLE_TIMER_H_
+#define STABLE_TIMER_H_
+#include "Library/Cpu.h"
 
 UINTN
 EFIAPI

@@ -7,20 +7,10 @@
 
 **/
 
-#ifndef _TIMER_H_
-#define _TIMER_H_
+#ifndef TIMER_H_
+#define TIMER_H_
 
-#include <PiDxe.h>
-
-#include <Protocol/Cpu.h>
 #include <Protocol/Timer.h>
-
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/BaseLib.h>
-#include <Library/DebugLib.h>
-#include <Library/IoLib.h>
-#include <Library/StableTimer.h>
-#include "Library/Cpu.h"
 
 
 #define DEFAULT_TIMER_TICK_DURATION 100000 //10ms = 100000 100 ns units
