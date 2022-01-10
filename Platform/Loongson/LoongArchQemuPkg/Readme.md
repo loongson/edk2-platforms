@@ -11,8 +11,8 @@
   1. Install LoongArch cross-tools on X86 machines.
     Download cross-tools from https://github.com/loongson/,Then config cross-tools env.
     For Example:
-    $ wget https://github.com/loongson/build-tools/releases/latest/download/loongarch64-clfs-20210831-cross-tools.tar.xz
-    $ tar -vxf loongarch64-clfs-20210831-cross-tools.tar.xz -C /opt
+    $ wget https://github.com/loongson/build-tools/releases/latest/download/loongarch64-clfs-20211202-cross-tools.tar.xz
+    $ tar -vxf loongarch64-clfs-20211202-cross-tools.tar.xz  -C /opt
     $ export PATH=/opt/cross-tools/bin:$PATH
 
   2. Follow edk2-platforms/Readme.md to obtaining source code,And config build env.
@@ -29,7 +29,7 @@
 
   3. Config  cross compiler prefix.
     For Example:
-    $ export GCC5_LOONGARCH64_PREFIX=loongarch64-linux-gnu-
+    $ export GCC5_LOONGARCH64_PREFIX=loongarch64-unknown-linux-gnu-
 
   4.Set up the build environment And  build BaseTool.
     For Example:
@@ -38,6 +38,6 @@
 
   5.Build  platform.
     For Exmaple:
-    $build --buildtarget=DEBUG --tagname=GCC5 --arch=LOONGARCH64  --platform=Platform/Loongson/LoongarchVirtPkg/Loongson.dsc
+    $build --buildtarget=DEBUG --tagname=GCC5 --arch=LOONGARCH64  --platform=Platform/Loongson/LoongArchQemuPkg/Loongson.dsc
 
   After a successful build, the resulting images can be found in `Build/{Platform Name}/{TARGET}_{TOOL_CHAIN_TAG}/FV`.
