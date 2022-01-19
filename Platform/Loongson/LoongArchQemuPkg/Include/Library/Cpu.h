@@ -167,7 +167,7 @@ do {                                            \
                 "csrwr  %0, %1 \n\t"            \
                 : "=r"(__val)                   \
                 : "i"(reg), "r"(__val)          \
-                :                               \
+                : "memory"                      \
                 );                              \
 } while(0)
 

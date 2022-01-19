@@ -45,7 +45,7 @@ LoongArchQemuReset (VOID)
   DEBUG ((DEBUG_INFO, "%a: LoongArchQemu reset via acpi\n", __FUNCTION__));
 
   Address = LoongArchQemuAcpiBase ();
-  MmioWrite8 (Address + LS7A_GPE0_RESET_REG, 1);
+  MmioWrite32 (Address + LS7A_GPE0_RESET_REG, 1);
   CpuDeadLoop ();
 }
 

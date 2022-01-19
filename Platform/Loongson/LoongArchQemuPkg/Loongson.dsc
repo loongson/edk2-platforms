@@ -55,7 +55,7 @@
   #
   # Disable deprecated APIs.
   #
-  GCC:*_*_*_CC_FLAGS = -D DISABLE_NEW_DEPRECATED_INTERFACES  -Wno-pointer-to-int-cast  -Wno-maybe-uninitialized
+  GCC:*_*_*_CC_FLAGS = -D DISABLE_NEW_DEPRECATED_INTERFACES
 
 !include NetworkPkg/NetworkBuildOptions.dsc.inc
 
