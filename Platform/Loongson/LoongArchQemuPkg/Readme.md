@@ -20,9 +20,10 @@
     $ export WORKSPACE=/work/git/tianocore
     $ mkdir -p $WORKSPACE
     $ cd $WORKSPACE
-    $ git clone https://github.com/tianocore/edk2.git
+    $ git clone https://github.com/loongson/edk2.git
+    $ git checkout -b devel-LoongArch remotes/origin/devel-LoongArch
     $ git submodule update --init
-    $ git clone https://github.com/tianocore/edk2-platforms.git
+    $ git clone https://github.com/loongson/edk2-platforms.git
     $ git submodule update --init
     $ git clone https://github.com/tianocore/edk2-non-osi.git
     $ export PACKAGES_PATH=$PWD/edk2:$PWD/edk2-platforms:$PWD/edk2-non-osi
