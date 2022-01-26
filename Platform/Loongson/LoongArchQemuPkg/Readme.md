@@ -9,7 +9,7 @@
 # How to build (X86 Linux Environment)
 
   1. Install LoongArch cross-tools on X86 machines.
-    Download cross-tools from https://github.com/loongson/,Then config cross-tools env.
+    Download cross-tools from https://github.com/loongson/ ,Then config cross-tools env.
     For Example:
     
     $ wget https://github.com/loongson/build-tools/releases/latest/download/loongarch64-clfs-20211202-cross-tools.tar.xz
