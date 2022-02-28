@@ -5,6 +5,8 @@
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
+  @par Glossary:
+    - FwCfg   - firmWare  Configure
 **/
 
 #ifndef QEMU_FW_CFG_LIB_INTERNAL_H_

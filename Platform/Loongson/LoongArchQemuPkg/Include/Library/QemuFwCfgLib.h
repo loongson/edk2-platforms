@@ -5,6 +5,9 @@
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
+  @par Glossary:
+    - FW or Fw    - Firmware
+    - Cfg         - Configure
 **/
 
 #ifndef QEMU_FW_CFG_LIB_
@@ -102,7 +105,7 @@ QemuFwCfgSkipBytes (
 /**
   Reads a UINT8 firmware configuration value
 
-  @return    Value of Firmware Configuration item read
+  @retval    Value of Firmware Configuration item read
 
 **/
 UINT8
@@ -115,7 +118,7 @@ QemuFwCfgRead8 (
 /**
   Reads a UINT16 firmware configuration value
 
-  @return    Value of Firmware Configuration item read
+  @retval    Value of Firmware Configuration item read
 
 **/
 UINT16
@@ -128,7 +131,7 @@ QemuFwCfgRead16 (
 /**
   Reads a UINT32 firmware configuration value
 
-  @return    Value of Firmware Configuration item read
+  @retval    Value of Firmware Configuration item read
 
 **/
 UINT32
@@ -141,7 +144,7 @@ QemuFwCfgRead32 (
 /**
   Reads a UINT64 firmware configuration value
 
-  @return    Value of Firmware Configuration item read
+  @retval    Value of Firmware Configuration item read
 
 **/
 UINT64
@@ -159,7 +162,7 @@ QemuFwCfgRead64 (
                      to QemuFwCfgSelectItem ().
   @param[out] Size - Number of bytes in the file.
 
-  @return    RETURN_SUCCESS       If file is found.
+  @retval    RETURN_SUCCESS       If file is found.
              RETURN_NOT_FOUND     If file is not found.
              RETURN_UNSUPPORTED   If firmware configuration is unavailable.
 

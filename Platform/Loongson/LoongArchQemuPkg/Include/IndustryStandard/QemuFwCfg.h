@@ -5,6 +5,11 @@
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
+  @par Glossary:
+    - FW     - FireWare
+    - CFG    - Configure
+    - FNAME    - File Name
+    - CTL    - Contorl
 **/
 
 #ifndef QEMU_FW_CFG_H_

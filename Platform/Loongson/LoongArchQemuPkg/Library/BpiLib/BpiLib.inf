@@ -15,7 +15,6 @@
 
 [Sources]
   Bpi.c
-  Bpi.h
 
 [Packages]
   MdePkg/MdePkg.dec
