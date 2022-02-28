@@ -15,6 +15,7 @@
 #include <Library/CpuLib.h>
 #include <Library/DebugLib.h>
 #include <Library/BaseLib.h>
+#include <Library/MmuLib.h>
 #include "CpuDxe.h"
 
 BOOLEAN mInterruptState   = FALSE;
@@ -173,6 +174,24 @@ CpuInit (
   return EFI_UNSUPPORTED;
 }
 
+/**
+  This function registers and enables the handler specified by InterruptHandler for a processor
+  interrupt or exception type specified by InterruptType. If InterruptHandler is NULL, then the
+  handler for the processor interrupt or exception type specified by InterruptType is uninstalled.
+  The installed handler is called once for each processor interrupt or exception.
+  
+  @param  InterruptType   Interrupt Type.
+  @param  InterruptHandler A pointer to a function of type EFI_CPU_INTERRUPT_HANDLER that is called
+  when a processor interrupt occurs. If this parameter is NULL, then the handler
+  will be uninstalled.
+  
+  @retval EFI_SUCCESS           The handler for the processor interrupt was successfully installed or uninstalled.
+  @retval EFI_ALREADY_STARTED   InterruptHandler is not NULL, and a handler for InterruptType was
+  previously installed.
+  @retval EFI_INVALID_PARAMETER InterruptHandler is NULL, and a handler for InterruptType was not
+  previously installed.
+  @retval EFI_UNSUPPORTED       The interrupt specified by InterruptType is not supported.
+**/
 EFI_STATUS
 EFIAPI
 CpuRegisterInterruptHandler (
@@ -185,6 +204,28 @@ CpuRegisterInterruptHandler (
   return RegisterInterruptHandler (InterruptType, InterruptHandler);
 }
 
+/**
+  Returns a timer value from one of the CPU's internal timers. There is no
+  inherent time interval between ticks but is a function of the CPU frequency.
+
+  @param  This                - Protocol instance structure.
+  @param  TimerIndex          - Specifies which CPU timer is requested.
+  @param  TimerValue          - Pointer to the returned timer value.
+  @param  TimerPeriod         - A pointer to the amount of time that passes
+                                in femtoseconds (10-15) for each increment
+                                of TimerValue. If TimerValue does not
+                                increment at a predictable rate, then 0 is
+                                returned.  The amount of time that has
+                                passed between two calls to GetTimerValue()
+                                can be calculated with the formula
+                                (TimerValue2 - TimerValue1) * TimerPeriod.
+                                This parameter is optional and may be NULL.
+
+  @retval EFI_SUCCESS           - If the CPU timer count was returned.
+  @retval EFI_UNSUPPORTED       - If the CPU does not have any readable timers.
+  @retval EFI_DEVICE_ERROR      - If an error occurred while reading the timer.
+  @retval EFI_INVALID_PARAMETER - TimerIndex is not valid or TimerValue is NULL.
+**/
 EFI_STATUS
 EFIAPI
 CpuGetTimerValue (
@@ -226,6 +267,37 @@ CpuSetMemoryAttributes (
   IN UINT64                    EfiAttributes
   )
 {
+  EFI_STATUS  Status;
+  UINTN       LoongArchAttributes;
+  UINTN       RegionBaseAddress;
+  UINTN       RegionLength;
+  UINTN       RegionLoongArchAttributes;
+
+  if ((BaseAddress & (SIZE_4KB - 1)) != 0) {
+    // Minimum granularity is SIZE_4KB (4KB on ARM)
+    DEBUG ((DEBUG_PAGE, "CpuSetMemoryAttributes(%lx, %lx, %lx): Minimum granularity is SIZE_4KB\n",
+      BaseAddress,
+      Length,
+      EfiAttributes));
+
+    return EFI_UNSUPPORTED;
+  }
+  // Convert the 'Attribute' into LoongArch Attribute
+  LoongArchAttributes = EfiAttributeToLoongArchAttribute (EfiAttributes);
+
+  // Get the region starting from 'BaseAddress' and its 'Attribute'
+  RegionBaseAddress = BaseAddress;
+  Status = GetLoongArchMemoryRegion (RegionBaseAddress, BaseAddress + Length,
+             &RegionLength, &RegionLoongArchAttributes);
+
+  LoongArchSetMemoryAttributes (BaseAddress, Length, EfiAttributes);
+  // Data & Instruction Caches are flushed when we set new memory attributes.
+  // So, we only set the attributes if the new region is different.
+  if (EFI_ERROR (Status) || (RegionLoongArchAttributes != LoongArchAttributes) ||
+      ((BaseAddress + Length) > (RegionBaseAddress + RegionLength)))
+  {
+    return LoongArchSetMemoryAttributes (BaseAddress, Length, EfiAttributes);
+  }
   return EFI_SUCCESS;
 }
 
@@ -236,6 +308,7 @@ CpuSetMemoryAttributes (
   @param  Context               The pointer to the notification function's context,
                                 which is implementation-dependent.
 
+  @param VOID
 **/
 VOID
 EFIAPI
@@ -265,7 +338,16 @@ EFI_CPU_ARCH_PROTOCOL Cpu = {
 };
 
 
+/**
+  Initialize the state information for the CPU Architectural Protocol.
 
+  @param ImageHandle     Image handle this driver.
+  @param SystemTable     Pointer to the System Table.
+
+  @retval EFI_SUCCESS           Thread can be successfully created
+  @retval EFI_OUT_OF_RESOURCES  Cannot allocate protocol data structure
+  @retval EFI_DEVICE_ERROR      Cannot create the thread
+**/
 EFI_STATUS
 CpuDxeInitialize (
   IN EFI_HANDLE         ImageHandle,

@@ -5,6 +5,8 @@
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
+  @par Glossary:
+    - FwCfg   - firmWare  Configure
 **/
 
 #include <Library/BaseLib.h>

@@ -4,6 +4,9 @@
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
+  @par Glossary:
+    - FwCfg   - firmWare  Configure
+    - CTL   - Control
 **/
 
 #include "Uefi.h"
@@ -20,7 +23,13 @@
 
 STATIC UINTN mFwCfgSelectorAddress;
 STATIC UINTN mFwCfgDataAddress;
+/**
+  To get firmware configure selector address.
 
+  @param VOID
+
+  @retval  firmware configure selector address
+**/
 UINTN
 EFIAPI
 QemuGetFwCfgSelectorAddress (
@@ -33,6 +42,13 @@ QemuGetFwCfgSelectorAddress (
   }
   return FwCfgSelectorAddress;
 }
+/**
+  To get firmware configure Data address.
+
+  @param VOID
+
+  @retval  firmware configure data address
+**/
 UINTN
 EFIAPI
 QemuGetFwCfgDataAddress (
@@ -67,6 +83,9 @@ QemuFwCfgSelectItem (
 
 /**
   Slow READ_BYTES_FUNCTION.
+
+  @param[in]  The size of the data to be read.
+  @param[in]  Buffer    The buffer that stores the readout data.
 **/
 VOID
 EFIAPI
@@ -104,6 +123,9 @@ MmioReadBytes (
 
 /**
   Slow WRITE_BYTES_FUNCTION.
+
+  @param[in]  The size of the data to be write.
+  @param[in]  Buffer    The buffer that stores the writein data.
 **/
 VOID
 EFIAPI
@@ -153,7 +175,6 @@ InternalQemuFwCfgReadBytes (
 
   @param[in] Size - Size in bytes to read
   @param[in] Buffer - Buffer to store data into
-
 **/
 VOID
 EFIAPI
@@ -178,7 +199,6 @@ QemuFwCfgReadBytes (
 
   @param[in] Size - Size in bytes to write
   @param[in] Buffer - Buffer to read data from
-
 **/
 VOID
 EFIAPI
@@ -359,14 +379,14 @@ QemuFwCfgFindFile (
   for (Idx = 0; Idx < Count; ++Idx) {
     UINT32 FileSize;
     UINT16 FileSelect;
-    CHAR8  FName[QEMU_FW_CFG_FNAME_SIZE];
+    CHAR8  FileName[QEMU_FW_CFG_FNAME_SIZE];
 
     FileSize     = QemuFwCfgRead32 ();
     FileSelect   = QemuFwCfgRead16 ();
     QemuFwCfgRead16 (); // skip the field called "reserved"
-    InternalQemuFwCfgReadBytes (sizeof (FName), FName);
+    InternalQemuFwCfgReadBytes (sizeof (FileName), FileName);
 
-    if (AsciiStrCmp (Name, FName) == 0) {
+    if (AsciiStrCmp (Name, FileName) == 0) {
       *Item = SwapBytes16 (FileSelect);
       *Size = SwapBytes32 (FileSize);
       return RETURN_SUCCESS;
@@ -375,6 +395,14 @@ QemuFwCfgFindFile (
 
   return RETURN_NOT_FOUND;
 }
+
+/**
+  firmware config initialize.
+
+  @param  VOID
+
+  @return    RETURN_SUCCESS  Initialization succeeded.
+**/
 RETURN_STATUS
 EFIAPI
 QemuFwCfgInitialize (
@@ -426,6 +454,7 @@ QemuFwCfgInitialize (
 
         mFwCfgSelectorAddress = FwCfgSelectorAddress;
         mFwCfgDataAddress = FwCfgDataAddress;
+
         PcdStatus = PcdSet64S (
           PcdFwCfgSelectorAddress,
           FwCfgSelectorAddress

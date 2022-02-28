@@ -5,6 +5,10 @@
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
+  @par Glossary:
+    - mem     - Memory
+    - Bpi    - Boot Parameter Interface
+    - FwCfg    - FirmWare Configure
 **/
 
 #include <Uefi.h>
@@ -16,13 +20,21 @@
 #include <Library/QemuFwCfgLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
-#include <Library/BpiLib/Bpi.h>
+#include <Library/Bpi.h>
 #include <string.h>
 #include <Library/BaseMemoryLib.h>
 #include "PlatformBm.h"
 
+/*
+  Calculates the checksum.
+
+  @param  buffer A pointer to the data to calculate the checksum.
+  @param  length   The number of data involved in calculating the checksum.
+
+  @retval    the value of checksum.
+ */
 UINT8
-calculatechecksum8 (
+CalculateCheckSum8 (
   IN CONST UINT8 *buffer, IN UINTN length
   )
 {
@@ -34,7 +46,17 @@ calculatechecksum8 (
   }
   return (UINT8) (0x100 - checksum);
 }
+/*
+  Iterates through all memory maps merging adjacent memory regions.
 
+  @param  array   A pointer to a memory-mapped table.
+  @param  length  The length of the memory-mapped table.
+  @param  bpmem   Adjusted memory information table.
+  @param  index   The Index of Adjusted memory information table.
+  @param  memtype  Specifies the memory type.
+
+  @retval    the value of checksum.
+ */
 UINT32
 memmap_sort (
   IN MEMMAP array[],
@@ -72,23 +94,29 @@ memmap_sort (
   }
   return index;
 }
+/*
+  Look for memory-mapped information.
 
+  @param  Bpi  A pointer to the boot parameter interface.
+
+  @retval The  address of the memory-mapped table.
+ */
 MEM_MAP *
-findnewinterfacemem (
-  IN BootParamsInterface *Bp
+FindNewInterfaceMem (
+  IN BootParamsInterface *Bpi
   )
 {
   CHAR8 *p =NULL;
   MEM_MAP *new_interface_mem = NULL;
   EXT_LIST *listpointer = NULL;
   
-  if (Bp == NULL) {
+  if (Bpi == NULL) {
     return new_interface_mem;
   }
  
-  p = (CHAR8 *)& (Bp->Signature);
+  p = (CHAR8 *)& (Bpi->Signature);
   if (AsciiStrnCmp (p, "BPI", 3) == 0) {
-    listpointer = Bp->ExtList;
+    listpointer = Bpi->ExtList;
     for (; listpointer != NULL; listpointer = listpointer->next) {
       CHAR8 *pl = (CHAR8 *) & (listpointer->Signature);
       if (AsciiStrnCmp (pl, "MEM", 3) == 0) {
@@ -99,9 +127,17 @@ findnewinterfacemem (
 
   return new_interface_mem;
 }
+/**
+  Gets the system memory mapping information.
 
+  @param  MapKey         memory-mapped key.
+  @param  MemoryMapSize  The size of the memory-mapped information.
+  @param  DescriptorSize The size of the memory-mapped information descriptor.
+
+  @retval VOID 
+**/
 EFI_MEMORY_DESCRIPTOR *
-get_system_memap (
+GetSystemMemap (
   OUT UINTN *MapKey,
   OUT UINTN *MemoryMapSize,
   OUT UINTN *DescriptorSize
@@ -159,7 +195,17 @@ get_system_memap (
 
   return MemoryMap;
 }
+/**
+  Memory-mapped information is processed according to the different types
+  of memory in the memory-mapped table.
 
+  @param  new_interface_mem   A pointer to a memory-mapped table.
+  @param  MemoryMapPtr   A pointer to the memory descriptor struct.
+  @param  MemoryMapSize  The size of the memory-mapped table.
+  @param  DescriptorSize The size of the descriptor.
+
+  @retval VOID 
+**/
 VOID
 MemMapSort (
   IN OUT MEM_MAP *new_interface_mem,
@@ -261,15 +307,21 @@ MemMapSort (
   new_interface_mem->MapCount = tmp_index;
   new_interface_mem->Header.CheckSum = 0;
 
-  checksum = calculatechecksum8 ((CONST UINT8 *)new_interface_mem, new_interface_mem->Header.Length);
+  checksum = CalculateCheckSum8 ((CONST UINT8 *)new_interface_mem, new_interface_mem->Header.Length);
   new_interface_mem->Header.CheckSum = checksum;
 
   return ;
 }
+/**
+  Establish linux kernel boot parameters.
 
+  @param  Bpi  A pointer to the boot parameter interface.
+
+  @retval VOID 
+**/
 VOID
 SetupLinuxBootParams (
-  IN OUT BootParamsInterface *Bp
+  IN OUT BootParamsInterface *Bpi
   )
 {
   EFI_MEMORY_DESCRIPTOR *MemoryMapPtr = NULL;
@@ -278,8 +330,8 @@ SetupLinuxBootParams (
   UINTN MemoryMapSize = 0;
   UINTN DescriptorSize = 0;
 
-  new_interface_mem = findnewinterfacemem (Bp);
-  MemoryMapPtr = get_system_memap (&MapKey, &MemoryMapSize, &DescriptorSize);
+  new_interface_mem = FindNewInterfaceMem (Bpi);
+  MemoryMapPtr = GetSystemMemap (&MapKey, &MemoryMapSize, &DescriptorSize);
 
   DEBUG ((EFI_D_INFO, "new_interface_mem %p MemoryMapPtr %p MapKey %x.\n",
     new_interface_mem, MemoryMapPtr, MapKey));
@@ -290,6 +342,22 @@ SetupLinuxBootParams (
   return ;
 }
 
+/**
+  Download the kernel, the initial ramdisk, and the kernel command line from
+  QEMU's fw_cfg. Construct a minimal SimpleFileSystem that contains the two
+  image files, and load and start the kernel from it.
+
+  The kernel will be instructed via its command line to load the initrd from
+  the same Simple FileSystem.
+
+  @retval EFI_NOT_FOUND         Kernel image was not found.
+  @retval EFI_OUT_OF_RESOURCES  Memory allocation failed.
+  @retval EFI_PROTOCOL_ERROR    Unterminated kernel command line.
+
+  @return                       Error codes from any of the underlying
+                                functions. On success, the function doesn't
+                                return.
+**/
 EFI_STATUS
 TryRunningQemuKernel (
   VOID

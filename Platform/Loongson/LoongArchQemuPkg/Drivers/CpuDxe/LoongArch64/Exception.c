@@ -4,6 +4,20 @@
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
+  @par Glossary:
+    - ESTAT     - Exception Status
+    - ECFG      - Exception Configure
+    - ERA       - Exception Return Address
+    - BADV      - Bad Virtual Address
+    - BADI      - Bad Instructions 
+    - Epc or EPC or epc   - Exception Program Counter
+    - pc or PC or pc      - Program Counter
+    - CRMD      - Current Mode 
+    - PRMD      - Previous Mode 
+    - CsrEuen      - Cpu Status Register Extern Unit Enable
+    - fpu or fp or FP   - Float Point Unit
+    - LOONGARCH   - Loongson Arch
+    - Irq   - Interrupt ReQuest
 **/
 
 #include <string.h>
@@ -53,7 +67,7 @@ RegisterInterruptHandler (
     return EFI_UNSUPPORTED;
   }
 
-  if ((InterruptHandler != NULL) 
+  if ((InterruptHandler != NULL)
     && (gExceptionHandlers[InterruptType] != NULL))
   {
     return EFI_ALREADY_STARTED;
@@ -63,29 +77,14 @@ RegisterInterruptHandler (
 
   return EFI_SUCCESS;
 }
+/**
+  This function calls the corresponding exception handler based on the exception type.
 
-/*
- * Get Exception Type
- */
-INT32
-EFIAPI
-GetExceptionType (IN EFI_SYSTEM_CONTEXT frame)
-{
-  INT32 tmp;
+  @param  ExceptionType  Exception Type.
+  @param  SystemContext  The system context at the time of the exception.
 
-  tmp = frame.SystemContextLoongArch64->ESTAT & CSR_ESTAT_EXC;
-  tmp = tmp >> CSR_ESTAT_EXC_SHIFT;
-  switch (tmp) {
-  case EXC_INT:
-    return (EXC_INT);
-  default:
-    return (EXC_BAD);
-  }
-}
-
-/*
- *To Invoke the Handler Function
- */
+  @retval VOID
+**/
 STATIC VOID
 EFIAPI
 InterruptHandler (
@@ -95,7 +94,7 @@ InterruptHandler (
 {
   INT32 Pending;
   /*irq [13-0] NMI IPI TI PCOV hw IP10-IP2 soft IP1-IP0*/
-  Pending = ((SystemContext.SystemContextLoongArch64->ESTAT) & 
+  Pending = ((SystemContext.SystemContextLoongArch64->ESTAT) &
              (SystemContext.SystemContextLoongArch64->ECFG) & 0x1fff);
   if (Pending & (1 << 11/*TI*/)) {
       gExceptionHandlers[ExceptionType] (ExceptionType, SystemContext);
@@ -153,12 +152,19 @@ GetImageName (
           return PeCoffLoaderGetPdbPointer (DebugTable->NormalImage->LoadedImageProtocolInstance->ImageBase);
         }
       }
-   }
+    }
   }
 
   return NULL;
 }
 
+/**
+  pass a file name string that contains the path, return file name.
+
+  @param  FullName   Path and file name
+
+  @retval            file name.
+**/
 STATIC
 CONST CHAR8 *
 BaseName (
@@ -177,50 +183,109 @@ BaseName (
   return Str;
 }
 
+/** Default Exception Handler Function
+  This function is called when an exception occurs that cannot be handled,
+  and this function prints the system context information when the interrupt occurred
+
+  @param  SystemContext  The system context at the time of the exception.
+
+  @retval            VOID.
+**/
+STATIC
 VOID
 EFIAPI
-mException (
-IN OUT EFI_SYSTEM_CONTEXT           SystemContext
-)
+DefaultHandler (
+  IN OUT EFI_SYSTEM_CONTEXT           SystemContext
+  )
 {
-  INT32           ExceptionType;
-  ExceptionType = GetExceptionType (SystemContext);
-  CHAR8  *Pdb;
-  UINTN  ImageBase, epc;
+  CHAR8  *ImageName;
+  UINTN  ImageBase, Epc;
   UINTN  PeCoffSizeOfHeader;
 
+  DEBUG ((DEBUG_ERROR, "CRMD   0x%llx\n",  SystemContext.SystemContextLoongArch64->CRMD));
+  DEBUG ((DEBUG_ERROR, "PRMD   0x%llx\n",  SystemContext.SystemContextLoongArch64->PRMD));
+  DEBUG ((DEBUG_ERROR, "ECFG  0x%llx\n",  SystemContext.SystemContextLoongArch64->ECFG));
+  DEBUG ((DEBUG_ERROR, "ESTAT   0x%llx\n",  SystemContext.SystemContextLoongArch64->ESTAT));
+  DEBUG ((DEBUG_ERROR, "ERA    0x%llx\n",  SystemContext.SystemContextLoongArch64->ERA));
+  DEBUG ((DEBUG_ERROR, "BADV    0x%llx\n",  SystemContext.SystemContextLoongArch64->BADV));
+  DEBUG ((DEBUG_ERROR, "BADI 0x%llx\n",  SystemContext.SystemContextLoongArch64->BADI));
 
-  if (ExceptionType == EXC_INT) { // Timer
-    /* 
-     * handle interrupt exception
-     */
-    InterruptHandler (ExceptionType, SystemContext);
-  } else { // Others
-    epc = SystemContext.SystemContextLoongArch64->ERA;
+  Epc = SystemContext.SystemContextLoongArch64->ERA;
+  ImageName = GetImageName (Epc, &ImageBase, &PeCoffSizeOfHeader);
+  if (ImageName != NULL) {
+    DEBUG ((DEBUG_ERROR, "PC 0x%012lx (0x%012lx+0x%08x) [ 0] %a\n",
+           Epc, ImageBase,
+           Epc - ImageBase, BaseName (ImageName)));
+  } else {
+    DEBUG ((DEBUG_ERROR, "PC 0x%012lx\n", Epc));
+  }
 
-    DEBUG ((DEBUG_ERROR, "CRMD   0x%llx\n",  SystemContext.SystemContextLoongArch64->CRMD));
-    DEBUG ((DEBUG_ERROR, "PRMD   0x%llx\n",  SystemContext.SystemContextLoongArch64->PRMD));
-    DEBUG ((DEBUG_ERROR, "ECFG  0x%llx\n",  SystemContext.SystemContextLoongArch64->ECFG));
-    DEBUG ((DEBUG_ERROR, "ESTAT   0x%llx\n",  SystemContext.SystemContextLoongArch64->ESTAT));
-    DEBUG ((DEBUG_ERROR, "ERA    0x%llx\n",  SystemContext.SystemContextLoongArch64->ERA));
-    DEBUG ((DEBUG_ERROR, "BADV    0x%llx\n",  SystemContext.SystemContextLoongArch64->BADV));
-    DEBUG ((DEBUG_ERROR, "BADI 0x%llx\n",  SystemContext.SystemContextLoongArch64->BADI));
+  while (1);
+}
 
+/** Common exception entry
+  Exception handling is the entry point for the C environment,
+  This function does different things depending on the exception type.
 
-    Pdb = GetImageName (epc, &ImageBase, &PeCoffSizeOfHeader);
-    if (Pdb != NULL) {
-      DEBUG ((DEBUG_ERROR, "PC 0x%012lx (0x%012lx+0x%08x) [ 0] %a\n",
-        epc, ImageBase,
-        epc - ImageBase, BaseName (Pdb)));
-    } else {
-      DEBUG ((DEBUG_ERROR, "PC 0x%012lx\n", epc));
-    }
+  @param  SystemContext  The system context at the time of the exception.
 
+  @retval            VOID.
+**/
+VOID
+EFIAPI
+CommonExceptionEntry (
+  IN OUT EFI_SYSTEM_CONTEXT           SystemContext
+  )
+{
+  INT32    ExceptionType;
+  UINT64   CsrEuen, FpuStatus;	
 
-    while (1);
+  ExceptionType = SystemContext.SystemContextLoongArch64->ESTAT & CSR_ESTAT_EXC;
+  ExceptionType = ExceptionType >> CSR_ESTAT_EXC_SHIFT;
+
+  LOONGARCH_CSR_READQ (CsrEuen, LOONGARCH_CSR_EUEN);
+  FpuStatus = CsrEuen & CSR_EUEN_FPEN;
+  switch (ExceptionType) {
+    case EXC_INT:
+      /*
+       * handle interrupt exception
+       */
+      InterruptHandler (ExceptionType, SystemContext);
+      if (!FpuStatus) {
+        LOONGARCH_CSR_READQ (CsrEuen, LOONGARCH_CSR_EUEN);
+	if (CsrEuen & CSR_EUEN_FPEN) {
+	  /*
+	   * Since Hw FP is enabled during interrupt handler,
+	   * disable FP
+	   */
+	   CsrEuen &= ~CSR_EUEN_FPEN;
+	   LOONGARCH_CSR_WRITEQ (CsrEuen, LOONGARCH_CSR_EUEN);
+	}
+      }
+      break;
+    case EXC_FPDIS:
+      /*
+       * Hardware FP disabled exception,
+       * Enable and init FP registers here
+       */
+      LOONGARCH_ENABLR_FPU ();
+      InitFpu(FPU_CSR_RN);
+      break;
+    default:
+      DefaultHandler(SystemContext);
+      break;
   }
 }
 
+/** Exception module initialization
+  This function sets the exception base address.
+
+  @param  Cpu   A pointer to the CPU architecture protocol structure.
+
+  @retval EFI_SUCCESS           Initialization succeeded
+  @retval EFI_NOT_FOUND          Could not Found resources.
+  @retval EFI_OUT_OF_RESOURCES   No enough resources.                             
+**/
 EFI_STATUS
 InitializeExceptions (
   IN EFI_CPU_ARCH_PROTOCOL    *Cpu
@@ -243,7 +308,7 @@ InitializeExceptions (
   // as we take over the exception vectors.
   //
   Status = gBS->AllocatePages (
-                  AllocateAnyPages,
+                 AllocateAnyPages,
                  EfiRuntimeServicesData,
                  1,
                  &Address
@@ -252,13 +317,13 @@ InitializeExceptions (
          return Status;
   }
 
-  DEBUG ((EFI_D_INFO, "set ebase\n"));
-  DEBUG ((EFI_D_INFO, "LoongArchException address: 0x%x\n", LoongArchException));
-  DEBUG ((EFI_D_INFO, "LoongArchExceptionEnd address: 0x%x\n", LoongArchExceptionEnd));
+  DEBUG ((EFI_D_INFO, "Set Exception Base Address\n"));
   CopyMem ((char *)Address, LoongArchException, (LoongArchExceptionEnd - LoongArchException));
   InvalidateInstructionCacheRange ((char *)Address, (LoongArchExceptionEnd - LoongArchException));
 
   SetEbase (Address);
+  DEBUG ((EFI_D_INFO, "LoongArchException address: 0x%p\n", Address));
+  DEBUG ((EFI_D_INFO, "LoongArchExceptionEnd address: 0x%p\n", Address + (LoongArchExceptionEnd - LoongArchException)));
 
   DEBUG ((EFI_D_INFO, "InitializeExceptions, IrqEnabled = %x\n", IrqEnabled));
   if (IrqEnabled) {

@@ -16,7 +16,13 @@
 #include <Library/DebugLib.h>
 #include <Library/UefiRuntimeLib.h>
 #include <LoongArchQemuPlatform.h>
+/**
+  To get acpi base address.
 
+  @param  VOID
+
+  @retval  acpi base address.
+**/
 UINTN
 LoongArchQemuAcpiBase (VOID)
 {
@@ -35,7 +41,13 @@ LoongArchQemuAcpiBase (VOID)
 
   return (UINTN) Address;
 }
+/**
+  Restart device.
 
+  @param  VOID
+
+  @retval  VOID
+**/
 VOID
 LoongArchQemuReset (VOID)
 {
@@ -48,7 +60,13 @@ LoongArchQemuReset (VOID)
   MmioWrite32 (Address + LS7A_GPE0_RESET_REG, 1);
   CpuDeadLoop ();
 }
+/**
+  Shutdown device.
 
+  @param  VOID
+
+  @retval  VOID
+**/
 VOID
 LoongArchQemuShutdown (VOID)
 {

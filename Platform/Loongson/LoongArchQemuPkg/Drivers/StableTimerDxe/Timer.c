@@ -57,6 +57,8 @@ extern UINT32 StableTimerFreq;
   Sets the counter value for timer.
 
   @param Count    The 16-bit counter value to program into stable timer.
+
+  @retval VOID
 **/
 VOID
 SetPitCount (
@@ -69,7 +71,7 @@ SetPitCount (
 
   Count &= LOONGARCH_CSR_TMCFG_TIMEVAL;
   Count |= LOONGARCH_CSR_TMCFG_EN | LOONGARCH_CSR_TMCFG_PERIOD;
-  loongarch_csr_writeq (Count, LOONGARCH_CSR_TMCFG); 
+  LOONGARCH_CSR_WRITEQ (Count, LOONGARCH_CSR_TMCFG); 
 }
 
 /**
@@ -77,6 +79,8 @@ SetPitCount (
 
   @param InterruptType    The type of interrupt that occurred
   @param SystemContext    A pointer to the system context when the interrupt occurred
+
+  @retval VOID
 **/
 VOID
 EFIAPI
@@ -92,7 +96,7 @@ TimerInterruptHandler (
   //
   // Clear interrupt.
   //
-  loongarch_csr_writeq (0x1, LOONGARCH_CSR_TINTCLR);
+  LOONGARCH_CSR_WRITEQ (0x1, LOONGARCH_CSR_TINTCLR);
 
   if (mTimerNotifyFunction != NULL) {
     //
@@ -267,6 +271,14 @@ TimerDriverGetTimerPeriod (
 /**
     Disable the timer
 **/
+
+/**
+  Disable the timer 
+  DXE Core will disable the timer after all the event handlers have run.
+
+  @param[in]  Event   The Event that is being processed
+  @param[in]  Context Event Context
+**/
 VOID
 EFIAPI
 ExitBootServicesEvent (
@@ -277,7 +289,7 @@ ExitBootServicesEvent (
   /*
    * Disable timer interrupt when exiting boot service
    */
-  loongarch_csr_writeq (0, LOONGARCH_CSR_TMCFG);
+  LOONGARCH_CSR_WRITEQ (0, LOONGARCH_CSR_TMCFG);
 }
 
 /**

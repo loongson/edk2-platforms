@@ -24,6 +24,16 @@
 
 #include <Ppi/TemporaryRamSupport.h>
 
+/**
+  temporary memory to permanent memory and do stack switching.
+
+  @param[in]  PeiServices     Pointer to the PEI Services Table.
+  @param[in]  TemporaryMemoryBase    Temporary Memory Base address.
+  @param[in]  PermanentMemoryBase   Permanent Memory Base address.
+  @param[in]  CopySize   The size of memory that needs to be migrated.
+
+  @retval   EFI_SUCCESS  Migration successful.
+**/
 EFI_STATUS
 EFIAPI
 TemporaryRamMigration (
@@ -314,11 +324,7 @@ FindAndReportEntryPoints (
 }
 
 /**
-  Caller provided function to be invoked at the end of InitializeDebugAgent().
-
-  Entry point to the C language phase of SEC. After the SEC assembly
-  code has initialized some temporary memory and set up the stack,
-  the control is transferred to this function.
+  Find the peicore entry point and jump to the entry point to execute.
 
   @param[in] Context    The first input parameter of InitializeDebugAgent().
 
@@ -359,7 +365,13 @@ SecStartupPhase2 (
   ASSERT (FALSE);
   CpuDeadLoop ();
 }
+/**
+  Entry point to the C language phase of SEC. initialize some temporary memory and set up the stack,
+  the control is transferred to this function.
 
+  @param[in]  BootFv   The pointer to the PEI FV in memory.
+  @param[in]  TopOfCurrentStack  Top of Current Stack.
+**/
 VOID
 EFIAPI
 SecCoreStartupWithStack (
@@ -429,7 +441,16 @@ SecCoreStartupWithStack (
   SecStartupPhase2 (&SecCoreData);
 }
 
+/**
+  temporary memory to permanent memory and do stack switching.
 
+  @param[in]  PeiServices     Pointer to the PEI Services Table.
+  @param[in]  TemporaryMemoryBase    Temporary Memory Base address.
+  @param[in]  PermanentMemoryBase   Permanent Memory Base address.
+  @param[in]  CopySize   The size of memory that needs to be migrated.
+
+  @retval   EFI_SUCCESS  Migration successful.
+**/
 EFI_STATUS
 EFIAPI
 TemporaryRamMigration (
@@ -458,11 +479,13 @@ TemporaryRamMigration (
   OldStack = (VOID*) ((UINTN)TemporaryMemoryBase + (CopySize >> 1));
   NewStack = (VOID*) (UINTN)PermanentMemoryBase;
 
-  //DebugAgentContext.HeapMigrateOffset = (UINTN)NewHeap - (UINTN)OldHeap;
-  //DebugAgentContext.StackMigrateOffset = (UINTN)NewStack - (UINTN)OldStack;
+#if 0
+  DebugAgentContext.HeapMigrateOffset = (UINTN)NewHeap - (UINTN)OldHeap;
+  DebugAgentContext.StackMigrateOffset = (UINTN)NewStack - (UINTN)OldStack;
 
-  //OldStatus = SaveAndSetDebugTimerInterrupt (FALSE);
-  //InitializeDebugAgent (DEBUG_AGENT_INIT_POSTMEM_SEC, (VOID *) &DebugAgentContext, NULL);
+  OldStatus = SaveAndSetDebugTimerInterrupt (FALSE);
+  InitializeDebugAgent (DEBUG_AGENT_INIT_POSTMEM_SEC, (VOID *) &DebugAgentContext, NULL);
+#endif
 
   //
   // Migrate Heap
