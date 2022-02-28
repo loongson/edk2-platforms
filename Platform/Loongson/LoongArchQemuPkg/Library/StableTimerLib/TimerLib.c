@@ -5,6 +5,10 @@
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
+  @par Glossary:
+    - Freq - Frequency
+    - Csr  - Cpu Status Register
+    - calc - calculate
 **/
 
 #include <Base.h>
@@ -16,46 +20,66 @@
 
 UINT32 StableTimerFreq = 0;
 
+/**
+  Gets the timer count value.
+
+  @param[] VOID 
+
+  @retval  timer count value.
+**/
 UINTN
 EFIAPI
 CsrReadTime (
   VOID
   )
 {
-  UINTN Val = 0;
+  UINTN Value = 0;
   __asm__ __volatile__(
       " rdtime.d   %0, $r0\n"
-      : "=r" (Val));
-  return Val;
+      : "=r" (Value));
+  return Value;
 }
 
+/**
+  Calculate the timer frequency.
+
+  @param[] VOID 
+
+  @retval  Timer frequency.
+**/
 UINT32
 EFIAPI
 CalcConstFreq (
   VOID
   )
 {
-  UINT32 Res;
+  UINT32 Result;
   UINT32 BaseFreq;
-  UINT32 Cfm;
-  UINT32 Cfd;
+  UINT32 ClockMultiplier;
+  UINT32 ClockDivide;
 
-  LoongArchGetCpucfg (BaseFreq, LOONGARCH_CPUCFG4);
-  LoongArchGetCpucfg (Res, LOONGARCH_CPUCFG5);
-  Cfm = Res & 0xffff;
-  Cfd = (Res >> 16) & 0xffff;
+  LOONGARCH_GET_CPUCFG (BaseFreq, LOONGARCH_CPUCFG4);
+  LOONGARCH_GET_CPUCFG (Result, LOONGARCH_CPUCFG5);
+  ClockMultiplier = Result & 0xffff;
+  ClockDivide = (Result >> 16) & 0xffff;
 
   if ((!BaseFreq)
-    || (!Cfm)
-    || (!Cfd))
+    || (!ClockMultiplier)
+    || (!ClockDivide))
   {
     return 0;
   }
   else {
-    return (BaseFreq * Cfm / Cfd);
+    return (BaseFreq * ClockMultiplier / ClockDivide);
   }
 }
+/**
+  Get the timer frequency.
 
+  @param[] VOID 
+
+  @retval  Timer frequency.
+**/
 UINT32
 EFIAPI
 GetFreq (

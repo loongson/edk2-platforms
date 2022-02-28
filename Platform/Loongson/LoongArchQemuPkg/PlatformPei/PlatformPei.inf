@@ -49,6 +49,7 @@
   QemuFwCfgLib
   PcdLib
   TimerLib
+  MmuLib
 
 [Pcd]
   gLoongArchQemuPkgTokenSpaceGuid.PcdRamSize
@@ -72,6 +73,8 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize
   gEmbeddedTokenSpaceGuid.PcdPrePiCpuMemorySize
   gEmbeddedTokenSpaceGuid.PcdPrePiCpuIoSize
+  gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceSpaceStartAddress
+  gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceSpaceLength
 
 [Depex]
   TRUE

@@ -91,9 +91,9 @@
 #define B_UART_MSR_DSR        BIT5
 #define B_UART_MSR_RI         BIT6
 #define B_UART_MSR_DCD        BIT7
-#define UART_BASE_ADDRESS     (0x1fe001e0) 
-#define UART_BPS              (115200) 
-#define UART_WAIT_TIMOUT      (1000000) 
+#define UART_BASE_ADDRESS     (0x1fe001e0)
+#define UART_BPS              (115200)
+#define UART_WAIT_TIMOUT      (1000000)
 //---------------------------------------------
 // UART Settings
 //---------------------------------------------

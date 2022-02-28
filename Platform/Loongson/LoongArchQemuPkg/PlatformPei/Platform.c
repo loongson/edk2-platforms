@@ -5,6 +5,8 @@
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
+  @par Glossary:
+    - Mem - Memory
 **/
 
 
@@ -26,7 +28,7 @@
 #include <Library/ResourcePublicationLib.h>
 #include <Guid/MemoryTypeInformation.h>
 #include <Library/QemuFwCfgLib.h>
-
+#include <Library/MmuLib.h>
 #include <Guid/FdtHob.h>
 #include <libfdt.h>
 #include <Ppi/MasterBootMode.h>
@@ -52,6 +54,14 @@ CONST EFI_PEI_PPI_DESCRIPTOR  mPpiListBootMode = {
   NULL
 };
 
+/**
+  Create Reserved type memory range hand off block.
+
+  @param  MemoryBase    memory base address.
+  @param  MemoryLimit  memory length.
+
+  @return  VOID
+**/
 VOID
 AddReservedMemoryBaseSizeHob (
   EFI_PHYSICAL_ADDRESS        MemoryBase,
@@ -68,7 +78,14 @@ AddReservedMemoryBaseSizeHob (
     MemorySize
     );
 }
+/**
+  Create system type  memory range hand off block.
 
+  @param  MemoryBase    memory base address.
+  @param  MemoryLimit  memory length.
+
+  @return  VOID
+**/
 VOID
 AddMemoryBaseSizeHob (
   EFI_PHYSICAL_ADDRESS        MemoryBase,
@@ -89,7 +106,14 @@ AddMemoryBaseSizeHob (
     );
 }
 
+/**
+  Create  memory range hand off block.
 
+  @param  MemoryBase    memory base address.
+  @param  MemoryLimit  memory length.
+
+  @return  VOID
+**/
 VOID
 AddMemoryRangeHob (
   EFI_PHYSICAL_ADDRESS        MemoryBase,
@@ -98,8 +122,13 @@ AddMemoryRangeHob (
 {
   AddMemoryBaseSizeHob (MemoryBase, (UINT64) (MemoryLimit - MemoryBase));
 }
+/**
+  Create  memory type information hand off block.
 
+  @param  VOID
 
+  @return  VOID
+**/
 VOID
 MemMapInitialization (
   VOID
@@ -116,7 +145,13 @@ MemMapInitialization (
     );
 }
 
+/**
+  Misc Initialization.
 
+  @param  VOID
+
+  @return  VOID
+**/
 VOID
 MiscInitialization (
   VOID
@@ -128,7 +163,13 @@ MiscInitialization (
   //
   BuildCpuHob (PcdGet8 (PcdPrePiCpuMemorySize), PcdGet8 (PcdPrePiCpuIoSize));
 }
+/**
+  add fdt hand off block.
 
+  @param  VOID
+
+  @return  VOID
+**/
 VOID
 AddFdtHob (VOID)
 {
@@ -155,6 +196,10 @@ AddFdtHob (VOID)
 
 /**
   Fetch the size of system memory from QEMU.
+
+  @param  VOID
+
+  @return  VOID
 **/
 VOID
 SystemMemorySizeInitialization (
@@ -212,7 +257,8 @@ InitializePlatform (
   InitializeRamRegions ();
   MemMapInitialization ();
   MiscInitialization ();
-  AddFdtHob();
+  AddFdtHob ();
+  ConfigureMmu ();
 
   return EFI_SUCCESS;
 }

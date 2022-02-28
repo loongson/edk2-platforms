@@ -5,6 +5,10 @@
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
+  @par Glossary:
+    - Bps - Bit Per Second
+    - CTL - Control
+    - Config - Configure
 **/
 
 #include <Base.h>
@@ -111,7 +115,17 @@ UartCtlWrite (
 
   return Result;
 }
+/**
+  Writes data to serial port.
 
+  @param  Buffer           Pointer to the data buffer to store the data writed to serial port.
+  @param  NumberOfBytes    Number of bytes to write to the serial port.
+
+  @retval 0                NumberOfBytes is 0.
+  @retval >0               The number of bytes write the serial port.
+                           If this value is less than NumberOfBytes, then the write operation failed.
+
+**/
 UINTN
 EFIAPI
 SerialPortWrite (
@@ -162,7 +176,17 @@ UartCtlRead (
 
   return Result;
 }
+/**
+  Read data from serial port.
 
+  @param  Buffer           Pointer to the data buffer to store the data read from serial port.
+  @param  NumberOfBytes    Number of bytes to read from the serial port.
+
+  @retval 0                NumberOfBytes is 0.
+  @retval >0               The number of bytes read from the serial port.
+                           If this value is less than NumberOfBytes, then the read operation failed.
+
+**/
 UINTN
 EFIAPI
 SerialPortRead (
@@ -198,7 +222,13 @@ SerialPortPoll (
 
   return (BOOLEAN) ((Data & LSR_RXRDY) != 0);
 }
+/**
+  To get serial register base address.
 
+  @param  VOID
+
+  @return  serial register base address.
+**/
 UINTN
 GetSerialRegisterBase (
   VOID
@@ -241,9 +271,6 @@ SerialPortWriteRegister (
 {
     return MmioWrite8 (Base + Offset, Value);
 }
-
-
-
 /**
   Sets the control bits on a serial device.
 
@@ -267,7 +294,7 @@ SerialPortSetControl (
   // First determine the parameter is invalid.
   //
   if ((Control & (~(EFI_SERIAL_REQUEST_TO_SEND | EFI_SERIAL_DATA_TERMINAL_READY |
-                    EFI_SERIAL_HARDWARE_FLOW_CONTROL_ENABLE))) != 0) 
+                    EFI_SERIAL_HARDWARE_FLOW_CONTROL_ENABLE))) != 0)
   {
     return RETURN_UNSUPPORTED;
   }
@@ -557,7 +584,13 @@ UartCtlConfig (
 
   return RETURN_SUCCESS;
 }
+/**
+  Set the serial port Attributes.
 
+  @param  VOID
+
+  @return  serial register base address.
+**/
 RETURN_STATUS
 EFIAPI
 SerialPortSetAttributes (

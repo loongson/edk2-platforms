@@ -30,7 +30,13 @@
 STATIC BOOLEAN                mInitialized = FALSE;
 STATIC EFI_EVENT              mRtcVirtualAddrChangeEvent;
 STATIC UINTN                  mRtcBase = 0X100d0100;
+/*
+  Enable Real-time clock.
 
+  @param VOID 
+
+  @retval  VOID      
+ */
 VOID
 InitRtc (
   VOID

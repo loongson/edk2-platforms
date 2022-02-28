@@ -38,7 +38,7 @@ PublishPeiMemory (
   )
 {
   EFI_STATUS  Status;
-  UINT64      Base;
+  UINT64 Base;
   UINT64      Size;
   UINT64      RamTop;
 
@@ -48,6 +48,7 @@ PublishPeiMemory (
   Base = PcdGet64 (PcdSecPeiTempRamBase) + PcdGet32 (PcdSecPeiTempRamSize);
   RamTop = PcdGet64 (PcdUefiRamTop);
   Size = RamTop - Base;
+
 
   //
   // Publish this memory to the PEI Core
@@ -71,6 +72,7 @@ InitializeRamRegions (
   UINT64 Base;
   UINT64 End;
 
+
   //
   // DDR memory space address range
   // 0x00000000 - 0x10000000  lower 256M memory space
@@ -89,6 +91,7 @@ InitializeRamRegions (
     AddMemoryRangeHob (Base, BASE_4GB);
     AddMemoryRangeHob (BASE_4GB, End);
   } else {
+
     AddMemoryRangeHob (Base, End);
   }
   AddMemoryRangeHob (0x0, 0x10000000);

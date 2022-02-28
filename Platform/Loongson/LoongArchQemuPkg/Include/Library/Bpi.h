@@ -4,6 +4,11 @@
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
+  @par Glossary:
+    - BPI or Bpi    - Boot Parameter Interface
+    - MEM or Mem    - Memory
+    - info or INFO  - Information
+    - SINFO    - Screen information
 **/
 #ifndef BPI_H_
 #define BPI_H_
@@ -20,9 +25,9 @@
 #define DEBUG_BPI
 
 #define MAP_ENTRY(Entry, Type, Start, Size)  \
-   mMemMap->Map[(Entry)].MemType = (Type),   \
-   mMemMap->Map[(Entry)].MemStart = (Start), \
-   mMemMap->Map[(Entry)].MemSize = (Size),   \
+   MemMap->Map[(Entry)].MemType = (Type),   \
+   MemMap->Map[(Entry)].MemStart = (Start), \
+   MemMap->Map[(Entry)].MemSize = (Size),   \
    Entry++
 
 #pragma pack(1)
@@ -55,14 +60,14 @@ typedef struct _MEM_MAP_ {
 typedef struct {
   EXT_LIST Header;          // {SI}
   struct screen_info si;
-}SInfo;
+}SINFO;
 
 typedef struct {
   UINT64  BaseAddr;
   UINT64  Length;
   UINT32  Type;
   UINT32  Reserved;
-} EFI_LA_MEMMAP_ENTRY;
+} LOONGARCH_MEMMAP_ENTRY;
 
 #pragma pack()
 

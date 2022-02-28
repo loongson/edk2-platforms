@@ -28,7 +28,7 @@ SetPeiServicesTablePointer (
   IN CONST EFI_PEI_SERVICES ** PeiServicesTablePointer
   )
 {
-  loongarch_csr_writeq ((UINTN)PeiServicesTablePointer, LOONGARCH_CSR_KS0);
+  LOONGARCH_CSR_WRITEQ ((UINTN)PeiServicesTablePointer, LOONGARCH_CSR_KS0);
 }
 
 /**
@@ -41,7 +41,6 @@ SetPeiServicesTablePointer (
   If the cached PEI Services Table pointer is NULL, then ASSERT ().
 
   @return  The pointer to PeiServices.
-
 **/
 CONST EFI_PEI_SERVICES **
 EFIAPI
@@ -51,7 +50,7 @@ GetPeiServicesTablePointer (
 {
   UINTN  val;
 
-  loongarch_csr_readq (val, LOONGARCH_CSR_KS0);
+  LOONGARCH_CSR_READQ (val, LOONGARCH_CSR_KS0);
   return (CONST EFI_PEI_SERVICES **)val;
 }
 

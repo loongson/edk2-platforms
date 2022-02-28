@@ -159,6 +159,12 @@ FilterAndProcess (
 
 /**
   This FILTER_FUNCTION checks if a handle corresponds to a PCI display device.
+  
+  @param  Handle   The handle to check
+  @param  ReportText   A pointer to a string at the time of the error.
+
+  @retval    TURE     THe  handle corresponds to a PCI display device.
+  @retval    FALSE    THe  handle does not corresponds to a PCI display device.
 **/
 BOOLEAN
 EFIAPI
@@ -194,6 +200,11 @@ IsPciDisplay (
 /**
   This CALLBACK_FUNCTION attempts to connect a handle non-recursively, asking
   the matching driver to produce all first-level child handles.
+
+  @param  Handle   The handle to connect.
+  @param  ReportText   A pointer to a string at the time of the error.
+
+  @retval  VOID
 **/
 VOID
 EFIAPI
@@ -218,6 +229,11 @@ Connect (
 /**
   This CALLBACK_FUNCTION retrieves the EFI_DEVICE_PATH_PROTOCOL from the
   handle, and adds it to ConOut and ErrOut.
+
+  @param  Handle   The handle to retrieves.
+  @param  ReportText   A pointer to a string at the time of the error.
+
+  @retval  VOID
 **/
 VOID
 EFIAPI
@@ -253,7 +269,15 @@ AddOutput (
   DEBUG ((EFI_D_VERBOSE, "%a: %s: added to ConOut and ErrOut\n", __FUNCTION__,
     ReportText));
 }
+/**
+  Register the boot option.
 
+  @param  FileGuid      File Guid. 
+  @param  Description   Option descriptor.
+  @param  Attributes    Option  Attributes.
+
+  @retval  VOID
+**/
 VOID
 PlatformRegisterFvBootOption (
   IN EFI_GUID                         *FileGuid,
@@ -446,7 +470,13 @@ RemoveStaleFvFileOptions (
   EfiBootManagerFreeLoadOptions (BootOptions, BootOptionCount);
 }
 
+/**
+  Register the boot option And Keys.
 
+  @param  VOID 
+
+  @retval  VOID
+**/
 VOID
 PlatformRegisterOptionsAndKeys (
   VOID

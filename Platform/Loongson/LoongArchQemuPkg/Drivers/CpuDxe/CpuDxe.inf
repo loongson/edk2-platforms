@@ -23,6 +23,7 @@
 [Sources.LOONGARCH64]
   LoongArch64/Exception.c
   LoongArch64/LoongArch.S
+  LoongArch64/Fpu.S
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -41,6 +42,7 @@
   PeCoffGetEntryPointLib
   UefiDriverEntryPoint
   UefiLib
+  MmuLib
 
 [Protocols]
   gEfiCpuArchProtocolGuid
