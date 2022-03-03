@@ -268,7 +268,6 @@ FILE FV_IMAGE = 9E21FD93-9C72-4c15-8C4B-E77F1DB2D792 {
     UI       STRING ="$(MODULE_NAME)" Optional
   }
 
-
 #####################################################################################################
 [Rule.Common.PEI_CORE]
   FILE PEI_CORE = $(NAMED_GUID) {

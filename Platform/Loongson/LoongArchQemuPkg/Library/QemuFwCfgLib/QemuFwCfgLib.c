@@ -437,7 +437,7 @@ QemuFwCfgInitialize (
     // Check for memory node
     //
     Type = fdt_getprop (DeviceTreeBase, Node, "compatible", &Len);
-    if ((Type) 
+    if ((Type)
       && (AsciiStrnCmp (Type, "qemu,fw-cfg-mmio", Len) == 0))
     {
       //

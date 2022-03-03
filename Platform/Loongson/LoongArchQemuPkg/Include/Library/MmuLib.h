@@ -48,7 +48,7 @@ GetLoongArchMemoryRegion (
   @param[in]  Attributes   The Attributes to be set.
 
   @retval  EFI_SUCCESS    The Attributes was set successfully
-          
+
 **/
 EFI_STATUS
 LoongArchSetMemoryAttributes (
@@ -73,7 +73,7 @@ LoongArchSetMemoryRegionNoExec (
 /**
   Create a page table and initialize the MMU.
 
-  @param[] VOID 
+  @param[] VOID
 
   @retval  VOID
 **/

@@ -33,7 +33,7 @@
   gLoongArchQemuPkgTokenSpaceGuid.PcdInvalidPte
   gLoongArchQemuPkgTokenSpaceGuid.PcdFlashSecFvSize
   gLoongArchQemuPkgTokenSpaceGuid.PcdFlashSecFvBase
-  gLoongArchQemuPkgTokenSpaceGuid.PcdRamSize  
+  gLoongArchQemuPkgTokenSpaceGuid.PcdRamSize
 
 [FixedPcd]
   gLoongArchQemuPkgTokenSpaceGuid.PcdRamRegionsBottom

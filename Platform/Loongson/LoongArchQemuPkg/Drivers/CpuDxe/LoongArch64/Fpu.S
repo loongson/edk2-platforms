@@ -22,7 +22,7 @@
   Load the FPU with signalling NANS.  This bit pattern we're using has
   the property that no matter whether considered as single or as double
   precision represents signaling NANS.
- 
+
   The value to initialize FCSR0 to comes in $A0.
  */
 ASM_FUNC(InitFpu)

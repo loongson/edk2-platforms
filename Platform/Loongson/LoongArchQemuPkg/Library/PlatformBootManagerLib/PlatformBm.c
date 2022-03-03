@@ -121,7 +121,7 @@ FilterAndProcess (
     //
     // This is not an error, just an informative condition.
     //
-    DEBUG ((EFI_D_VERBOSE, "%a: %g: %r\n", __FUNCTION__, ProtocolGuid,
+    DEBUG ((DEBUG_VERBOSE, "%a: %g: %r\n", __FUNCTION__, ProtocolGuid,
       Status));
     return;
   }
@@ -159,7 +159,7 @@ FilterAndProcess (
 
 /**
   This FILTER_FUNCTION checks if a handle corresponds to a PCI display device.
-  
+
   @param  Handle   The handle to check
   @param  ReportText   A pointer to a string at the time of the error.
 
@@ -189,7 +189,7 @@ IsPciDisplay (
   Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, 0 /* Offset */,
                         sizeof Pci / sizeof (UINT32), &Pci);
   if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR, "%a: %s: %r\n", __FUNCTION__, ReportText, Status));
+    DEBUG ((DEBUG_ERROR, "%a: %s: %r\n", __FUNCTION__, ReportText, Status));
     return FALSE;
   }
 
@@ -221,7 +221,7 @@ Connect (
                   NULL,   // RemainingDevicePath -- produce all children
                   FALSE   // Recursive
                   );
-  DEBUG ((EFI_ERROR (Status) ? EFI_D_ERROR : EFI_D_VERBOSE, "%a: %s: %r\n",
+  DEBUG ((EFI_ERROR (Status) ? DEBUG_ERROR : DEBUG_VERBOSE, "%a: %s: %r\n",
     __FUNCTION__, ReportText, Status));
 }
 
@@ -247,32 +247,32 @@ AddOutput (
 
   DevicePath = DevicePathFromHandle (Handle);
   if (DevicePath == NULL) {
-    DEBUG ((EFI_D_ERROR, "%a: %s: handle %p: device path not found\n",
+    DEBUG ((DEBUG_ERROR, "%a: %s: handle %p: device path not found\n",
       __FUNCTION__, ReportText, Handle));
     return;
   }
 
   Status = EfiBootManagerUpdateConsoleVariable (ConOut, DevicePath, NULL);
   if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR, "%a: %s: adding to ConOut: %r\n", __FUNCTION__,
+    DEBUG ((DEBUG_ERROR, "%a: %s: adding to ConOut: %r\n", __FUNCTION__,
       ReportText, Status));
     return;
   }
 
   Status = EfiBootManagerUpdateConsoleVariable (ErrOut, DevicePath, NULL);
   if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR, "%a: %s: adding to ErrOut: %r\n", __FUNCTION__,
+    DEBUG ((DEBUG_ERROR, "%a: %s: adding to ErrOut: %r\n", __FUNCTION__,
       ReportText, Status));
     return;
   }
 
-  DEBUG ((EFI_D_VERBOSE, "%a: %s: added to ConOut and ErrOut\n", __FUNCTION__,
+  DEBUG ((DEBUG_VERBOSE, "%a: %s: added to ConOut and ErrOut\n", __FUNCTION__,
     ReportText));
 }
 /**
   Register the boot option.
 
-  @param  FileGuid      File Guid. 
+  @param  FileGuid      File Guid.
   @param  Description   Option descriptor.
   @param  Attributes    Option  Attributes.
 
@@ -454,7 +454,7 @@ RemoveStaleFvFileOptions (
       DevicePathString = ConvertDevicePathToText (BootOptions[Index].FilePath,
                            FALSE, FALSE);
       DEBUG ((
-        EFI_ERROR (Status) ? EFI_D_WARN : EFI_D_VERBOSE,
+        EFI_ERROR (Status) ? EFI_D_WARN : DEBUG_VERBOSE,
         "%a: removing stale Boot#%04x %s: %r\n",
         __FUNCTION__,
         (UINT32)BootOptions[Index].OptionNumber,
@@ -473,7 +473,7 @@ RemoveStaleFvFileOptions (
 /**
   Register the boot option And Keys.
 
-  @param  VOID 
+  @param  VOID
 
   @retval  VOID
 **/
@@ -623,16 +623,16 @@ PlatformBootManagerAfterConsole (
   //
   // Show the splash screen.
   //
-  DEBUG ((EFI_D_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
+  DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
   BootLogoEnableLogo ();
-  DEBUG ((EFI_D_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
+  DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
 
   //
   // Connect the rest of the devices.
   //
-  DEBUG ((EFI_D_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
+  DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
   EfiBootManagerConnectAll ();
-  DEBUG ((EFI_D_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
+  DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
 
   SetBootParams ();
   //
@@ -641,31 +641,31 @@ PlatformBootManagerAfterConsole (
   // first (see above) -- PCI enumeration blocks ACPI table installation, if
   // there is a PCI host.
   //
-  DEBUG ((EFI_D_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
+  DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
   TryRunningQemuKernel ();
-  DEBUG ((EFI_D_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
+  DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
 
   //
   // Enumerate all possible boot options, then filter and reorder them based on
   // the QEMU configuration.
   //
-  DEBUG ((EFI_D_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
+  DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
   EfiBootManagerRefreshAllBootOption ();
-  DEBUG ((EFI_D_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
+  DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
 
   //
   // Register UEFI Shell
   //
-  DEBUG ((EFI_D_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
+  DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
   PlatformRegisterFvBootOption (
     &gUefiShellFileGuid, L"EFI Internal Shell", LOAD_OPTION_ACTIVE
     );
-  DEBUG ((EFI_D_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
+  DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
 
   RemoveStaleFvFileOptions ();
-  DEBUG ((EFI_D_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
+  DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
   SetBootOrderFromQemu ();
-  DEBUG ((EFI_D_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
+  DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
 }
 
 /**
