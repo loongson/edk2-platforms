@@ -43,7 +43,6 @@
   DEFINE NETWORK_ISCSI_ENABLE            = FALSE
 
 !include NetworkPkg/NetworkDefines.dsc.inc
-
 ############################################################################
 #
 # Defines for default states.  These can be changed on the command line.
@@ -62,8 +61,8 @@
 [BuildOptions.LOONGARCH64.EDKII.SEC]
   *_*_*_CC_FLAGS                 =
 
-#[BuildOptions.common.EDKII.DXE_CORE,BuildOptions.common.EDKII.DXE_DRIVER,BuildOptions.common.EDKII.UEFI_DRIVER,BuildOptions.common.EDKII.UEFI_APPLICATION]
-#  GCC:*_*_*_DLINK_FLAGS = -z common-page-size=0x1000
+[BuildOptions.common.EDKII.DXE_CORE,BuildOptions.common.EDKII.DXE_DRIVER,BuildOptions.common.EDKII.UEFI_DRIVER,BuildOptions.common.EDKII.UEFI_APPLICATION]
+    GCC:*_*_LOONGARCH64_DLINK_FLAGS = -z common-page-size=0x1000
 
 [BuildOptions.common.EDKII.DXE_RUNTIME_DRIVER]
   GCC:*_*_LOONGARCH64_DLINK_FLAGS = -z common-page-size=0x10000
@@ -116,10 +115,10 @@
   PciCapLib                        | OvmfPkg/Library/BasePciCapLib/BasePciCapLib.inf
   PciCapPciSegmentLib              | OvmfPkg/Library/BasePciCapPciSegmentLib/BasePciCapPciSegmentLib.inf
   PciCapPciIoLib                   | OvmfPkg/Library/UefiPciCapPciIoLib/UefiPciCapPciIoLib.inf
-
   IoLib                            | MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic.inf
   SerialPortLib                    | Platform/Loongson/LoongArchQemuPkg/Library/SerialPortLib/SerialPortLib.inf
   EfiResetSystemLib                | Platform/Loongson/LoongArchQemuPkg/Library/ResetSystemLib/ResetSystemLib.inf
+  ResetSystemLib                   | Platform/Loongson/LoongArchQemuPkg/Library/ResetSystemLib/ResetSystemLib.inf
   UefiLib                          | MdePkg/Library/UefiLib/UefiLib.inf
   UefiBootServicesTableLib         | MdePkg/Library/UefiBootServicesTableLib/UefiBootServicesTableLib.inf
   UefiRuntimeServicesTableLib      | MdePkg/Library/UefiRuntimeServicesTableLib/UefiRuntimeServicesTableLib.inf
@@ -131,7 +130,6 @@
   UefiUsbLib                       | MdePkg/Library/UefiUsbLib/UefiUsbLib.inf
   SerializeVariablesLib            | OvmfPkg/Library/SerializeVariablesLib/SerializeVariablesLib.inf
   CustomizedDisplayLib             | MdeModulePkg/Library/CustomizedDisplayLib/CustomizedDisplayLib.inf
-  ResetSystemLib                   | Platform/Loongson/LoongArchQemuPkg/Library/ResetSystemLib/ResetSystemLib.inf
   DebugPrintErrorLevelLib          | MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
   TpmMeasurementLib                | MdeModulePkg/Library/TpmMeasurementLibNull/TpmMeasurementLibNull.inf
   AuthVariableLib                  | MdeModulePkg/Library/AuthVariableLibNull/AuthVariableLibNull.inf
@@ -151,7 +149,6 @@
 !endif
   UefiBootManagerLib               | MdeModulePkg/Library/UefiBootManagerLib/UefiBootManagerLib.inf
   OrderedCollectionLib             | MdePkg/Library/BaseOrderedCollectionRedBlackTreeLib/BaseOrderedCollectionRedBlackTreeLib.inf
-  HobLib                           | MdePkg/Library/PeiHobLib/PeiHobLib.inf
   ReportStatusCodeLib              | MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
 
   PeCoffGetEntryPointLib           | MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
@@ -172,41 +169,33 @@
   FrameBufferBltLib                | MdeModulePkg/Library/FrameBufferBltLib/FrameBufferBltLib.inf
   QemuFwCfgLib                     | OvmfPkg/Library/QemuFwCfgLib/QemuFwCfgLibMmio.inf
 
-[LibraryClasses.common.SEC]
   DebugLib                         | MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
-  DebugAgentLib                    | MdeModulePkg/Library/DebugAgentLibNull/DebugAgentLibNull.inf
+
+  PeiServicesLib                   | MdePkg/Library/PeiServicesLib/PeiServicesLib.inf
+[LibraryClasses.common.SEC]
   ReportStatusCodeLib              | MdeModulePkg/Library/PeiReportStatusCodeLib/PeiReportStatusCodeLib.inf
   HobLib                           | MdePkg/Library/PeiHobLib/PeiHobLib.inf
-  PeiServicesLib                   | MdePkg/Library/PeiServicesLib/PeiServicesLib.inf
   MemoryAllocationLib              | MdePkg/Library/PeiMemoryAllocationLib/PeiMemoryAllocationLib.inf
-  PeCoffLib                        | MdePkg/Library/BasePeCoffLib/BasePeCoffLib.inf
-
 
 [LibraryClasses.common.PEI_CORE]
   HobLib                           | MdePkg/Library/PeiHobLib/PeiHobLib.inf
-  PeiServicesLib                   | MdePkg/Library/PeiServicesLib/PeiServicesLib.inf
   PeiServicesTablePointerLib       | Platform/Loongson/LoongArchQemuPkg/Library/PeiServicesTablePointerLib/PeiServicesTablePointerLib.inf
   MemoryAllocationLib              | MdePkg/Library/PeiMemoryAllocationLib/PeiMemoryAllocationLib.inf
   PeiCoreEntryPoint                | MdePkg/Library/PeiCoreEntryPoint/PeiCoreEntryPoint.inf
   ReportStatusCodeLib              | MdeModulePkg/Library/PeiReportStatusCodeLib/PeiReportStatusCodeLib.inf
   OemHookStatusCodeLib             | MdeModulePkg/Library/OemHookStatusCodeLibNull/OemHookStatusCodeLibNull.inf
   PeCoffGetEntryPointLib           | MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
-  DebugLib                         | MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
-  PeCoffLib                        | MdePkg/Library/BasePeCoffLib/BasePeCoffLib.inf
   QemuFwCfgLib                     | Platform/Loongson/LoongArchQemuPkg/Library/QemuFwCfgLib/QemuFwCfgLib.inf
+  MmuLib                           | Platform/Loongson/LoongArchQemuPkg/Library/MmuLib/MmuBaseLibPei.inf
 
-  MmuLib                       | Platform/Loongson/LoongArchQemuPkg/Library/MmuLib/MmuBaseLibPei.inf
 [LibraryClasses.common.PEIM]
   HobLib                           | MdePkg/Library/PeiHobLib/PeiHobLib.inf
-  PeiServicesLib                   | MdePkg/Library/PeiServicesLib/PeiServicesLib.inf
   PeiServicesTablePointerLib       | Platform/Loongson/LoongArchQemuPkg/Library/PeiServicesTablePointerLib/PeiServicesTablePointerLib.inf
   MemoryAllocationLib              | MdePkg/Library/PeiMemoryAllocationLib/PeiMemoryAllocationLib.inf
   PeimEntryPoint                   | MdePkg/Library/PeimEntryPoint/PeimEntryPoint.inf
   ReportStatusCodeLib              | MdeModulePkg/Library/PeiReportStatusCodeLib/PeiReportStatusCodeLib.inf
   OemHookStatusCodeLib             | MdeModulePkg/Library/OemHookStatusCodeLibNull/OemHookStatusCodeLibNull.inf
   PeCoffGetEntryPointLib           | MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
-  DebugLib                         | MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
-  PeCoffLib                        | MdePkg/Library/BasePeCoffLib/BasePeCoffLib.inf
   PeiResourcePublicationLib        | MdePkg/Library/PeiResourcePublicationLib/PeiResourcePublicationLib.inf
   ExtractGuidedSectionLib          | MdePkg/Library/PeiExtractGuidedSectionLib/PeiExtractGuidedSectionLib.inf
   PcdLib                           | MdePkg/Library/PeiPcdLib/PeiPcdLib.inf
@@ -219,7 +208,6 @@
   DxeCoreEntryPoint                | MdePkg/Library/DxeCoreEntryPoint/DxeCoreEntryPoint.inf
   MemoryAllocationLib              | MdeModulePkg/Library/DxeCoreMemoryAllocationLib/DxeCoreMemoryAllocationLib.inf
   ReportStatusCodeLib              | MdeModulePkg/Library/DxeReportStatusCodeLib/DxeReportStatusCodeLib.inf
-  DebugLib                         | MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
 
 [LibraryClasses.common.DXE_RUNTIME_DRIVER]
   PcdLib                           | MdePkg/Library/DxePcdLib/DxePcdLib.inf
@@ -227,7 +215,6 @@
   DxeCoreEntryPoint                | MdePkg/Library/DxeCoreEntryPoint/DxeCoreEntryPoint.inf
   MemoryAllocationLib              | MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
   ReportStatusCodeLib              | MdeModulePkg/Library/RuntimeDxeReportStatusCodeLib/RuntimeDxeReportStatusCodeLib.inf
-  DebugLib                         | MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
   UefiRuntimeLib                   | MdePkg/Library/UefiRuntimeLib/UefiRuntimeLib.inf
   ExtractGuidedSectionLib          | MdePkg/Library/PeiExtractGuidedSectionLib/PeiExtractGuidedSectionLib.inf
   QemuFwCfgS3Lib                   | OvmfPkg/Library/QemuFwCfgS3Lib/DxeQemuFwCfgS3LibFwCfg.inf
@@ -240,7 +227,6 @@
   DxeCoreEntryPoint                | MdePkg/Library/DxeCoreEntryPoint/DxeCoreEntryPoint.inf
   MemoryAllocationLib              | MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
   ReportStatusCodeLib              | MdeModulePkg/Library/DxeReportStatusCodeLib/DxeReportStatusCodeLib.inf
-  DebugLib                         | MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
   UefiScsiLib                      | MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
   ExtractGuidedSectionLib          | MdePkg/Library/PeiExtractGuidedSectionLib/PeiExtractGuidedSectionLib.inf
   BpiLib                           | Platform/Loongson/LoongArchQemuPkg/Library/BpiLib/BpiLib.inf
@@ -251,7 +237,6 @@
   MemoryAllocationLib              | MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
   ReportStatusCodeLib              | MdeModulePkg/Library/DxeReportStatusCodeLib/DxeReportStatusCodeLib.inf
   UefiScsiLib                      | MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
-  DebugLib                         | MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
   CpuExceptionHandlerLib           | UefiCpuPkg/Library/CpuExceptionHandlerLib/DxeCpuExceptionHandlerLib.inf
   ExtractGuidedSectionLib          | MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
   QemuFwCfgS3Lib                   | OvmfPkg/Library/QemuFwCfgS3Lib/DxeQemuFwCfgS3LibFwCfg.inf
@@ -261,7 +246,6 @@
   PcdLib                           | MdePkg/Library/DxePcdLib/DxePcdLib.inf
   HobLib                           | MdePkg/Library/DxeHobLib/DxeHobLib.inf
   MemoryAllocationLib              | MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
-  DebugLib                         | MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
   ExtractGuidedSectionLib          | MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
 
 
@@ -279,8 +263,8 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdPciBusHotplugDeviceSupport         | FALSE
   gUefiOvmfPkgTokenSpaceGuid.PcdQemuBootOrderPciTranslation            | TRUE
   gUefiOvmfPkgTokenSpaceGuid.PcdQemuBootOrderMmioTranslation           | TRUE
-
 [PcdsFixedAtBuild]
+## BaseLib ##
   gEfiMdePkgTokenSpaceGuid.PcdMaximumUnicodeStringLength               | 1000000
   gEfiMdePkgTokenSpaceGuid.PcdMaximumAsciiStringLength                 | 1000000
   gEfiMdePkgTokenSpaceGuid.PcdMaximumLinkedListLength                  | 1000000
@@ -320,7 +304,7 @@
   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask                        | 0x21
 !else
   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask                        | 0x2f
-!endif  
+!endif
   # DEBUG_ASSERT_ENABLED       0x01
   # DEBUG_PRINT_ENABLED        0x02
   # DEBUG_CODE_ENABLED         0x04
@@ -342,12 +326,7 @@
   #
   gLoongArchQemuPkgTokenSpaceGuid.PcdUefiRamTop                        | 0xA0000000
   gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiExposedTableVersions           | 0x04
-  #                                                                                                                     
-  # Enable NX memory protection for all non-code regions, including OEM and OS                                          
-  # reserved ones, with the exception of LoaderData regions, of which OS loaders                                        
-  # (i.e., GRUB) may assume that its contents are executable.                                                           
-  #                                                                                                                     
-#  gEfiMdeModulePkgTokenSpaceGuid.PcdDxeNxMemoryProtectionPolicy|0xC000000000007FD1
+
   #
   # Network Pcds
   #
@@ -359,7 +338,7 @@
 ################################################################################
 [PcdsDynamicDefault]
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase         | 0
-  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase64       | 0 
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase64       | 0
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64       | 0
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase       | 0
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase64     | 0

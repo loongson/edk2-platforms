@@ -117,7 +117,7 @@ TryRunningQemuKernel (
   @retval  EFI_SUCCESS               The boot parameter was established successfully.
   @retval  EFI_INVALID_PARAMETER     Input GUID is NULL.
   @retval  EFI_NOT_FOUND             Attempted to delete non-existant entry
-  @retval  EFI_OUT_OF_RESOURCES      Not enough memory available            
+  @retval  EFI_OUT_OF_RESOURCES      Not enough memory available
  */
 EFI_STATUS
 EFIAPI

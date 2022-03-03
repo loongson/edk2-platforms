@@ -6,7 +6,7 @@
 
   @par Glossary:
     - Pgd or Pgd or PGD    - Page Global Directory
-    - Pud or Pud or PUD    - Page Upper Directory 
+    - Pud or Pud or PUD    - Page Upper Directory
     - Pmd or Pmd or PMD    - Page Middle Directory
     - Pte or pte or PTE    - Page Table Entry
     - Val or VAL or val    - Value
@@ -93,7 +93,7 @@ typedef struct { UINTN PteVal; } PTE;
  **/
 #define GET_PAGE_ATTRIBUTES(x)  (UINTN) {(PTE_VAL(x) & ~PFN_MASK)}
 /**
-  Gets the virtual address of the next block of the specified virtual address 
+  Gets the virtual address of the next block of the specified virtual address
   that is aligned with the size of the global page directory mapping.
 
   @param  Address  Specifies the virtual address.
@@ -106,7 +106,7 @@ typedef struct { UINTN PteVal; } PTE;
   (Boundary - 1 < (End) - 1)? Boundary: (End);    \
 })
 /**
-  Gets the virtual address of the next block of the specified virtual address 
+  Gets the virtual address of the next block of the specified virtual address
   that is aligned with the size of the page upper directory mapping.
 
   @param  Address  Specifies the virtual address.
@@ -119,7 +119,7 @@ typedef struct { UINTN PteVal; } PTE;
   (Boundary - 1 < (End) - 1)? Boundary: (End);    \
 })
 /**
-  Gets the virtual address of the next block of the specified virtual address 
+  Gets the virtual address of the next block of the specified virtual address
   that is aligned with the size of the page middle directory mapping.
 
   @param  Address  Specifies the virtual address.
@@ -207,7 +207,7 @@ inline
 UINTN
 pgd_none (
   IN PGD pgd
-  ) 
+  )
 {
   return (PGD_VAL(pgd) == (UINTN)PcdGet64(PcdInvalidPud));
 }

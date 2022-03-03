@@ -33,41 +33,41 @@
 /*
   Set Cpu Status Register STLB Page Size.
 
-  @param val  Page Size. 
+  @param val  Page Size.
 
-  @retval  VOID      
+  @retval  VOID
  */
 #define WRITE_CSR_STLB_PAGE_SIZE(val)  LOONGARCH_CSR_WRITEQ((val), LOONGARCH_CSR_STLBPGSIZE)
 /*
   Set Cpu Status Register Page Size.
 
-  @param size  Page Size. 
+  @param size  Page Size.
 
-  @retval  VOID      
+  @retval  VOID
  */
 #define WRITE_CSR_PAGE_SIZE(size)  LOONGARCH_CSR_XCHGQ((size) << CSR_TLBIDX_SIZE, CSR_TLBIDX_SIZE_MASK, LOONGARCH_CSR_TLBIDX)
 /*
   Set Cpu Status Register TLBREFILL Page Size.
 
-  @param size  Page Size. 
+  @param size  Page Size.
 
-  @retval  VOID      
+  @retval  VOID
  */
 #define WRITE_CSR_TLBREFILL_PAGE_SIZE(size)  LOONGARCH_CSR_XCHGQ((size) << CSR_TLBREHI_PS_SHIFT, CSR_TLBREHI_PS, LOONGARCH_CSR_TLBREHI)
 /*
-  Set Cpu Status Register TLBREFILL Base Address. 
+  Set Cpu Status Register TLBREFILL Base Address.
 
-  @param BaseAddress the code base address of TLB refills . 
+  @param BaseAddress the code base address of TLB refills .
 
-  @retval  VOID      
+  @retval  VOID
  */
 #define SET_REFILL_TLBBASE(BaseAddress) LOONGARCH_CSR_WRITEQ((BaseAddress), LOONGARCH_CSR_TLBREBASE);
 /*
-  Get Cpu Status Register Page Size. 
+  Get Cpu Status Register Page Size.
 
-  @param  val  Gets the page size. 
+  @param  val  Gets the page size.
 
-  @retval  VOID      
+  @retval  VOID
  */
 #define READ_CSR_PAGE_SIZE(val)                               \
 {                                                             \

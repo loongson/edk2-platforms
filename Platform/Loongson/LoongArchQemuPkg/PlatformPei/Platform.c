@@ -134,7 +134,7 @@ MemMapInitialization (
   VOID
   )
 {
-  DEBUG ((EFI_D_INFO, "==%a==\n", __func__));
+  DEBUG ((DEBUG_INFO, "==%a==\n", __func__));
   //
   // Create Memory Type Information HOB
   //
@@ -157,7 +157,7 @@ MiscInitialization (
   VOID
   )
 {
-  DEBUG ((EFI_D_INFO, "==%a==\n", __func__));
+  DEBUG ((DEBUG_INFO, "==%a==\n", __func__));
   //
   // Creat CPU HOBs.
   //
@@ -246,7 +246,7 @@ InitializePlatform (
 {
   EFI_STATUS Status;
 
-  DEBUG ((EFI_D_INFO, "Platform PEIM Loaded\n"));
+  DEBUG ((DEBUG_INFO, "Platform PEIM Loaded\n"));
 
   Status = PeiServicesInstallPpi (&mPpiListBootMode);
   ASSERT_EFI_ERROR (Status);

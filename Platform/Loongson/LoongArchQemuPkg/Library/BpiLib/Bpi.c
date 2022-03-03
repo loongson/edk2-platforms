@@ -31,7 +31,7 @@
   @param  Buffer A pointer to the data to calculate the checksum.
   @param  Size   The number of data involved in calculating the checksum.
 
-  @retval  VOID      
+  @retval  VOID
  */
 VOID
 BpiChecksum (
@@ -63,7 +63,7 @@ BpiChecksum (
   @param  Bpi    A pointer to the structure that holds the header of the linked list.
   @param  Header The address of the node to join the linked list.
 
-  @retval  VOID      
+  @retval  VOID
  */
 VOID
 EFIAPI
@@ -92,7 +92,7 @@ AddToList (
 
   @param  Bpi    A pointer to the structure that holds the header of the linked list.
 
-  @retval  VOID      
+  @retval  VOID
  */
 VOID
 EFIAPI
@@ -103,10 +103,10 @@ ShowList (
   EXT_LIST *LastHeader;
 
   if (Bpi->ExtList == NULL) {
-    DEBUG ((EFI_D_INFO, "List is null\n"));
+    DEBUG ((DEBUG_INFO, "List is null\n"));
   } else {
     for (LastHeader = Bpi->ExtList; LastHeader; LastHeader = LastHeader->next) {
-      DEBUG ((EFI_D_INFO, "Header: 0x%llx, Legth: 0x%x, CheckSum: 0x%x\n", LastHeader, LastHeader->Length, 
+      DEBUG ((DEBUG_INFO, "Header: 0x%llx, Legth: 0x%x, CheckSum: 0x%x\n", LastHeader, LastHeader->Length,
             LastHeader->CheckSum));
     }
   }
@@ -118,7 +118,7 @@ ShowList (
   @param  Bpi    A pointer to the structure that holds the header of the linked list.
   @param  MemMap  A pointer to a memory-mapped struct.
 
-  @retval  VOID      
+  @retval  VOID
  */
 VOID
 EFIAPI
@@ -147,7 +147,7 @@ InitMemMap (
   RamSize = PcdGet64 (PcdRamSize); //in Byte
 
   ASSERT (RamSize != 0);
-  DEBUG ((EFI_D_INFO, "RamSize %lld Byte\n", RamSize));
+  DEBUG ((DEBUG_INFO, "RamSize %lld Byte\n", RamSize));
 
   /*
    * 1. The lowest 2M region cannot record in MemMap, cause Linux ram region should begin with usable ram.
@@ -169,10 +169,10 @@ InitMemMap (
   if (RamSize > SIZE_1GB) {
     Status = QemuFwCfgFindFile ("etc/memmap", &FwCfgItem, &FwCfgSize);
     if (EFI_ERROR (Status)) {
-      DEBUG ((EFI_D_ERROR, "fw read etc/la_memmap error Status %d \n", Status));
+      DEBUG ((DEBUG_ERROR, "fw read etc/la_memmap error Status %d \n", Status));
     }
     if (FwCfgSize % sizeof MemMapEntry != 0) {
-      DEBUG ((EFI_D_ERROR, "no MemMapEntry FwCfgSize:%d\n", FwCfgSize));
+      DEBUG ((DEBUG_ERROR, "no MemMapEntry FwCfgSize:%d\n", FwCfgSize));
     }
 
     QemuFwCfgSelectItem (FwCfgItem);
@@ -181,7 +181,7 @@ InitMemMap (
     for (Processed = 0; Processed < (FwCfgSize / sizeof MemMapEntry); Processed++) {
       pEntry = StartEntry + Processed;
       DEBUG ((
-        EFI_D_INFO,
+        DEBUG_INFO,
         "%a:%d Base=0x%Lx Length=0x%Lx Type=%u sizeof (MemMapEntry):%d, Processed:%d, FwCfgSize:%d\n",
         __FUNCTION__,
         __LINE__,
@@ -201,7 +201,7 @@ InitMemMap (
 #ifdef DEBUG_BPI
   INTN j;
   for (j = 0; j < i; j++) {
-    DEBUG ((EFI_D_INFO, "%d: type: 0x%x, start: 0x%llx, size: 0x%llx\n", j, MemMap->Map[j].MemType,
+    DEBUG ((DEBUG_INFO, "%d: type: 0x%x, start: 0x%llx, size: 0x%llx\n", j, MemMap->Map[j].MemType,
            MemMap->Map[j].MemStart, MemMap->Map[j].MemSize));
   }
 #endif
@@ -213,7 +213,7 @@ InitMemMap (
   @param  Pos    Find the starting location of the bit domain.
   @param  Size   The length of the bit domain found.
 
-  @retval  VOID      
+  @retval  VOID
  */
 VOID
 FindBits (
@@ -249,7 +249,7 @@ FindBits (
   @param  Si    A pointer to the SCREEN_INFO struct.
   @param  Gop   A pointer to the EFI_GRAPHICS_OUTPUT_PROTOCOL structure.
 
-  @retval  VOID      
+  @retval  VOID
  */
 EFI_STATUS
 SetupGraphicsFromGop (
@@ -342,7 +342,7 @@ SetupGraphicsFromGop (
 
   @param  Si    A pointer to the SCREEN_INFO struct.
 
-  @retval  VOID      
+  @retval  VOID
  */
 EFI_STATUS
 SetupGraphics (
@@ -391,7 +391,7 @@ SetupGraphics (
   @param  Bpi    A pointer to the BootParamsInterface struct.
   @param  si     A pointer to the SCREEN_INFO struct.
 
-  @retval  VOID      
+  @retval  VOID
  */
 VOID
 EFIAPI
@@ -419,7 +419,7 @@ InitScreenInfo (
   @param  Bpi    A pointer to the BootParamsInterface struct.
   @param  SystemTable     A pointer to the EFI_SYSTEM_TABLE struct.
 
-  @retval  VOID      
+  @retval  VOID
  */
 VOID
 EFIAPI
@@ -428,7 +428,7 @@ InitializeBpi (
   IN EFI_SYSTEM_TABLE   *SystemTable
   )
 {
-  DEBUG ((EFI_D_INFO, "New BPI addr: 0x%llx\n", (UINTN)Bpi));
+  DEBUG ((DEBUG_INFO, "New BPI addr: 0x%llx\n", (UINTN)Bpi));
   UINT8 Data[8] = {'B', 'P', 'I', '0', '1', '0', '0', '1'};
   CopyMem (&Bpi->Signature, Data, sizeof (UINT64));
   Bpi->SystemTable = SystemTable;
@@ -442,7 +442,7 @@ InitializeBpi (
   @retval  EFI_SUCCESS               The boot parameter was established successfully.
   @retval  EFI_INVALID_PARAMETER     Input GUID is NULL.
   @retval  EFI_NOT_FOUND             Attempted to delete non-existant entry
-  @retval  EFI_OUT_OF_RESOURCES      Not enough memory available            
+  @retval  EFI_OUT_OF_RESOURCES      Not enough memory available
  */
 EFI_STATUS
 EFIAPI

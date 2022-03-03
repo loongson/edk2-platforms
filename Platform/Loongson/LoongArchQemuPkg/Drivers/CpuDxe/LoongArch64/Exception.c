@@ -9,11 +9,11 @@
     - ECFG      - Exception Configure
     - ERA       - Exception Return Address
     - BADV      - Bad Virtual Address
-    - BADI      - Bad Instructions 
+    - BADI      - Bad Instructions
     - Epc or EPC or epc   - Exception Program Counter
     - pc or PC or pc      - Program Counter
-    - CRMD      - Current Mode 
-    - PRMD      - Previous Mode 
+    - CRMD      - Current Mode
+    - PRMD      - Previous Mode
     - CsrEuen      - Cpu Status Register Extern Unit Enable
     - fpu or fp or FP   - Float Point Unit
     - LOONGARCH   - Loongson Arch
@@ -99,7 +99,7 @@ InterruptHandler (
   if (Pending & (1 << 11/*TI*/)) {
       gExceptionHandlers[ExceptionType] (ExceptionType, SystemContext);
   } else {
-      DEBUG ((EFI_D_INFO, "Pending: 0x%0x, ExceptionType: 0x%0x\n", Pending, ExceptionType));
+      DEBUG ((DEBUG_INFO, "Pending: 0x%0x, ExceptionType: 0x%0x\n", Pending, ExceptionType));
   }
 }
 
@@ -238,7 +238,7 @@ CommonExceptionEntry (
   )
 {
   INT32    ExceptionType;
-  UINT64   CsrEuen, FpuStatus;	
+  UINT64   CsrEuen, FpuStatus;
 
   ExceptionType = SystemContext.SystemContextLoongArch64->ESTAT & CSR_ESTAT_EXC;
   ExceptionType = ExceptionType >> CSR_ESTAT_EXC_SHIFT;
@@ -253,14 +253,14 @@ CommonExceptionEntry (
       InterruptHandler (ExceptionType, SystemContext);
       if (!FpuStatus) {
         LOONGARCH_CSR_READQ (CsrEuen, LOONGARCH_CSR_EUEN);
-	if (CsrEuen & CSR_EUEN_FPEN) {
-	  /*
-	   * Since Hw FP is enabled during interrupt handler,
-	   * disable FP
-	   */
-	   CsrEuen &= ~CSR_EUEN_FPEN;
-	   LOONGARCH_CSR_WRITEQ (CsrEuen, LOONGARCH_CSR_EUEN);
-	}
+        if (CsrEuen & CSR_EUEN_FPEN) {
+          /*
+           * Since Hw FP is enabled during interrupt handler,
+           * disable FP
+           */
+           CsrEuen &= ~CSR_EUEN_FPEN;
+           LOONGARCH_CSR_WRITEQ (CsrEuen, LOONGARCH_CSR_EUEN);
+        }
       }
       break;
     case EXC_FPDIS:
@@ -284,7 +284,7 @@ CommonExceptionEntry (
 
   @retval EFI_SUCCESS           Initialization succeeded
   @retval EFI_NOT_FOUND          Could not Found resources.
-  @retval EFI_OUT_OF_RESOURCES   No enough resources.                             
+  @retval EFI_OUT_OF_RESOURCES   No enough resources.
 **/
 EFI_STATUS
 InitializeExceptions (
@@ -317,15 +317,15 @@ InitializeExceptions (
          return Status;
   }
 
-  DEBUG ((EFI_D_INFO, "Set Exception Base Address\n"));
+  DEBUG ((DEBUG_INFO, "Set Exception Base Address\n"));
   CopyMem ((char *)Address, LoongArchException, (LoongArchExceptionEnd - LoongArchException));
   InvalidateInstructionCacheRange ((char *)Address, (LoongArchExceptionEnd - LoongArchException));
 
   SetEbase (Address);
-  DEBUG ((EFI_D_INFO, "LoongArchException address: 0x%p\n", Address));
-  DEBUG ((EFI_D_INFO, "LoongArchExceptionEnd address: 0x%p\n", Address + (LoongArchExceptionEnd - LoongArchException)));
+  DEBUG ((DEBUG_INFO, "LoongArchException address: 0x%p\n", Address));
+  DEBUG ((DEBUG_INFO, "LoongArchExceptionEnd address: 0x%p\n", Address + (LoongArchExceptionEnd - LoongArchException)));
 
-  DEBUG ((EFI_D_INFO, "InitializeExceptions, IrqEnabled = %x\n", IrqEnabled));
+  DEBUG ((DEBUG_INFO, "InitializeExceptions, IrqEnabled = %x\n", IrqEnabled));
   if (IrqEnabled) {
     //
     // Restore interrupt state

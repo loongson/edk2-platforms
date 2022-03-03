@@ -179,12 +179,12 @@ CpuInit (
   interrupt or exception type specified by InterruptType. If InterruptHandler is NULL, then the
   handler for the processor interrupt or exception type specified by InterruptType is uninstalled.
   The installed handler is called once for each processor interrupt or exception.
-  
+
   @param  InterruptType   Interrupt Type.
   @param  InterruptHandler A pointer to a function of type EFI_CPU_INTERRUPT_HANDLER that is called
   when a processor interrupt occurs. If this parameter is NULL, then the handler
   will be uninstalled.
-  
+
   @retval EFI_SUCCESS           The handler for the processor interrupt was successfully installed or uninstalled.
   @retval EFI_ALREADY_STARTED   InterruptHandler is not NULL, and a handler for InterruptType was
   previously installed.

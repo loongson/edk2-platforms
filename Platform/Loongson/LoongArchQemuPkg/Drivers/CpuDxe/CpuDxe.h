@@ -102,7 +102,7 @@ CpuSetMemoryAttributes (
 
   @retval EFI_SUCCESS           Initialization succeeded
   @retval EFI_NOT_FOUND          Could not Found resources.
-  @retval EFI_OUT_OF_RESOURCES   No enough resources.                             
+  @retval EFI_OUT_OF_RESOURCES   No enough resources.
 **/
 EFI_STATUS
 InitializeExceptions (
@@ -139,7 +139,7 @@ SetEbase (
   Load the FPU with signalling NANS.  This bit pattern we're using has
   the property that no matter whether considered as single or as double
   precision represents signaling NANS.
- 
+
   @param  fcsr  The value to initialize FCSR0
 
   @retval      The Old Exception Base Address.

@@ -56,7 +56,7 @@ PublishPeiMemory (
   Status = PublishSystemMemory (Base, Size);
   ASSERT_EFI_ERROR (Status);
 
-  DEBUG ((EFI_D_INFO, "Publish Memory Initialize done.\n"));
+  DEBUG ((DEBUG_INFO, "Publish Memory Initialize done.\n"));
   return Status;
 }
 
@@ -77,7 +77,7 @@ InitializeRamRegions (
   // DDR memory space address range
   // 0x00000000 - 0x10000000  lower 256M memory space
   // 0x90000000 - BASE_4GB    if there is
-  // BASE_4GB   - 
+  // BASE_4GB   -
   Base = PcdGet64 (PcdRamRegionsBottom);
   End  = Base + PcdGet64 (PcdRamSize) - 0x10000000;
 
@@ -85,7 +85,7 @@ InitializeRamRegions (
   // Create memory HOBs.
   // Put memory below 4G address space at the first memory HOB
   //
-  DEBUG ((EFI_D_INFO, "%a: MemoryBase=%llx, MemoryEnd=%llx\n", __FUNCTION__, Base, End));
+  DEBUG ((DEBUG_INFO, "%a: MemoryBase=%llx, MemoryEnd=%llx\n", __FUNCTION__, Base, End));
 
   if (End > BASE_4GB) {
     AddMemoryRangeHob (Base, BASE_4GB);

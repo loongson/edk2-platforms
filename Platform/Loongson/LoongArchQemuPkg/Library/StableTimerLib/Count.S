@@ -19,7 +19,7 @@
 # @param A0 The interrupt number
 #
 ASM_FUNC(CpuSetIP)
-    csrrd   T0, LOONGARCH_CSR_ECFG 
+    csrrd   T0, LOONGARCH_CSR_ECFG
     or      T0, T0, A0
     csrwr   T0, LOONGARCH_CSR_ECFG
     jirl    ZERO, RA,0
