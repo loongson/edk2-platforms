@@ -191,7 +191,7 @@ FindFfsFileAndSection (
   EFI_PHYSICAL_ADDRESS        EndOfFile;
 
   if (Fv->Signature != EFI_FVH_SIGNATURE) {
-    DEBUG ((EFI_D_ERROR, "FV at %p does not have FV header signature\n", Fv));
+    DEBUG ((DEBUG_ERROR, "FV at %p does not have FV header signature\n", Fv));
     return EFI_VOLUME_CORRUPTED;
   }
 
@@ -274,7 +274,7 @@ FindPeiCoreImageBaseInFv (
                &Section
                );
     if (EFI_ERROR (Status)) {
-      DEBUG ((EFI_D_ERROR, "Unable to find PEI Core image\n"));
+      DEBUG ((DEBUG_ERROR, "Unable to find PEI Core image\n"));
       return Status;
     }
   }
@@ -350,12 +350,12 @@ SecStartupPhase2 (
   SecCoreData->BootFirmwareVolumeBase = BootFv;
   SecCoreData->BootFirmwareVolumeSize = (UINTN) BootFv->FvLength;
 
-  DEBUG ((EFI_D_INFO, "Find Pei EntryPoint=%p\n", PeiCoreEntryPoint));
+  DEBUG ((DEBUG_INFO, "Find Pei EntryPoint=%p\n", PeiCoreEntryPoint));
 
   //
   // Transfer the control to the PEI core
   //
-  DEBUG ((EFI_D_INFO, "SecStartupPhase2 %p\n", PeiCoreEntryPoint));
+  DEBUG ((DEBUG_INFO, "SecStartupPhase2 %p\n", PeiCoreEntryPoint));
 
   (*PeiCoreEntryPoint) (SecCoreData, (EFI_PEI_PPI_DESCRIPTOR *)&mPrivateDispatchTable);
 
@@ -382,16 +382,16 @@ SecCoreStartupWithStack (
   EFI_SEC_PEI_HAND_OFF             SecCoreData;
   EFI_FIRMWARE_VOLUME_HEADER       *BootPeiFv = (EFI_FIRMWARE_VOLUME_HEADER*) BootFv;
 
-  DEBUG ((EFI_D_INFO, "Entering C environment\n"));
+  DEBUG ((DEBUG_INFO, "Entering C environment\n"));
 
   ProcessLibraryConstructorList (NULL, NULL);
 
-  DEBUG ((EFI_D_INFO,
+  DEBUG ((DEBUG_INFO,
     "SecCoreStartupWithStack (0x%lx, 0x%lx)\n",
     (UINTN)BootFv,
     (UINTN)TopOfCurrentStack
     ));
-  DEBUG ((EFI_D_INFO,
+  DEBUG ((DEBUG_INFO,
     "(0x%lx, 0x%lx)\n",
     (UINTN) (PcdGet64 (PcdSecPeiTempRamBase)),
     (UINTN) (PcdGet32 (PcdSecPeiTempRamSize))
@@ -425,11 +425,11 @@ SecCoreStartupWithStack (
   SecCoreData.BootFirmwareVolumeBase = BootPeiFv;
   SecCoreData.BootFirmwareVolumeSize = (UINTN) BootPeiFv->FvLength;
 
-  DEBUG ((EFI_D_INFO,
+  DEBUG ((DEBUG_INFO,
     "&SecCoreData.BootFirmwareVolumeBase=%lx SecCoreData.BootFirmwareVolumeBase=%lx\n",
     (UINT64)&(SecCoreData.BootFirmwareVolumeBase),
     (UINT64) (SecCoreData.BootFirmwareVolumeBase)));
-  DEBUG ((EFI_D_INFO,
+  DEBUG ((DEBUG_INFO,
     "&SecCoreData.BootFirmwareVolumeSize=%lx SecCoreData.BootFirmwareVolumeSize=%lx\n",
     (UINT64)&(SecCoreData.BootFirmwareVolumeSize),
     (UINT64) (SecCoreData.BootFirmwareVolumeSize)));
@@ -466,7 +466,7 @@ TemporaryRamMigration (
   VOID                             *NewStack;
   BASE_LIBRARY_JUMP_BUFFER         JumpBuffer;
 
-  DEBUG ((EFI_D_INFO,
+  DEBUG ((DEBUG_INFO,
     "TemporaryRamMigration (0x%Lx, 0x%Lx, 0x%Lx)\n",
     TemporaryMemoryBase,
     PermanentMemoryBase,

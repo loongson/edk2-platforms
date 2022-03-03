@@ -100,7 +100,7 @@ GetMemoryMapFromFwCfg (
 /**
   Create a page table and initialize the MMU.
 
-  @param[] VOID 
+  @param[] VOID
 
   @retval  VOID
 **/

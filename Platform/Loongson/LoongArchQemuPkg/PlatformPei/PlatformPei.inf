@@ -57,24 +57,16 @@
   gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceTreePadding
 
 [FixedPcd]
-  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashPeiFvBase
-  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashPeiFvSize
-  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashDxeFvOffset
   gLoongArchQemuPkgTokenSpaceGuid.PcdFlashDxeFvBase
   gLoongArchQemuPkgTokenSpaceGuid.PcdFlashDxeFvSize
-  
   gLoongArchQemuPkgTokenSpaceGuid.PcdRamRegionsBottom
   gLoongArchQemuPkgTokenSpaceGuid.PcdUefiRamTop
   gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamBase
   gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamSize
   gLoongArchQemuPkgTokenSpaceGuid.PcdGuidedExtractHandlerTableSize
   gEfiMdePkgTokenSpaceGuid.PcdGuidedExtractHandlerTableAddress
-  gEfiMdeModulePkgTokenSpaceGuid.PcdVariableStoreSize
-  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize
   gEmbeddedTokenSpaceGuid.PcdPrePiCpuMemorySize
   gEmbeddedTokenSpaceGuid.PcdPrePiCpuIoSize
-  gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceSpaceStartAddress
-  gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceSpaceLength
 
 [Depex]
   TRUE

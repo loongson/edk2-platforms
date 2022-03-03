@@ -71,7 +71,7 @@ SetPitCount (
 
   Count &= LOONGARCH_CSR_TMCFG_TIMEVAL;
   Count |= LOONGARCH_CSR_TMCFG_EN | LOONGARCH_CSR_TMCFG_PERIOD;
-  LOONGARCH_CSR_WRITEQ (Count, LOONGARCH_CSR_TMCFG); 
+  LOONGARCH_CSR_WRITEQ (Count, LOONGARCH_CSR_TMCFG);
 }
 
 /**
@@ -273,7 +273,7 @@ TimerDriverGetTimerPeriod (
 **/
 
 /**
-  Disable the timer 
+  Disable the timer
   DXE Core will disable the timer after all the event handlers have run.
 
   @param[in]  Event   The Event that is being processed
@@ -365,7 +365,7 @@ StableTimerDriverInitialize (
   // Calculate const frequence
   //
   StableTimerFreq = CalcConstFreq ();
-  DEBUG ((EFI_D_INFO, "===========Stable timer freq %d Hz=============\n", StableTimerFreq));
+  DEBUG ((DEBUG_INFO, "===========Stable timer freq %d Hz=============\n", StableTimerFreq));
 
   //
   // Install interrupt handler for Stable Timer #0 (ISA IRQ0)
@@ -397,7 +397,7 @@ StableTimerDriverInitialize (
   ASSERT_EFI_ERROR (Status);
 
   // Register for an ExitBootServicesEvent
-  Status = gBS->CreateEvent (EVT_SIGNAL_EXIT_BOOT_SERVICES, TPL_NOTIFY, ExitBootServicesEvent, NULL, 
+  Status = gBS->CreateEvent (EVT_SIGNAL_EXIT_BOOT_SERVICES, TPL_NOTIFY, ExitBootServicesEvent, NULL,
                   &EfiExitBootServicesEvent);
   ASSERT_EFI_ERROR (Status);
 

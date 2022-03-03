@@ -72,5 +72,5 @@ slave_main:
     # read mail buf and jump to specified entry
     li.d      T1, LOONGSON_CSR_MAIL_BUF0
     iocsrrd.d T0, T1
-    or	      RA, T0, ZERO
+    or        RA, T0, ZERO
     jirl      ZERO, RA, 0x0

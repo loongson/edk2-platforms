@@ -33,9 +33,9 @@ STATIC UINTN                  mRtcBase = 0X100d0100;
 /*
   Enable Real-time clock.
 
-  @param VOID 
+  @param VOID
 
-  @retval  VOID      
+  @retval  VOID
  */
 VOID
 InitRtc (

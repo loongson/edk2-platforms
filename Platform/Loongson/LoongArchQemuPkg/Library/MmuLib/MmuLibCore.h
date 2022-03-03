@@ -16,7 +16,7 @@
   @param  Num  The number of page directories to initialize.
   @param  Src  A pointer to the data used to initialize the page directory.
 
-  @retval VOID. 
+  @retval VOID.
 **/
 VOID
 PageDirInit (

@@ -12,8 +12,6 @@
 #ifndef QEMU_FW_CFG_LIB_INTERNAL_H_
 #define QEMU_FW_CFG_LIB_INTERNAL_H_
 
-#define FW_CFG_SELECTOR    0x1e020000
-#define FW_CFG_DATA        0x1e020008
 /**
   Returns a boolean indicating if the firmware configuration interface is
   available for library-internal purposes.

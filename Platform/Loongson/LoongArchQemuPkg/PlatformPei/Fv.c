@@ -28,7 +28,7 @@ PeiFvInitialization (
   VOID
   )
 {
-  DEBUG ((EFI_D_INFO, "Platform PEI Firmware Volume Initialization\n"));
+  DEBUG ((DEBUG_INFO, "Platform PEI Firmware Volume Initialization\n"));
 
   //
   // Create a memory allocation HOB for the PEI FV.
@@ -47,7 +47,7 @@ PeiFvInitialization (
   //
   // Let PEI know about the DXE FV so it can find the DXE Core
   //
-  DEBUG ((EFI_D_INFO, "DXEFV base:%p size:%x\n", (VOID *) (UINTN)PcdGet64 (PcdFlashDxeFvBase),
+  DEBUG ((DEBUG_INFO, "DXEFV base:%p size:%x\n", (VOID *) (UINTN)PcdGet64 (PcdFlashDxeFvBase),
     PcdGet32 (PcdFlashDxeFvSize)));
   PeiServicesInstallFvInfoPpi (
     NULL,

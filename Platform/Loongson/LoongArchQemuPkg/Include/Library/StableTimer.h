@@ -17,7 +17,7 @@
 /**
   Gets the timer count value.
 
-  @param[] VOID 
+  @param[] VOID
 
   @retval  timer count value.
 **/
@@ -30,7 +30,7 @@ CsrReadTime (
 /**
   Calculate the timer frequency.
 
-  @param[] VOID 
+  @param[] VOID
 
   @retval  Timer frequency.
 **/

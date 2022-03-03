@@ -69,7 +69,7 @@ memmap_sort (
   UINT64 tempmemsize = 0;
   UINT32 j = 0;
   UINT32 t = 0;
-  
+
   for (j = 0; j < length; ) {
     tempmemsize = array[j].MemSize;
     for (t = j + 1; t < length; t++) {
@@ -83,7 +83,7 @@ memmap_sort (
     bpmem->Map[index].MemType = memtype;
     bpmem->Map[index].MemStart = array[j].MemStart;
     bpmem->Map[index].MemSize = tempmemsize;
-    DEBUG ((EFI_D_INFO, "map[%d]:type %x, start 0x%llx, end 0x%llx\n",
+    DEBUG ((DEBUG_INFO, "map[%d]:type %x, start 0x%llx, end 0x%llx\n",
       index,
       bpmem->Map[index].MemType,
       bpmem->Map[index].MemStart,
@@ -109,11 +109,11 @@ FindNewInterfaceMem (
   CHAR8 *p =NULL;
   MEM_MAP *new_interface_mem = NULL;
   EXT_LIST *listpointer = NULL;
-  
+
   if (Bpi == NULL) {
     return new_interface_mem;
   }
- 
+
   p = (CHAR8 *)& (Bpi->Signature);
   if (AsciiStrnCmp (p, "BPI", 3) == 0) {
     listpointer = Bpi->ExtList;
@@ -134,7 +134,7 @@ FindNewInterfaceMem (
   @param  MemoryMapSize  The size of the memory-mapped information.
   @param  DescriptorSize The size of the memory-mapped information descriptor.
 
-  @retval VOID 
+  @retval VOID
 **/
 EFI_MEMORY_DESCRIPTOR *
 GetSystemMemap (
@@ -161,7 +161,7 @@ GetSystemMemap (
                   );
   ASSERT (Status == EFI_BUFFER_TOO_SMALL);
 
-  DEBUG ((EFI_D_INFO, "%a %a:%d Status 0x%x\n", __FILE__, __func__, __LINE__, Status));
+  DEBUG ((DEBUG_INFO, "%a %a:%d Status 0x%x\n", __FILE__, __func__, __LINE__, Status));
   // Enlarge space here, because we will allocate pool now.
   MemoryMapSizeTemp += EFI_PAGE_SIZE;
   Status = gBS->AllocatePool (
@@ -171,7 +171,7 @@ GetSystemMemap (
                   );
   ASSERT_EFI_ERROR (Status);
 
-  DEBUG ((EFI_D_INFO, "%a %a:%d Status 0x%x\n", __FILE__, __func__, __LINE__, Status));
+  DEBUG ((DEBUG_INFO, "%a %a:%d Status 0x%x\n", __FILE__, __func__, __LINE__, Status));
 
   *MemoryMapSize = MemoryMapSizeTemp;
   *DescriptorSize = DescriptorSizeTemp;
@@ -189,7 +189,7 @@ GetSystemMemap (
                   );
   ASSERT_EFI_ERROR (Status);
 
-  DEBUG ((EFI_D_INFO, "%a %a:%d Status 0x%x\n", __FILE__, __func__, __LINE__, Status));
+  DEBUG ((DEBUG_INFO, "%a %a:%d Status 0x%x\n", __FILE__, __func__, __LINE__, Status));
   *MemoryMapSize = MemoryMapSizeTemp;
   *DescriptorSize = DescriptorSizeTemp;
 
@@ -204,7 +204,7 @@ GetSystemMemap (
   @param  MemoryMapSize  The size of the memory-mapped table.
   @param  DescriptorSize The size of the descriptor.
 
-  @retval VOID 
+  @retval VOID
 **/
 VOID
 MemMapSort (
@@ -269,7 +269,7 @@ MemMapSort (
         reserve_mem[reserve_index].MemSize = MemoryMapPtr->NumberOfPages * 4096;
         reserve_index++;
         break;
- 
+
       default :
         free_mem[free_index].MemType = SYSTEM_RAM;
         free_mem[free_index].MemStart = (MemoryMapPtr->PhysicalStart) & 0xffffffffffff;
@@ -317,7 +317,7 @@ MemMapSort (
 
   @param  Bpi  A pointer to the boot parameter interface.
 
-  @retval VOID 
+  @retval VOID
 **/
 VOID
 SetupLinuxBootParams (
@@ -333,7 +333,7 @@ SetupLinuxBootParams (
   new_interface_mem = FindNewInterfaceMem (Bpi);
   MemoryMapPtr = GetSystemMemap (&MapKey, &MemoryMapSize, &DescriptorSize);
 
-  DEBUG ((EFI_D_INFO, "new_interface_mem %p MemoryMapPtr %p MapKey %x.\n",
+  DEBUG ((DEBUG_INFO, "new_interface_mem %p MemoryMapPtr %p MapKey %x.\n",
     new_interface_mem, MemoryMapPtr, MapKey));
   MemMapSort (new_interface_mem, MemoryMapPtr, MemoryMapSize, DescriptorSize);
 
@@ -388,10 +388,10 @@ TryRunningQemuKernel (
   /* get command line size */
   QemuFwCfgSelectItem (QemuFwCfgItemCommandLineSize);
   CommandLineSize = (UINTN) QemuFwCfgRead32 ();
-  DEBUG ((EFI_D_INFO, "command line size: %d.\n", CommandLineSize));
+  DEBUG ((DEBUG_INFO, "command line size: %d.\n", CommandLineSize));
 
   Size += ALIGN_UP (CommandLineSize + 1, 4);
-  DEBUG ((EFI_D_INFO, "kernel args size: %d.\n", Size));
+  DEBUG ((DEBUG_INFO, "kernel args size: %d.\n", Size));
   //Argv = LoadLinuxAllocateCommandLinePages (EFI_SIZE_TO_PAGES (Size));
   Status = gBS->AllocatePages (
                   AllocateAnyPages,
@@ -403,7 +403,7 @@ TryRunningQemuKernel (
       return Status;
   }
   Argv = (VOID *) (UINTN) Address;
-  DEBUG ((EFI_D_INFO, "kernel argv address: 0x%0x.\n", Argv));
+  DEBUG ((DEBUG_INFO, "kernel argv address: 0x%0x.\n", Argv));
 
   VOID **P = Argv;
   CHAR8 *Pos = (CHAR8 *) (Argv + (Argc + 1));
@@ -422,9 +422,9 @@ TryRunningQemuKernel (
   QemuFwCfgSelectItem (QemuFwCfgItemKernelEntry);
   KernelEntryPoint = (VOID *) ((UINTN) ((UINT32)QemuFwCfgRead64 ()));
 
-  DEBUG ((EFI_D_INFO, "kernel entry point: %p.\n", KernelEntryPoint));
+  DEBUG ((DEBUG_INFO, "kernel entry point: %p.\n", KernelEntryPoint));
   if (KernelEntryPoint == NULL) {
-    DEBUG ((EFI_D_INFO, "kernel entry point invalid.\n"));
+    DEBUG ((DEBUG_INFO, "kernel entry point invalid.\n"));
     return EFI_NOT_FOUND;
   }
 
@@ -435,14 +435,14 @@ TryRunningQemuKernel (
   if ((EFI_ERROR (Status))
     || (Bpi == NULL))
   {
-    DEBUG ((EFI_D_ERROR, "Get Boot Params Table Failed!\n"));
+    DEBUG ((DEBUG_ERROR, "Get Boot Params Table Failed!\n"));
     return EFI_NOT_FOUND;
   }
 
   SetupLinuxBootParams ((BootParamsInterface *)Bpi);
 
-  DEBUG ((EFI_D_INFO, "kernel argc: %d, argv: 0x%0x, bpi: 0x%0x.\n", Argc, Argv, Bpi));
-  DEBUG ((EFI_D_INFO, "entry kernel ...\n"));
+  DEBUG ((DEBUG_INFO, "kernel argc: %d, argv: 0x%0x, bpi: 0x%0x.\n", Argc, Argv, Bpi));
+  DEBUG ((DEBUG_INFO, "entry kernel ...\n"));
     ((EFI_KERNEL_ENTRY_POINT)KernelEntryPoint) (Argc, Argv, Bpi, NULL);
 
   return EFI_SUCCESS;

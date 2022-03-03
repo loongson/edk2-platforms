@@ -47,7 +47,7 @@ MmuIsInit (VOID) {
   @param  Num  The number of page directories to initialize.
   @param  Src  A pointer to the data used to initialize the page directory.
 
-  @retval VOID. 
+  @retval VOID.
 **/
 VOID
 PageDirInit (
@@ -142,7 +142,7 @@ PteOffset (
   @param  Pte  A pointer to a page table entry.
   @param  PteVal  The value of the page table entry to set.
 
-  @retval VOID 
+  @retval VOID
 **/
 VOID
 SetPte (
@@ -158,7 +158,7 @@ SetPte (
   @param  Pgd  A pointer to a page global directory.
   @param  Pud  The value of the page global directory to set.
 
-  @retval VOID 
+  @retval VOID
 **/
 VOID
 SetPgd (
@@ -175,7 +175,7 @@ SetPgd (
   @param  Pud  A pointer to a page upper directory.
   @param  Pmd  The value of the page upper directory to set.
 
-  @retval VOID 
+  @retval VOID
 **/
 VOID
 SetPud (
@@ -192,7 +192,7 @@ SetPud (
   @param  Pmd  A pointer to a page middle directory.
   @param  Pte  The value of the page middle directory to set.
 
-  @retval VOID 
+  @retval VOID
 **/
 VOID
 SetPmd (
@@ -207,7 +207,7 @@ SetPmd (
 
   @param  Pte  A pointer to the page table.
 
-  @retval VOID 
+  @retval VOID
 **/
 VOID
 PteFree (
@@ -221,7 +221,7 @@ PteFree (
 
   @param  Pmd  A pointer to the page middle directory.
 
-  @retval VOID 
+  @retval VOID
 **/
 VOID
 PmdFree (
@@ -235,7 +235,7 @@ PmdFree (
 
   @param  Pud  A pointer to the page upper directory.
 
-  @retval VOID 
+  @retval VOID
 **/
 VOID
 PudFree (
@@ -342,7 +342,7 @@ PteAlloc (
 
   @param  Pgd  A pointer to the page global directory.
 
-  @retval   Gets the page upper directory entry  
+  @retval   Gets the page upper directory entry
 **/
 PUD *
 PudAllocGet (
@@ -360,7 +360,7 @@ PudAllocGet (
 
   @param  Pud  A pointer to the page upper directory.
 
-  @retval   Gets the page middle directory entry  
+  @retval   Gets the page middle directory entry
 **/
 PMD *
 PmdAllocGet (
@@ -382,7 +382,7 @@ PmdAllocGet (
 
   @param  Pmd  A pointer to the page upper directory.
 
-  @retval   Gets the page table entry  
+  @retval   Gets the page table entry
 **/
 PTE *
 PteAllocGet (
@@ -731,7 +731,7 @@ GetLoongArchMemoryRegion (
   @param[in]  Attributes   The Attributes to be set.
 
   @retval  EFI_SUCCESS    The Attributes was set successfully
-          
+
 **/
 EFI_STATUS
 LoongArchSetMemoryAttributes (
