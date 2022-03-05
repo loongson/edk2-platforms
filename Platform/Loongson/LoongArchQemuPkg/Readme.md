@@ -23,7 +23,7 @@
     $ mkdir -p $WORKSPACE
     $ cd $WORKSPACE
     $ git clone https://github.com/loongson/edk2.git
-    $ git checkout -b devel-LoongArch remotes/origin/devel-LoongArch
+    $ git checkout -b LoongArch remotes/origin/LoongArch
     $ git submodule update --init
     $ git clone https://github.com/loongson/edk2-platforms.git
     $ git submodule update --init
