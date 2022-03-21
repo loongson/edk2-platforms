@@ -293,7 +293,34 @@ do {                                                 \
           : "memory"                                 \
           );                                         \
 } while(0)
+/*
+  Search for tlb
 
+  @param  VOID
+
+  @retval  VOID
+ */
+#define LOONGARCH_TLB_SRCH()                         \
+do {                                                 \
+  /* tlbsrch */                                      \
+  __asm__ __volatile__(                              \
+          "tlbsrch"                                  \
+          );                                         \
+} while(0)
+/*
+  Writes data to the specified tlb table entry.
+
+  @param  VOID
+
+  @retval  VOID
+ */
+#define LOONGARCH_TLB_WR()                         \
+do {                                               \
+  /* tlbwr */                                      \
+  __asm__ __volatile__(                            \
+          "tlbwr"                                  \
+          );                                       \
+} while(0)
 /*
   Reads data from the specified CPUCFG register.
 

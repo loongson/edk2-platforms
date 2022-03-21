@@ -393,6 +393,140 @@ PteAllocGet (
   return (pmd_none (*Pmd) && PteAlloc (Pmd))?
     NULL: PteOffset (Pmd, Address);
 }
+ /**
+  Convert page middle directory table entry  to tlb entry.
+
+  @param  PmdVal   page middle directory table entry value.
+
+  @retval  tlb entry value.
+ **/
+UINTN
+PmdToTlbEntry (
+  UINTN PmdVal
+  )
+{
+  UINTN Value;
+
+  Value = PmdVal ^ PAGE_HUGE;
+  Value |= ((Value & PAGE_HGLOBAL) >>
+           (PAGE_HGLOBAL_SHIFT - PAGE_GLOBAL_SHIFT));
+
+  return Value;
+}
+
+ /**
+  Update huge tlb.
+
+  @param  address  The address corresponding to tlb.
+  @param  Pte   A pointer to the page table entry.
+
+  @retval  VOID.
+ **/
+VOID
+UpdateHugeTlb (
+  IN UINTN address,
+  PTE *Pte)
+{
+  INTN Idx;
+  UINTN TlbEntry;
+  address &= (PAGE_MASK << 1);
+  LOONGARCH_CSR_WRITEQ (address, LOONGARCH_CSR_TLBEHI);
+  LOONGARCH_TLB_SRCH();
+  LOONGARCH_CSR_READQ (Idx, LOONGARCH_CSR_TLBIDX);
+
+  if (Idx < 0) {
+    return ;
+  }
+  WRITE_CSR_PAGE_SIZE (HUGE_PAGE_SIZE);
+  TlbEntry = PmdToTlbEntry(PTE_VAL (*Pte));
+  LOONGARCH_CSR_WRITEQ(TlbEntry, LOONGARCH_CSR_TLBELO0);
+  LOONGARCH_CSR_WRITEQ(TlbEntry + (HUGE_PAGE_SIZE >> 1), LOONGARCH_CSR_TLBELO1);
+  LOONGARCH_TLB_WR ();
+
+  WRITE_CSR_PAGE_SIZE (DEFAULT_PAGE_SIZE);
+
+  return ;
+}
+ /**
+  Update tlb.
+
+  @param  address  The address corresponding to tlb.
+  @param  Pte   A pointer to the page table entry.
+
+  @retval  VOID.
+ **/
+VOID
+UpdateTlb (
+  IN UINTN address,
+  PTE *Pte)
+{
+  INTN Idx;
+  if (IS_HUGE_PAGE (Pte->PteVal)) {
+    return UpdateHugeTlb(address, Pte);
+  }
+
+  address &= (PAGE_MASK << 1);
+  LOONGARCH_CSR_WRITEQ (address, LOONGARCH_CSR_TLBEHI);
+  LOONGARCH_TLB_SRCH();
+  LOONGARCH_CSR_READQ (Idx, LOONGARCH_CSR_TLBIDX);
+
+  if (Idx < 0) {
+    return ;
+  }
+
+  if ((UINTN)Pte & sizeof(PTE)) {
+    Pte--;
+  }
+
+  WRITE_CSR_PAGE_SIZE (DEFAULT_PAGE_SIZE);
+  LOONGARCH_CSR_WRITEQ(PTE_VAL (*Pte), LOONGARCH_CSR_TLBELO0);
+  Pte++;
+  LOONGARCH_CSR_WRITEQ(PTE_VAL (*Pte), LOONGARCH_CSR_TLBELO1);
+  LOONGARCH_TLB_WR ();
+
+  return ;
+}
+
+/**
+  Gets the physical address of the page table entry corresponding to the specified virtual address.
+
+  @param  Address  the corresponding virtual address of the page table entry.
+
+  @retval     A pointer to the page table entry.
+  @retval  NULL
+**/
+PTE *
+GetPteAddress (
+  IN UINTN Address
+  )
+{
+  PGD *Pgd;
+  PUD *Pud;
+  PMD *Pmd;
+
+  Pgd = PgdOffset (Address);
+
+  if (pgd_none (*Pgd)) {
+    return NULL;
+  }
+
+  Pud = PudOffset (Pgd, Address);
+
+  if (pud_none (*Pud)) {
+    return NULL;
+  }
+
+  Pmd = PmdOffset (Pud, Address);
+  if (pmd_none (*Pmd)) {
+    return NULL;
+  }
+
+  if (IS_HUGE_PAGE (Pmd->PmdVal)) {
+    return ((PTE *)Pmd);
+  }
+
+  return PteOffset (Pmd, Address);
+}
 /**
   Establishes a page table entry based on the specified memory region.
 
@@ -413,19 +547,32 @@ MemoryMapPteRange (
   )
 {
   PTE *Pte;
-  UINTN Num = 0;
+  PTE PteVal;
+  BOOLEAN UpDate;
+
   Pte = PteAllocGet (Pmd, Address);
   if (!Pte) {
     return EFI_OUT_OF_RESOURCES;
   }
 
   do {
+    UpDate = FALSE;
+    PteVal = MAKE_PTE (Address, Attributes);
     DEBUG ((DEBUG_VERBOSE,
-      "%a %d Address %p  PGD_INDEX %p PGD_INDEX   %p PMD_INDEX  %p PTE_INDEX  %p MAKE_PTE  %p Num  %p \n",
-      __func__, __LINE__,  Address, PGD_INDEX (Address), PGD_INDEX (Address), PMD_INDEX (Address),
-      PTE_INDEX (Address), MAKE_PTE (Address, Attributes),  Num));
-    SetPte (Pte, MAKE_PTE (Address, Attributes));
-    Num++;
+      "%a %d Address %p  PGD_INDEX %p PUD_INDEX   %p PMD_INDEX  %p PTE_INDEX  %p MAKE_PTE  %p\n",
+      __func__, __LINE__,  Address, PGD_INDEX (Address), PUD_INDEX (Address), PMD_INDEX (Address),
+      PTE_INDEX (Address), PteVal));
+
+    if ((!pte_none (*Pte)) &&
+        (PTE_VAL(*Pte) != PTE_VAL(PteVal)))
+    {
+      UpDate = TRUE;
+    }
+
+    SetPte (Pte, PteVal);
+    if (UpDate) {
+      UpdateTlb (Address, Pte);
+    }
   } while (Pte++, Address += EFI_PAGE_SIZE, Address != End);
 
   return EFI_SUCCESS;
@@ -450,8 +597,8 @@ MemoryMapPmdRange (
   )
 {
   PMD *Pmd;
+  PTE *Pte;
   UINTN Next;
-  UINTN Num = 0;
   UINTN AddressStart_HugePage;
   UINTN AddressEnd_HugePage;
 
@@ -462,28 +609,38 @@ MemoryMapPmdRange (
 
   do {
     Next = PMD_ADDRESS_END (Address, End);
-    Num++;
     if (((Address & (~PMD_MASK)) == 0) &&
-        ((Next &  (~PMD_MASK)) == 0))
+        ((Next &  (~PMD_MASK)) == 0) &&
+        (pmd_none (*Pmd)))
     {
       DEBUG ((DEBUG_VERBOSE,
-        "%a %d Address %p  PGD_INDEX %p PUD_INDEX   %p PMD_INDEX  %p MAKE_HUGE_PTE  %p Num  %p \n",
+        "%a %d Address %p  PGD_INDEX %p PUD_INDEX   %p PMD_INDEX  %p MAKE_HUGE_PTE  %p\n",
         __func__, __LINE__,  Address, PGD_INDEX (Address), PUD_INDEX (Address), PMD_INDEX (Address),
-        MAKE_HUGE_PTE (Address, Attributes),  Num));
+        MAKE_HUGE_PTE (Address, Attributes)));
+
       SetPmd (Pmd, (PTE *)MAKE_HUGE_PTE (Address, Attributes));
     } else {
        if ((pmd_none (*Pmd)) ||
-          (!pmd_none (*Pmd) &&
-           IS_HUGE_PAGE (Pmd->PmdVal)))
+          ((!pmd_none (*Pmd)) &&
+           (!IS_HUGE_PAGE (Pmd->PmdVal))))
        {
          if (MemoryMapPteRange (Pmd, Address, Next, Attributes)) {
            return EFI_OUT_OF_RESOURCES;
-        }
+         }
        } else {
+         SetPmd (Pmd, (PTE *)PcdGet64 (PcdInvalidPte));
          AddressStart_HugePage = Address & PMD_MASK;
          AddressEnd_HugePage = AddressStart_HugePage + HUGE_PAGE_SIZE;
          if (MemoryMapPteRange (Pmd, AddressStart_HugePage, AddressEnd_HugePage, Attributes)) {
            return EFI_OUT_OF_RESOURCES;
+         }
+         Pte = GetPteAddress (AddressStart_HugePage);
+         if (Pte == NULL) {
+           continue ;
+         }
+         UpdateTlb (AddressStart_HugePage, Pte);
+         if (AddressEnd_HugePage > End) {
+           Next = End;
          }
        }
     }
@@ -559,46 +716,7 @@ MemoryMapPageRange (
 
   return EFI_SUCCESS;
 }
-/**
-  Gets the physical address of the page table entry corresponding to the specified virtual address.
 
-  @param  Address  the corresponding virtual address of the page table entry.
-
-  @retval     A pointer to the page table entry.
-  @retval  NULL
-**/
-PTE *
-GetPteAddress (
-  IN UINTN Address
-  )
-{
-  PGD *Pgd;
-  PUD *Pud;
-  PMD *Pmd;
-
-  Pgd = PgdOffset (Address);
-
-  if (pgd_none (*Pgd)) {
-    return NULL;
-  }
-
-  Pud = PudOffset (Pgd, Address);
-
-  if (pud_none (*Pud)) {
-    return NULL;
-  }
-
-  Pmd = PmdOffset (Pud, Address);
-  if (pmd_none (*Pmd)) {
-    return NULL;
-  }
-
-  if (IS_HUGE_PAGE (Pmd->PmdVal)) {
-    return ((PTE *)Pmd);
-  }
-
-  return PteOffset (Pmd, Address);
-}
 /**
   Page tables are established from memory-mapped tables.
 
@@ -629,7 +747,7 @@ EfiAttributeToLoongArchAttribute (
   IN UINTN  EfiAttributes
   )
 {
-  UINTN  LoongArchAttributes = PAGE_VALID | PAGE_DIRTY | CACHE_CC;
+  UINTN  LoongArchAttributes = PAGE_VALID | PAGE_DIRTY | CACHE_CC | PAGE_USER;
   switch (EfiAttributes & EFI_MEMORY_CACHETYPE_MASK) {
     case EFI_MEMORY_UC:
       LoongArchAttributes |= CACHE_SUC;
@@ -740,14 +858,14 @@ LoongArchSetMemoryAttributes (
   IN UINTN                 Attributes
   )
 {
-#if 0
+
   if (!MmuIsInit ()) {
     return EFI_SUCCESS;
   }
-  PGPROT_VAL (Attributes) = EfiAttributeToLoongArchAttribute (Attributes);
+  Attributes = EfiAttributeToLoongArchAttribute (Attributes);
   DEBUG ((DEBUG_VERBOSE, "%a %d %p %p %p.\n", __func__, __LINE__, BaseAddress , Length, Attributes));
   MemoryMapPageRange (BaseAddress, BaseAddress + Length, Attributes);
-#endif
+
   return EFI_SUCCESS;
 }
 

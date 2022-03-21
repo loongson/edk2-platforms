@@ -1,0 +1,76 @@
+## @file
+# Component description file for Emu Fimware Volume Block DXE driver module.
+#
+#  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = FvbServicesRuntimeDxe
+  FILE_GUID                      = 733cbac2-b23f-4b92-bc8e-fb01ce5907b7
+  MODULE_TYPE                    = DXE_RUNTIME_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = FvbInitialize
+
+#
+# The following information is for reference only and not required by the build
+# tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  FvbInfo.c
+  FwBlockService.c
+  FwBlockServiceDxe.c
+  QemuFlash.c
+  QemuFlashDxe.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  OvmfPkg/OvmfPkg.dec
+  Platform/Loongson/LoongArchQemuPkg/Loongson.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  DevicePathLib
+  DxeServicesTableLib
+  MemoryAllocationLib
+  PcdLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  UefiRuntimeLib
+
+[Guids]
+  gEfiEventVirtualAddressChangeGuid   # ALWAYS_CONSUMED
+  # gEfiEventVirtualAddressChangeGuid # Create Event: EVENT_GROUP_GUID
+
+[Protocols]
+  gEfiFirmwareVolumeBlockProtocolGuid           # PROTOCOL SOMETIMES_PRODUCED
+  gEfiDevicePathProtocolGuid                    # PROTOCOL SOMETIMES_PRODUCED
+
+[FixedPcd]
+  gLoongArchQemuPkgTokenSpaceGuid.PcdOvmfFlashNvStorageVariableBase
+  gLoongArchQemuPkgTokenSpaceGuid.PcdOvmfFlashNvStorageFtwWorkingBase
+  gLoongArchQemuPkgTokenSpaceGuid.PcdOvmfFlashNvStorageFtwSpareBase
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashFdBase
+  gLoongArchQemuPkgTokenSpaceGuid.PcdAllVarSize
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashBlockSize
+[Pcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64
+  gUefiOvmfPkgTokenSpaceGuid.PcdOvmfFlashVariablesEnable
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase64
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase64
+
+[FeaturePcd]
+  gUefiOvmfPkgTokenSpaceGuid.PcdSmmSmramRequire
+
+[Depex]
+  TRUE

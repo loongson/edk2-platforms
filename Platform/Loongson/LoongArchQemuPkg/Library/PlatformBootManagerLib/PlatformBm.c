@@ -634,7 +634,6 @@ PlatformBootManagerAfterConsole (
   EfiBootManagerConnectAll ();
   DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
 
-  SetBootParams ();
   //
   // Process QEMU's -kernel command line option. Note that the kernel booted
   // this way should receive ACPI tables, which is why we connect all devices

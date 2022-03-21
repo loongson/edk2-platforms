@@ -50,11 +50,11 @@
    
   A compile script is provided here:
   
-    #!/bin/bash  
-    export WORKSPACE=/work/git/tianocore  
-    export PACKAGES_PATH=$WORKSPACE/edk2:$WORKSPACE/edk2-platforms  
-    export GCC5_LOONGARCH64_PREFIX=loongarch64-unknown-linux-gnu-  
-    . edk2/edksetup.sh  
-    make -C edk2/BaseTools  
+    #!/bin/bash
+    export WORKSPACE=/work/git/tianocore
+    export PACKAGES_PATH=$WORKSPACE/edk2:$WORKSPACE/edk2-platforms
+    export GCC5_LOONGARCH64_PREFIX=loongarch64-unknown-linux-gnu-
+    . edk2/edksetup.sh
+    make -C edk2/BaseTools
     build --buildtarget=DEBUG --tagname=GCC5 --arch=LOONGARCH64  --platform=Platform/Loongson/LoongArchQemuPkg/Loongson.dsc  
  

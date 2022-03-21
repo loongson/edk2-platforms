@@ -38,7 +38,7 @@
 #define PGD_MASK (~(PGD_SIZE-1))
 #define PUD_MASK   (~(PUD_SIZE-1))
 #define PMD_MASK   (~(PMD_SIZE-1))
-#define PAGE_MASK  (~(EFI_PAGE_SIZE - 1)
+#define PAGE_MASK  (~(EFI_PAGE_SIZE - 1))
 #define PFN_MASK   (~(((UINTN)(1) << (EFI_PAGE_SHIFT)) - 1) & \
                      (((UINTN)(1) << (PAGE_PFN_END_SHIFT)) - 1))
 

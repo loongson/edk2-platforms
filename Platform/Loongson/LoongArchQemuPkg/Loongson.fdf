@@ -33,6 +33,18 @@ FV = FVMAIN_COMPACT
 !include VarStore.fdf.inc
 
 #####################################################################################################
+[FD.QEMU_EFI_VARS]
+BaseAddress   = $(VARIABLE_BASE_ADDRESS)
+Size          = $(VAR_ALL_SIZE)
+ErasePolarity = 1
+BlockSize     = $(BLOCK_SIZE)
+NumBlocks     = $(VAR_ALL_BLOCKS)
+
+DEFINE VARIABLE_OFFSET = 0
+!include VarStore.fdf.inc
+DEFINE VARIABLE_OFFSET = 0x003a0000
+
+#####################################################################################################
 [FV.SECFV]
 FvNameGuid         = 587d4265-5e71-41da-9c35-4258551f1e22
 BlockSize          = $(BLOCK_SIZE)
@@ -137,7 +149,7 @@ INF  MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
 #
 # Variable
 #
-#INF  Platform/Loongson/LoongArchQemuPkg/Drivers/QemuFlashFvbServicesRuntimeDxe/FvbServicesRuntimeDxe.inf
+INF  Platform/Loongson/LoongArchQemuPkg/Drivers/QemuFlashFvbServicesRuntimeDxe/FvbServicesRuntimeDxe.inf
 INF  OvmfPkg/EmuVariableFvbRuntimeDxe/Fvb.inf
 INF  MdeModulePkg/Universal/FaultTolerantWriteDxe/FaultTolerantWriteDxe.inf
 INF  MdeModulePkg/Universal/Variable/RuntimeDxe/VariableRuntimeDxe.inf
@@ -203,8 +215,7 @@ INF  MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
 INF  MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
 INF  MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
 INF  MdeModulePkg/Universal/BdsDxe/BdsDxe.inf
-INF  MdeModulePkg/Application/BootManagerMenuApp/BootManagerMenuApp.inf
-
+INF MdeModulePkg/Application/UiApp/UiApp.inf
 #
 #Smbios
 #
@@ -259,7 +270,6 @@ FILE FV_IMAGE = 9E21FD93-9C72-4c15-8C4B-E77F1DB2D792 {
      SECTION FV_IMAGE = DXEFV
    }
  }
-
 
 #####################################################################################################
 [Rule.Common.SEC]
