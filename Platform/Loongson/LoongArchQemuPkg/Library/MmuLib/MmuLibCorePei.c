@@ -18,10 +18,8 @@
 #include "pte.h"
 #include "page.h"
 #include "mmu.h"
-#include <Library/Bpi.h>
 #include <Library/QemuFwCfgLib.h>
 #include "MmuLibCore.h"
-
 
 /**
   Return the Virtual Memory Map of your platform
