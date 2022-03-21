@@ -48,7 +48,6 @@
   UefiBootServicesTableLib
   UefiLib
   UefiRuntimeServicesTableLib
-  BpiLib
 
 [FixedPcd]
   gEfiMdePkgTokenSpaceGuid.PcdUartDefaultBaudRate

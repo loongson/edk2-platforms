@@ -271,6 +271,7 @@ SerialPortWriteRegister (
 {
     return MmioWrite8 (Base + Offset, Value);
 }
+
 /**
   Sets the control bits on a serial device.
 

@@ -32,6 +32,8 @@
 [Protocols]
 
 [PcdsFixedAtBuild, PcdsDynamic]
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashFdBase|0x0|UINT64|0
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashBlockSize|0x0|UINT32|2
   gLoongArchQemuPkgTokenSpaceGuid.PcdFlashPeiFvBase|0x0|UINT64|0x00000003
   gLoongArchQemuPkgTokenSpaceGuid.PcdFlashPeiFvSize|0x0|UINT32|0x00000004
   gLoongArchQemuPkgTokenSpaceGuid.PcdFlashDxeFvOffset|0x0|UINT64|0x00000007
@@ -50,6 +52,10 @@
   gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamSize|0|UINT32|0x0000001d
   gLoongArchQemuPkgTokenSpaceGuid.PcdUefiRamTop|0x0|UINT64|0x0000001e
   gLoongArchQemuPkgTokenSpaceGuid.PcdRamRegionsBottom|0x0|UINT64|0x00000022
+  gLoongArchQemuPkgTokenSpaceGuid.PcdOvmfFlashNvStorageVariableBase|0x0|UINT64|0x00000024
+  gLoongArchQemuPkgTokenSpaceGuid.PcdAllVarSize|0x0|UINT32|0x00000025
+  gLoongArchQemuPkgTokenSpaceGuid.PcdOvmfFlashNvStorageFtwSpareBase|0x0|UINT64|0x00000026
+  gLoongArchQemuPkgTokenSpaceGuid.PcdOvmfFlashNvStorageFtwWorkingBase|0x0|UINT64|0x00000027
   gLoongArchQemuPkgTokenSpaceGuid.PcdFlashSecFvBase|0x0|UINT64|0x00000028
   gLoongArchQemuPkgTokenSpaceGuid.PcdFlashSecFvSize|0x0|UINT32|0x00000029
 

@@ -22,6 +22,9 @@
 #define LOONGARCH_CSR_PGDL    0x19 /* Page table base address when VA[47] = 0 */
 #define LOONGARCH_CSR_PGDH    0x1a /* Page table base address when VA[47] = 1 */
 #define LOONGARCH_CSR_TLBIDX  0x10 /* TLB Index, EHINV, PageSize, NP */
+#define LOONGARCH_CSR_TLBEHI  0x11 /* TLB EntryHi */
+#define LOONGARCH_CSR_TLBELO0 0x12 /* TLB EntryLo0 */
+#define LOONGARCH_CSR_TLBELO1 0x13 /* TLB EntryLo1 */
 #define LOONGARCH_CSR_TLBREHI 0x8e /* TLB refill entryhi */
 #define LOONGARCH_CSR_PWCTL0  0x1c /* PWCtl0 */
 #define LOONGARCH_CSR_PWCTL1  0x1d /* PWCtl1 */

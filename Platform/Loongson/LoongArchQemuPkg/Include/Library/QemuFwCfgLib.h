@@ -15,6 +15,13 @@
 
 #include <IndustryStandard/QemuFwCfg.h>
 
+typedef struct {
+  UINT64  BaseAddr;
+  UINT64  Length;
+  UINT32  Type;
+  UINT32  Reserved;
+} LOONGARCH_MEMMAP_ENTRY;
+
 /**
   Returns a boolean indicating if the firmware configuration interface
   is available or not.
