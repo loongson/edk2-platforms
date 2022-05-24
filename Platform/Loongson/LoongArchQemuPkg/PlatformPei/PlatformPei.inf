@@ -50,6 +50,7 @@
   PcdLib
   TimerLib
   MmuLib
+  MemoryAllocationLib
 
 [Pcd]
   gLoongArchQemuPkgTokenSpaceGuid.PcdRamSize
