@@ -81,6 +81,7 @@ GetMemoryMapFromFwCfg (
       continue;
     }
 
+    DEBUG ((DEBUG_INFO, "MemmapEntry Base %p length %p  type %d\n", pEntry->BaseAddr, pEntry->Length, pEntry->Type));
     VirtualMemoryTable[Index].PhysicalBase = pEntry->BaseAddr;
     VirtualMemoryTable[Index].VirtualBase  = VirtualMemoryTable[Index].PhysicalBase;
     VirtualMemoryTable[Index].Length       = pEntry->Length;

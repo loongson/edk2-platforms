@@ -17,13 +17,14 @@
 // The Library classes this module consumes
 //
 #include <Library/BaseMemoryLib.h>
+#include <Library/MemoryAllocationLib.h>
 #include <Library/DebugLib.h>
 #include <Library/HobLib.h>
 #include <Library/IoLib.h>
 #include <Library/PcdLib.h>
 #include <Library/PeimEntryPoint.h>
 #include <Library/ResourcePublicationLib.h>
-
+#include <Library/QemuFwCfgLib.h>
 #include "Platform.h"
 
 /**
@@ -69,32 +70,40 @@ InitializeRamRegions (
   VOID
   )
 {
-  UINT64 Base;
-  UINT64 End;
+  EFI_STATUS           Status;
+  FIRMWARE_CONFIG_ITEM FwCfgItem;
+  UINTN                FwCfgSize;
+  LOONGARCH_MEMMAP_ENTRY  MemoryMapEntry;
+  LOONGARCH_MEMMAP_ENTRY  *StartEntry;
+  LOONGARCH_MEMMAP_ENTRY  *pEntry;
+  UINTN                Processed;
 
-
-  //
-  // DDR memory space address range
-  // 0x00000000 - 0x10000000  lower 256M memory space
-  // 0x90000000 - BASE_4GB    if there is
-  // BASE_4GB   -
-  Base = PcdGet64 (PcdRamRegionsBottom);
-  End  = Base + PcdGet64 (PcdRamSize) - 0x10000000;
-
-  //
-  // Create memory HOBs.
-  // Put memory below 4G address space at the first memory HOB
-  //
-  DEBUG ((DEBUG_INFO, "%a: MemoryBase=%llx, MemoryEnd=%llx\n", __FUNCTION__, Base, End));
-
-  if (End > BASE_4GB) {
-    AddMemoryRangeHob (Base, BASE_4GB);
-    AddMemoryRangeHob (BASE_4GB, End);
-  } else {
-
-    AddMemoryRangeHob (Base, End);
+  Status = QemuFwCfgFindFile ("etc/memmap", &FwCfgItem, &FwCfgSize);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "%a %d read etc/memmap error Status %d \n", __func__, __LINE__, Status));
+    return ;
   }
-  AddMemoryRangeHob (0x0, 0x10000000);
+  if (FwCfgSize % sizeof MemoryMapEntry != 0) {
+    DEBUG ((DEBUG_ERROR, "no MemoryMapEntry FwCfgSize:%d\n", FwCfgSize));
+    return ;
+  }
+
+  QemuFwCfgSelectItem (FwCfgItem);
+  StartEntry = AllocatePages  (EFI_SIZE_TO_PAGES (FwCfgSize));
+  QemuFwCfgReadBytes (FwCfgSize, StartEntry);
+  for (Processed = 0; Processed < (FwCfgSize / sizeof MemoryMapEntry); Processed++) {
+    pEntry = StartEntry + Processed;
+    if (pEntry->Length == 0) {
+      continue;
+    }
+
+    DEBUG ((DEBUG_INFO, "MemmapEntry Base %p length %p  type %d\n", pEntry->BaseAddr, pEntry->Length, pEntry->Type));
+    if (pEntry->Type != EfiAcpiAddressRangeMemory) {
+      continue;
+    }
+
+    AddMemoryRangeHob ( pEntry->BaseAddr, pEntry->BaseAddr + pEntry->Length);
+  }
 
   //
   // Lock the scope of the cache.
