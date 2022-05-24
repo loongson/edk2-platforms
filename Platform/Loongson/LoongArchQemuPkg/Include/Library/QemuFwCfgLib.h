@@ -15,6 +15,13 @@
 
 #include <IndustryStandard/QemuFwCfg.h>
 
+typedef enum {
+  EfiAcpiAddressRangeMemory   = 1,
+  EfiAcpiAddressRangeReserved = 2,
+  EfiAcpiAddressRangeACPI     = 3,
+  EfiAcpiAddressRangeNVS      = 4
+} EFI_ACPI_MEMORY_TYPE;
+
 typedef struct {
   UINT64  BaseAddr;
   UINT64  Length;
