@@ -43,6 +43,7 @@
   PcdLib
   PrintLib
   QemuBootOrderLib
+  QemuLoadImageLib
   QemuFwCfgLib
   UefiBootManagerLib
   UefiBootServicesTableLib
