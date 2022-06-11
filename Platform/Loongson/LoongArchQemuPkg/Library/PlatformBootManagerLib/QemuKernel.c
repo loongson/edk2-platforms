@@ -11,18 +11,17 @@
     - FwCfg    - FirmWare Configure
 **/
 
-#include <Uefi.h>
+#include <Library/QemuLoadImageLib.h>
+#include <Library/ReportStatusCodeLib.h>
 
 #include <Library/BaseLib.h>
+#include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
-#include <Library/LoadLinuxLib.h>
+#include <Library/DevicePathLib.h>
 #include <Library/MemoryAllocationLib.h>
-#include <Library/QemuFwCfgLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
-#include <string.h>
-#include <Library/BaseMemoryLib.h>
-#include "PlatformBm.h"
+#include <Library/UefiRuntimeServicesTableLib.h>
 
 /**
   Download the kernel, the initial ramdisk, and the kernel command line from
@@ -45,5 +44,38 @@ TryRunningQemuKernel (
   VOID
   )
 {
-  return EFI_SUCCESS;
+  EFI_STATUS  Status;
+  EFI_HANDLE  KernelImageHandle;
+
+  Status = QemuLoadKernelImage (&KernelImageHandle);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
+
+  //
+  // Signal the EFI_EVENT_GROUP_READY_TO_BOOT event.
+  //
+  EfiSignalEventReadyToBoot ();
+
+  REPORT_STATUS_CODE (
+    EFI_PROGRESS_CODE,
+    (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_DXE_BS_PC_READY_TO_BOOT_EVENT)
+    );
+
+  //
+  // Start the image.
+  //
+  Status = QemuStartKernelImage (&KernelImageHandle);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((
+      DEBUG_ERROR,
+      "%a: QemuStartKernelImage(): %r\n",
+      __FUNCTION__,
+      Status
+      ));
+  }
+
+  QemuUnloadKernelImage (KernelImageHandle);
+
+  return Status;   
 }
