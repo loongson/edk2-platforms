@@ -86,7 +86,7 @@ LibGetTime (
   Time->Year = Val + 1900;
 
   Val = MmioRead32 (mRtcBase + TOY_READ0_REG);
-  Time->Month =  ((Val >> TOY_MON_SHIFT) & TOY_MON_MASK) - 1;
+  Time->Month =  (Val >> TOY_MON_SHIFT) & TOY_MON_MASK;
   Time->Day   =  (Val >> TOY_DAY_SHIFT) & TOY_DAY_MASK;
   Time->Hour  =  (Val >> TOY_HOUR_SHIFT) & TOY_HOUR_MASK;
   Time->Minute = (Val >> TOY_MIN_SHIFT) & TOY_MIN_MASK;

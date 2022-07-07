@@ -117,8 +117,9 @@
   PciCapPciIoLib                   | OvmfPkg/Library/UefiPciCapPciIoLib/UefiPciCapPciIoLib.inf
   IoLib                            | MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic.inf
   SerialPortLib                    | Platform/Loongson/LoongArchQemuPkg/Library/SerialPortLib/SerialPortLib.inf
-  EfiResetSystemLib                | Platform/Loongson/LoongArchQemuPkg/Library/ResetSystemLib/ResetSystemLib.inf
-  ResetSystemLib                   | Platform/Loongson/LoongArchQemuPkg/Library/ResetSystemLib/ResetSystemLib.inf
+  EfiResetSystemLib                | Platform/Loongson/LoongArchQemuPkg/Library/ResetSystemAcpiLib/BaseResetSystemAcpiGedLib.inf
+  ResetSystemLib                   | Platform/Loongson/LoongArchQemuPkg/Library/ResetSystemAcpiLib/BaseResetSystemAcpiGedLib.inf
+
   UefiLib                          | MdePkg/Library/UefiLib/UefiLib.inf
   UefiBootServicesTableLib         | MdePkg/Library/UefiBootServicesTableLib/UefiBootServicesTableLib.inf
   UefiRuntimeServicesTableLib      | MdePkg/Library/UefiRuntimeServicesTableLib/UefiRuntimeServicesTableLib.inf
@@ -171,6 +172,7 @@
   QemuFwCfgLib                     | OvmfPkg/Library/QemuFwCfgLib/QemuFwCfgLibMmio.inf
   DebugLib                         | MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
   PeiServicesLib                   | MdePkg/Library/PeiServicesLib/PeiServicesLib.inf
+  VariableFlashInfoLib             | MdeModulePkg/Library/BaseVariableFlashInfoLib/BaseVariableFlashInfoLib.inf
 
 [LibraryClasses.common.SEC]
   ReportStatusCodeLib              | MdeModulePkg/Library/PeiReportStatusCodeLib/PeiReportStatusCodeLib.inf
@@ -220,6 +222,9 @@
   QemuFwCfgS3Lib                   | OvmfPkg/Library/QemuFwCfgS3Lib/DxeQemuFwCfgS3LibFwCfg.inf
   RealTimeClockLib                 | Platform/Loongson/LoongArchQemuPkg/Library/LsRealTimeClockLib/LsRealTimeClockLib.inf
   VariablePolicyLib                | MdeModulePkg/Library/VariablePolicyLib/VariablePolicyLibRuntimeDxe.inf
+  QemuFwCfgLib                     | Platform/Loongson/LoongArchQemuPkg/Library/QemuFwCfgLib/QemuFwCfgLib.inf
+  EfiResetSystemLib                | Platform/Loongson/LoongArchQemuPkg/Library/ResetSystemAcpiLib/DxeResetSystemAcpiGedLib.inf
+  ResetSystemLib                   | Platform/Loongson/LoongArchQemuPkg/Library/ResetSystemAcpiLib/DxeResetSystemAcpiGedLib.inf
 
 [LibraryClasses.common.UEFI_DRIVER]
   PcdLib                           | MdePkg/Library/DxePcdLib/DxePcdLib.inf
@@ -324,7 +329,7 @@
   # 0x90000000 - 0xA0000000
   #
   gLoongArchQemuPkgTokenSpaceGuid.PcdUefiRamTop                        | 0xA0000000
-  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiExposedTableVersions           | 0x04
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiExposedTableVersions           | 0x06
 
   gEfiMdeModulePkgTokenSpaceGuid.PcdBootManagerMenuFile                | { 0x21, 0xaa, 0x2c, 0x46, 0x14, 0x76, 0x03, 0x45, 0x83, 0x6e, 0x8a, 0xb6, 0xf4, 0x66, 0x23, 0x31 }
 
