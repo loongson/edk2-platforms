@@ -122,7 +122,7 @@ LibSetTime (
   Val |= (Time->Minute << TOY_MIN_SHIFT);
   Val |= (Time->Hour   << TOY_HOUR_SHIFT);
   Val |= (Time->Day    << TOY_DAY_SHIFT);
-  Val |= ((Time->Month + 1) << TOY_MON_SHIFT);
+  Val |= (Time->Month  << TOY_MON_SHIFT);
   MmioWrite32 (mRtcBase + TOY_WRITE0_REG, Val);
 
   Val = Time->Year - 1900;
