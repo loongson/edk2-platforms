@@ -225,6 +225,9 @@
   QemuFwCfgLib                     | Platform/Loongson/LoongArchQemuPkg/Library/QemuFwCfgLib/QemuFwCfgLib.inf
   EfiResetSystemLib                | Platform/Loongson/LoongArchQemuPkg/Library/ResetSystemAcpiLib/DxeResetSystemAcpiGedLib.inf
   ResetSystemLib                   | Platform/Loongson/LoongArchQemuPkg/Library/ResetSystemAcpiLib/DxeResetSystemAcpiGedLib.inf
+!if $(TARGET) != RELEASE
+  DebugLib                         | MdePkg/Library/DxeRuntimeDebugLibSerialPort/DxeRuntimeDebugLibSerialPort.inf
+!endif
 
 [LibraryClasses.common.UEFI_DRIVER]
   PcdLib                           | MdePkg/Library/DxePcdLib/DxePcdLib.inf
@@ -352,7 +355,7 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdPciDisableBusEnumeration           | FALSE
   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution          | 800
   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution            | 600
-  gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut                      | 0
+  gEfiMdePkgTokenSpaceGuid.PcdPlatformBootTimeOut                      | 2
 
   # Set video resolution for text setup.
   gEfiMdeModulePkgTokenSpaceGuid.PcdSetupVideoHorizontalResolution     | 640
