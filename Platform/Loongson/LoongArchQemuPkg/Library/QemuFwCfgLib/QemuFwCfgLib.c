@@ -449,7 +449,7 @@ QemuFwCfgInitialize (
         && (Len == (2 * sizeof (UINT64))))
       {
         FwCfgDataAddress      = SwapBytes64 (RegProp[0]);
-        FwCfgDataSize         = SwapBytes64 (RegProp[1]);
+        FwCfgDataSize         = 8;
         FwCfgSelectorAddress  = FwCfgDataAddress + FwCfgDataSize;
 
         mFwCfgSelectorAddress = FwCfgSelectorAddress;
