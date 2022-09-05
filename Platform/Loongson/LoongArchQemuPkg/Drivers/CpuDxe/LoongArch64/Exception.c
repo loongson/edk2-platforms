@@ -20,7 +20,6 @@
     - Irq   - Interrupt ReQuest
 **/
 
-#include <string.h>
 #include "Library/Cpu.h"
 #include <Library/BaseMemoryLib.h>
 #include <Library/UefiBootServicesTableLib.h>
