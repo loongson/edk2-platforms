@@ -1,6 +1,7 @@
 /** @file
+  ResetSystem lib head file.
 
-  Copyright (c) 2021, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -15,7 +16,5 @@ typedef struct {
   UINT8   ResetValue;
 } POWER_MANAGER;
 
-extern POWER_MANAGER PowerManager;
+extern POWER_MANAGER mPowerManager;
 
-EFI_STATUS
-GetPowerManagerByParseAcpiInfo (VOID);

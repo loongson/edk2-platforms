@@ -33,8 +33,8 @@
 
 
 
-EFI_EXCEPTION_CALLBACK  gExceptionHandlers[MAX_LOONGARCH_EXCEPTION + 1];
-EFI_EXCEPTION_CALLBACK  gDebuggerExceptionHandlers[MAX_LOONGARCH_EXCEPTION + 1];
+EFI_EXCEPTION_CALLBACK  gExceptionHandlers[MAX_LOONGARCH_INTERRUPT + 1];
+EFI_EXCEPTION_CALLBACK  gDebuggerExceptionHandlers[MAX_LOONGARCH_INTERRUPT + 1];
 
 /**
   This function registers and enables the handler specified by InterruptHandler for a processor
@@ -62,7 +62,7 @@ RegisterInterruptHandler (
   IN EFI_CPU_INTERRUPT_HANDLER      InterruptHandler
   )
 {
-  if (InterruptType > MAX_LOONGARCH_EXCEPTION) {
+  if (InterruptType > MAX_LOONGARCH_INTERRUPT) {
     return EFI_UNSUPPORTED;
   }
 

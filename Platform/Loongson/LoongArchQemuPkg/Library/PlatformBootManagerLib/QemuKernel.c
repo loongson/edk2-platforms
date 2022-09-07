@@ -77,5 +77,5 @@ TryRunningQemuKernel (
 
   QemuUnloadKernelImage (KernelImageHandle);
 
-  return Status;   
+  return Status;
 }

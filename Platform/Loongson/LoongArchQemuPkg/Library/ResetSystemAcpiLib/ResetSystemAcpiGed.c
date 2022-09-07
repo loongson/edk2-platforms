@@ -1,6 +1,7 @@
 /** @file
+  ResetSystem library implementation.
 
-  Copyright (c) 2022, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -11,140 +12,46 @@
 #include <PiPei.h>
 #include <Library/BaseLib.h>        // CpuDeadLoop()
 #include <Library/DebugLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/MemoryAllocationLib.h>
 #include <Library/ResetSystemLib.h> // ResetCold()
-#include <Library/UefiRuntimeLib.h> // EfiConvertPointer()
 #include <Library/IoLib.h>
-#include <Library/QemuFwCfgLib.h>
 #include "ResetSystemAcpiGed.h"
 
-POWER_MANAGER PowerManager;
+POWER_MANAGER mPowerManager;
 
-VOID *
-GetFwCfgData(
-CONST CHAR8           *Name
-)
-{
-  FIRMWARE_CONFIG_ITEM FwCfgItem;
-  EFI_STATUS           Status;
-  UINTN                FwCfgSize;
-  VOID                 *Data;
-
-  Status = QemuFwCfgFindFile (Name, &FwCfgItem, &FwCfgSize);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a %d read  %s error Status %d \n", __func__, __LINE__, Name, Status));
-    return NULL;
-  }
-
-  Data = AllocatePool (FwCfgSize);
-  if (Data == NULL) {
-    return NULL;
-  }
-
-  QemuFwCfgSelectItem (FwCfgItem);
-  QemuFwCfgReadBytes (FwCfgSize, Data);
-
-  return Data;
-}
 /**
-  Find the power manager related info from ACPI table
+  Calling this function causes a system-wide reset. This sets
+  all circuitry within the system to its initial state. This type of reset
+  is asynchronous to system operation and operates without regard to
+  cycle boundaries.
 
-
-  @retval RETURN_SUCCESS     Successfully find out all the required information.
-  @retval RETURN_NOT_FOUND   Failed to find the required info.
-
+  System reset should not return, if it returns, it means the system does
+  not support cold reset.
 **/
-EFI_STATUS
-GetPowerManagerByParseAcpiInfo (VOID)
-{
-  EFI_ACPI_5_0_FIXED_ACPI_DESCRIPTION_TABLE    *Fadt = NULL;
-  EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER *Rsdp = NULL;
-  EFI_ACPI_DESCRIPTION_HEADER                  *Xsdt = NULL;
-  EFI_ACPI_DESCRIPTION_HEADER                  *Rsdt = NULL;
-  VOID                                         *AcpiTables = NULL;
-  UINT32                                       *Entry32 = NULL;
-  UINTN                                         Entry32Num;
-  UINT32                                       *Signature = NULL;
-  UINTN                                         Idx;
-
-  Rsdp = GetFwCfgData ("etc/acpi/rsdp");
-  if (Rsdp == NULL) {
-    DEBUG ((DEBUG_ERROR, "%a %d read etc/acpi/rsdp error \n", __func__, __LINE__));
-    return RETURN_NOT_FOUND;
-  }
-
-  AcpiTables = GetFwCfgData ("etc/acpi/tables");
-  if (AcpiTables == NULL) {
-    DEBUG ((DEBUG_ERROR, "%a %d read etc/acpi/tables error \n", __func__, __LINE__));
-    FreePool (Rsdp);
-    return RETURN_NOT_FOUND;
-  }
-
-  Rsdt = (EFI_ACPI_DESCRIPTION_HEADER *)((UINTN)AcpiTables +  Rsdp->RsdtAddress);
-  Entry32    = (UINT32 *)(Rsdt + 1);
-  Entry32Num = (Rsdt->Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) >> 2;
-  for (Idx = 0; Idx < Entry32Num; Idx++) {
-    Signature = (UINT32 *)((UINTN)Entry32[Idx] + (UINTN)AcpiTables);
-    if (*Signature == EFI_ACPI_5_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE) {
-      Fadt = (EFI_ACPI_5_0_FIXED_ACPI_DESCRIPTION_TABLE *)Signature;
-      DEBUG ((DEBUG_INFO, "Found Fadt in Rsdt\n"));
-      goto Done;
-    }
-  }
-
-
-  Xsdt = (EFI_ACPI_DESCRIPTION_HEADER *)((UINTN)AcpiTables +  Rsdp->XsdtAddress);
-  Entry32    = (UINT32 *)(Xsdt + 1);
-  Entry32Num = (Xsdt->Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) >> 2;
-  for (Idx = 0; Idx < Entry32Num; Idx++) {
-    Signature = (UINT32 *)((UINTN)Entry32[Idx] + (UINTN)AcpiTables);
-    if (*Signature == EFI_ACPI_5_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE) {
-      Fadt = (EFI_ACPI_5_0_FIXED_ACPI_DESCRIPTION_TABLE *)Signature;
-      DEBUG ((DEBUG_INFO, "Found Fadt in Xsdt\n"));
-      goto Done;
-    }
-  }  
-
-
-  FreePool (Rsdp);
-  FreePool (AcpiTables);
-  DEBUG ((DEBUG_ERROR, " Fadt Not Found\n"));
-  return RETURN_NOT_FOUND;
-
-Done:
-
-  PowerManager.ResetRegAddr        = Fadt->ResetReg.Address;
-  PowerManager.ResetValue          = Fadt->ResetValue;
-  PowerManager.SleepControlRegAddr = Fadt->SleepControlReg.Address;
-  PowerManager.SleepStatusRegAddr  = Fadt->SleepStatusReg.Address;
-
-  FreePool (Rsdp);
-  FreePool (AcpiTables);
-
-  return RETURN_SUCCESS;
-}
-
-static VOID
+STATIC VOID
 AcpiGedReset (
   VOID
   )
 {
   MmioWrite8 (
-    (UINTN)PowerManager.ResetRegAddr,
-    PowerManager.ResetValue
+    (UINTN)mPowerManager.ResetRegAddr,
+    mPowerManager.ResetValue
     );
 
   CpuDeadLoop ();
 }
 
-static VOID
+/**
+  This function causes the system to enter a power state equivalent
+    to the ACPI S5 states.
+
+ * */
+STATIC VOID
 AcpiGedShutdown (
   VOID
   )
 {
   MmioWrite8 (
-    (UINTN)PowerManager.SleepControlRegAddr,
+    (UINTN)mPowerManager.SleepControlRegAddr,
     (1 << 5) /* enable bit */ |
     (5 << 2) /* typ == S5  */
     );
@@ -152,6 +59,15 @@ AcpiGedShutdown (
   CpuDeadLoop ();
 }
 
+/**
+  This function causes a system-wide reset (cold reset), in which
+  all circuitry within the system returns to its initial state. This type of
+  reset is asynchronous to system operation and operates without regard to
+  cycle boundaries.
+
+  If this function returns, it means that the system does not support cold
+  reset.
+**/
 VOID EFIAPI
 ResetCold (
   VOID
@@ -160,6 +76,13 @@ ResetCold (
   AcpiGedReset ();
 }
 
+/**
+  This function causes a system-wide initialization (warm reset), in which all
+  processors are set to their initial state. Pending cycles are not corrupted.
+
+  If this function returns, it means that the system does not support warm
+  reset.
+**/
 VOID EFIAPI
 ResetWarm (
   VOID
@@ -168,6 +91,17 @@ ResetWarm (
   AcpiGedReset ();
 }
 
+/**
+  This function causes a systemwide reset. The exact type of the reset is
+  defined by the EFI_GUID that follows the Null-terminated Unicode string passed
+  into ResetData. If the platform does not recognize the EFI_GUID in ResetData
+  the platform must pick a supported reset type to perform.The platform may
+  optionally log the parameters from any non-normal reset that occurs.
+
+  @param[in]  DataSize   The size, in bytes, of ResetData.
+  @param[in]  ResetData  The data buffer starts with a Null-terminated string,
+                         followed by the EFI_GUID.
+**/
 VOID
 EFIAPI
 ResetPlatformSpecific (
@@ -178,18 +112,13 @@ ResetPlatformSpecific (
   AcpiGedReset ();
 }
 
-VOID
-EFIAPI
-ResetSystem (
-  IN EFI_RESET_TYPE  ResetType,
-  IN EFI_STATUS      ResetStatus,
-  IN UINTN           DataSize,
-  IN VOID            *ResetData OPTIONAL
-  )
-{
-  AcpiGedReset ();
-}
+/**
+  This function causes the system to enter a power state equivalent
+  to the ACPI G2/S5 or G3 states.
 
+  If this function returns, it means that the system does not support shut down
+  reset.
+**/
 VOID EFIAPI
 ResetShutdown (
   VOID
