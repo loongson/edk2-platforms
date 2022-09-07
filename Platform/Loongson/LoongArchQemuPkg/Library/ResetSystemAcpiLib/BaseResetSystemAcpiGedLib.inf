@@ -1,8 +1,8 @@
 ## @file
-#  DXE library instance for ResetSystem library class for OVMF
+#  Base library instance for ResetSystem library class for loongarhch
 #
-#  Copyright (C) 2020, Red Hat, Inc.
-#  Copyright (c) 2006 - 2018, Intel Corporation. All rights reserved.<BR>
+#  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+#
 #  SPDX-License-Identifier: BSD-2-Clause-Patent
 #
 ##

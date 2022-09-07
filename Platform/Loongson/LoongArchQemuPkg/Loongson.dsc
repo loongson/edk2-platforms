@@ -188,7 +188,7 @@
   ReportStatusCodeLib              | MdeModulePkg/Library/PeiReportStatusCodeLib/PeiReportStatusCodeLib.inf
   OemHookStatusCodeLib             | MdeModulePkg/Library/OemHookStatusCodeLibNull/OemHookStatusCodeLibNull.inf
   PeCoffGetEntryPointLib           | MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
-  QemuFwCfgLib                     | Platform/Loongson/LoongArchQemuPkg/Library/QemuFwCfgLib/QemuFwCfgLib.inf
+  QemuFwCfgLib                     | Platform/Loongson/LoongArchQemuPkg/Library/QemuFwCfgLib/QemuFwCfgPeiLib.inf
   MmuLib                           | Platform/Loongson/LoongArchQemuPkg/Library/MmuLib/MmuBaseLibPei.inf
 
 [LibraryClasses.common.PEIM]
@@ -203,7 +203,7 @@
   ExtractGuidedSectionLib          | MdePkg/Library/PeiExtractGuidedSectionLib/PeiExtractGuidedSectionLib.inf
   PcdLib                           | MdePkg/Library/PeiPcdLib/PeiPcdLib.inf
   QemuFwCfgS3Lib                   | OvmfPkg/Library/QemuFwCfgS3Lib/PeiQemuFwCfgS3LibFwCfg.inf
-  QemuFwCfgLib                     | Platform/Loongson/LoongArchQemuPkg/Library/QemuFwCfgLib/QemuFwCfgLib.inf
+  QemuFwCfgLib                     | Platform/Loongson/LoongArchQemuPkg/Library/QemuFwCfgLib/QemuFwCfgPeiLib.inf
 
   MmuLib                       | Platform/Loongson/LoongArchQemuPkg/Library/MmuLib/MmuBaseLibPei.inf
 [LibraryClasses.common.DXE_CORE]
@@ -223,7 +223,7 @@
   QemuFwCfgS3Lib                   | OvmfPkg/Library/QemuFwCfgS3Lib/DxeQemuFwCfgS3LibFwCfg.inf
   RealTimeClockLib                 | Platform/Loongson/LoongArchQemuPkg/Library/LsRealTimeClockLib/LsRealTimeClockLib.inf
   VariablePolicyLib                | MdeModulePkg/Library/VariablePolicyLib/VariablePolicyLibRuntimeDxe.inf
-  QemuFwCfgLib                     | Platform/Loongson/LoongArchQemuPkg/Library/QemuFwCfgLib/QemuFwCfgLib.inf
+  QemuFwCfgLib                     | Platform/Loongson/LoongArchQemuPkg/Library/QemuFwCfgLib/QemuFwCfgPeiLib.inf
   EfiResetSystemLib                | Platform/Loongson/LoongArchQemuPkg/Library/ResetSystemAcpiLib/DxeResetSystemAcpiGedLib.inf
   ResetSystemLib                   | Platform/Loongson/LoongArchQemuPkg/Library/ResetSystemAcpiLib/DxeResetSystemAcpiGedLib.inf
 !if $(TARGET) != RELEASE

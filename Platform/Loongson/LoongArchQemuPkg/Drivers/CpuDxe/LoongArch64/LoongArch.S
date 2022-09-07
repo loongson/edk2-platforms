@@ -265,7 +265,7 @@ ASM_FUNC(Exception_handler)
 ASM_FUNC(LoongArchException)
     csrwr   T0, LOONGARCH_CSR_KS0
     csrwr   SP, LOONGARCH_CSR_KS1
-    la      T0, Exception_handler
+    la.abs      T0, Exception_handler
     jirl    ZERO, T0, 0
 .globl  LoongArchExceptionEnd
 LoongArchExceptionEnd:

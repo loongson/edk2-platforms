@@ -13,15 +13,15 @@
   FILE_GUID                      = cdf9a9d5-7422-4dcb-b41d-607151ad320b
   MODULE_TYPE                    = BASE
   VERSION_STRING                 = 1.0
-  LIBRARY_CLASS                  = QemuFwCfgLib
+  LIBRARY_CLASS                  = QemuFwCfgLib|PEIM
 
   CONSTRUCTOR                    = QemuFwCfgInitialize
 
 
 [Sources]
   QemuFwCfgLibInternal.h
-  QemuFwCfgLib.c
-  QemuFwCfg.c
+  QemuFwCfgPeiLib.c
+  QemuFwCfgPei.c
 
 [Packages]
   EmbeddedPkg/EmbeddedPkg.dec
