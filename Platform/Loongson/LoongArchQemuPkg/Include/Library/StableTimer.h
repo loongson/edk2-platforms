@@ -21,9 +21,10 @@
 
   @retval  timer count value.
 **/
+extern
 UINTN
 EFIAPI
-CsrReadTime (
+LoongArchReadTime (
   VOID
   );
 

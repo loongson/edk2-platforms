@@ -239,6 +239,7 @@
 
   @retval  VOID
  */
+#ifdef __GNUC__
 #define LOONGARCH_CSR_READQ(val, reg)                   \
 do {                                                    \
   UINT64 __res;                                         \
@@ -251,6 +252,7 @@ do {                                                    \
           );                                            \
   (val) = __res;                                        \
 } while(0)
+#endif
 
 /*
   Write data to the specified CSR register.
@@ -260,6 +262,7 @@ do {                                                    \
 
   @retval  VOID
  */
+#ifdef __GNUC__
 #define LOONGARCH_CSR_WRITEQ(val, reg)                 \
 do {                                                   \
   UINT64 __val = val;                                  \
@@ -271,6 +274,7 @@ do {                                                   \
           : "memory"                                   \
           );                                           \
 } while(0)
+#endif
 
 /*
   Exchange specified bit data with the specified CSR registers
@@ -281,6 +285,7 @@ do {                                                   \
 
   @retval  VOID
  */
+#ifdef __GNUC__
 #define LOONGARCH_CSR_XCHGQ(val, mask, reg)          \
 do {                                                 \
   UINT64 __val = val;                                \
@@ -293,6 +298,8 @@ do {                                                 \
           : "memory"                                 \
           );                                         \
 } while(0)
+#endif
+
 /*
   Search for tlb
 
@@ -300,6 +307,7 @@ do {                                                 \
 
   @retval  VOID
  */
+#ifdef __GNUC__
 #define LOONGARCH_TLB_SRCH()                         \
 do {                                                 \
   /* tlbsrch */                                      \
@@ -307,6 +315,8 @@ do {                                                 \
           "tlbsrch"                                  \
           );                                         \
 } while(0)
+#endif
+
 /*
   Writes data to the specified tlb table entry.
 
@@ -314,6 +324,7 @@ do {                                                 \
 
   @retval  VOID
  */
+#ifdef __GNUC__
 #define LOONGARCH_TLB_WR()                         \
 do {                                               \
   /* tlbwr */                                      \
@@ -321,6 +332,7 @@ do {                                               \
           "tlbwr"                                  \
           );                                       \
 } while(0)
+#endif
 /*
   Reads data from the specified CPUCFG register.
 
@@ -329,6 +341,7 @@ do {                                               \
 
   @retval  VOID
  */
+#ifdef __GNUC__
 #define LOONGARCH_GET_CPUCFG(val, reg)               \
 do {                                                 \
   UINT64 __res;                                      \
@@ -341,6 +354,7 @@ do {                                                 \
           );                                         \
   val = (UINT32)__res;                               \
 } while(0)
+#endif
 
 /*
   Enables  floating-point unit
