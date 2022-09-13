@@ -18,7 +18,6 @@
 //
 // Function Prototypes
 //
-
 extern UINT32 EFIAPI CpuGetCompare(VOID);
 extern VOID  EFIAPI CpuSetCompare(IN UINT32 val);
 extern VOID  EFIAPI CpuSetIP(IN UINT32 val);

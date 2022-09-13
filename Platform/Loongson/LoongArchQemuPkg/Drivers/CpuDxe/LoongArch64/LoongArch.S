@@ -265,8 +265,12 @@ ASM_FUNC(Exception_handler)
 ASM_FUNC(LoongArchException)
     csrwr   T0, LOONGARCH_CSR_KS0
     csrwr   SP, LOONGARCH_CSR_KS1
-    la.abs      T0, Exception_handler
+    pcaddi   T0, 0
+    ld.d     T0, T0, 16
     jirl    ZERO, T0, 0
+    nop
+1:
+    .quad  Exception_handler
 .globl  LoongArchExceptionEnd
 LoongArchExceptionEnd:
 

@@ -24,3 +24,12 @@ ASM_FUNC(CpuSetIP)
     csrwr   T0, LOONGARCH_CSR_ECFG
     jirl    ZERO, RA,0
 
+#
+#Gets the timer count value.
+#
+#@param[] VOID
+#
+#@retval  timer count value.
+ASM_FUNC(LoongArchReadTime)
+    rdtime.d   A0, ZERO
+    jirl    ZERO, RA,0

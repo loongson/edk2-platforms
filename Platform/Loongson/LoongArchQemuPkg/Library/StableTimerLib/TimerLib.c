@@ -21,26 +21,6 @@
 UINT32 StableTimerFreq = 0;
 
 /**
-  Gets the timer count value.
-
-  @param[] VOID
-
-  @retval  timer count value.
-**/
-UINTN
-EFIAPI
-CsrReadTime (
-  VOID
-  )
-{
-  UINTN Value = 0;
-  __asm__ __volatile__(
-      " rdtime.d   %0, $r0\n"
-      : "=r" (Value));
-  return Value;
-}
-
-/**
   Calculate the timer frequency.
 
   @param[] VOID
@@ -118,11 +98,11 @@ MicroSecondDelay (
 
   Count = GetFreq ();
   Count = (Count * MicroSeconds) / 1000000;
-  Start = CsrReadTime ();
+  Start = LoongArchReadTime ();
   End = Start + Count;
 
   do {
-    Ticks = CsrReadTime ();
+    Ticks = LoongArchReadTime ();
   } while (Ticks < End);
 
   return MicroSeconds;
@@ -174,7 +154,7 @@ GetPerformanceCounter (
   VOID
   )
 {
-  return CsrReadTime ();
+  return LoongArchReadTime ();
 }
 /**
   Retrieves the 64-bit frequency in Hz and the range of performance counter
