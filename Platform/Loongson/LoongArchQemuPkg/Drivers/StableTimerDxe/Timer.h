@@ -14,7 +14,7 @@
 
 
 #define DEFAULT_TIMER_TICK_DURATION 100000 //10ms = 100000 100 ns units
-#define SR_IP7  (1 << 15)
+#define SR_IP7                      (1 << 15)
 //
 // Function Prototypes
 //
