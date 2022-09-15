@@ -69,8 +69,5 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase64
   gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase64
 
-[FeaturePcd]
-  gUefiOvmfPkgTokenSpaceGuid.PcdSmmSmramRequire
-
 [Depex]
   TRUE

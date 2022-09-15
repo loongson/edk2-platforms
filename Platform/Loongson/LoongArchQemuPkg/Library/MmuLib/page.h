@@ -15,32 +15,32 @@
 #ifndef PAGE_H_
 #define PAGE_H_
 
-#define MAX_VA_BITS  47
-#define PGD_WIDE    (8)
-#define PUD_WIDE    (9)
-#define PMD_WIDE    (9)
-#define PTE_WIDE    (9)
+#define MAX_VA_BITS                         47
+#define PGD_WIDE                            (8)
+#define PUD_WIDE                            (9)
+#define PMD_WIDE                            (9)
+#define PTE_WIDE                            (9)
 
-#define ENTRYS_PER_PGD  (1 << PGD_WIDE)
-#define ENTRYS_PER_PUD  (1 << PUD_WIDE)
-#define ENTRYS_PER_PMD  (1 << PMD_WIDE)
-#define ENTRYS_PER_PTE  (1 << PTE_WIDE)
+#define ENTRYS_PER_PGD                      (1 << PGD_WIDE)
+#define ENTRYS_PER_PUD                      (1 << PUD_WIDE)
+#define ENTRYS_PER_PMD                      (1 << PMD_WIDE)
+#define ENTRYS_PER_PTE                      (1 << PTE_WIDE)
 
-#define PGD_SHIFT (PUD_SHIFT + PUD_WIDE)
-#define PUD_SHIFT   (PMD_SHIFT + PMD_WIDE)
-#define PMD_SHIFT   (EFI_PAGE_SHIFT + PTE_WIDE)
-#define PTE_SHIFT   (EFI_PAGE_SHIFT)
+#define PGD_SHIFT                           (PUD_SHIFT + PUD_WIDE)
+#define PUD_SHIFT                           (PMD_SHIFT + PMD_WIDE)
+#define PMD_SHIFT                           (EFI_PAGE_SHIFT + PTE_WIDE)
+#define PTE_SHIFT                           (EFI_PAGE_SHIFT)
 
-#define PGD_SIZE   (1UL << PGD_SHIFT)
-#define PUD_SIZE   (1UL << PUD_SHIFT)
-#define PMD_SIZE   (1UL << PMD_SHIFT)
+#define PGD_SIZE                            (1UL << PGD_SHIFT)
+#define PUD_SIZE                            (1UL << PUD_SHIFT)
+#define PMD_SIZE                            (1UL << PMD_SHIFT)
 
-#define PGD_MASK (~(PGD_SIZE-1))
-#define PUD_MASK   (~(PUD_SIZE-1))
-#define PMD_MASK   (~(PMD_SIZE-1))
-#define PAGE_MASK  (~(EFI_PAGE_SIZE - 1))
-#define PFN_MASK   (~(((UINTN)(1) << (EFI_PAGE_SHIFT)) - 1) & \
-                     (((UINTN)(1) << (PAGE_PFN_END_SHIFT)) - 1))
+#define PGD_MASK                            (~(PGD_SIZE-1))
+#define PUD_MASK                            (~(PUD_SIZE-1))
+#define PMD_MASK                            (~(PMD_SIZE-1))
+#define PAGE_MASK                           (~(EFI_PAGE_SIZE - 1))
+#define PFN_MASK                            (~(((UINTN)(1) << (EFI_PAGE_SHIFT)) - 1) & \
+                                             (((UINTN)(1) << (PAGE_PFN_END_SHIFT)) - 1))
 
 typedef struct { UINTN PgdVal; } PGD;
 typedef struct { UINTN PudVal; } PUD;
@@ -53,7 +53,7 @@ typedef struct { UINTN PteVal; } PTE;
 
   @retval   the value of the page global directory table entry.
  **/
-#define PGD_VAL(x)    ((x).PgdVal)
+#define PGD_VAL(x)                          ((x).PgdVal)
 /**
   Gets the value of the page upper directory table entry.
 
@@ -61,7 +61,7 @@ typedef struct { UINTN PteVal; } PTE;
 
   @retval  the value of the page upper directory table entry.
  **/
-#define PUD_VAL(x)    ((x).PudVal)
+#define PUD_VAL(x)                          ((x).PudVal)
 /**
   Gets the value of the page middle directory table entry.
 
@@ -69,7 +69,7 @@ typedef struct { UINTN PteVal; } PTE;
 
   @retval  the value of the page middle directory table entry.
  **/
-#define PMD_VAL(x)    ((x).PmdVal)
+#define PMD_VAL(x)                          ((x).PmdVal)
 /**
   Gets the value of the page table entry.
 
@@ -77,13 +77,13 @@ typedef struct { UINTN PteVal; } PTE;
 
   @retval  the value of the page table entry.
  **/
-#define PTE_VAL(x)    ((x).PteVal)
+#define PTE_VAL(x)                          ((x).PteVal)
 
 
-#define PGD_TABLE_SIZE (ENTRYS_PER_PGD * sizeof(PGD))
-#define PUD_TABLE_SIZE (ENTRYS_PER_PUD * sizeof(PUD))
-#define PMD_TABLE_SIZE (ENTRYS_PER_PMD * sizeof(PMD))
-#define PTE_TABLE_SIZE (ENTRYS_PER_PTE * sizeof(PTE))
+#define PGD_TABLE_SIZE                      (ENTRYS_PER_PGD * sizeof(PGD))
+#define PUD_TABLE_SIZE                      (ENTRYS_PER_PUD * sizeof(PUD))
+#define PMD_TABLE_SIZE                      (ENTRYS_PER_PMD * sizeof(PMD))
+#define PTE_TABLE_SIZE                      (ENTRYS_PER_PTE * sizeof(PTE))
 /**
   Gets the physical address of the record in the page table entry.
 
@@ -91,7 +91,7 @@ typedef struct { UINTN PteVal; } PTE;
 
   @retval  the value of the physical address.
  **/
-#define GET_PAGE_ATTRIBUTES(x)  (UINTN) {(PTE_VAL(x) & ~PFN_MASK)}
+#define GET_PAGE_ATTRIBUTES(x)              (UINTN) {(PTE_VAL(x) & ~PFN_MASK)}
 /**
   Gets the virtual address of the next block of the specified virtual address
   that is aligned with the size of the global page directory mapping.
@@ -138,7 +138,7 @@ typedef struct { UINTN PteVal; } PTE;
 
   @retval   the index of the page global directory table entry.
  **/
-#define PGD_INDEX(Address)  (((Address) >> PGD_SHIFT) & (ENTRYS_PER_PGD-1))
+#define PGD_INDEX(Address)                  (((Address) >> PGD_SHIFT) & (ENTRYS_PER_PGD-1))
 /**
   Get Specifies the virtual address corresponding to the index of the page upper directory table entry.
 
@@ -147,7 +147,7 @@ typedef struct { UINTN PteVal; } PTE;
 
   @retval   the index of the page upper directory table entry.
  **/
-#define PUD_INDEX(Address)  (((Address) >> PUD_SHIFT) & (ENTRYS_PER_PUD - 1))
+#define PUD_INDEX(Address)                  (((Address) >> PUD_SHIFT) & (ENTRYS_PER_PUD - 1))
 /**
   Get Specifies the virtual address corresponding to the index of the page middle directory table entry.
 
@@ -155,7 +155,7 @@ typedef struct { UINTN PteVal; } PTE;
 
   @retval   the index of the page middle directory table entry.
  **/
-#define PMD_INDEX(Address)  (((Address) >> PMD_SHIFT) & (ENTRYS_PER_PMD - 1))
+#define PMD_INDEX(Address)                  (((Address) >> PMD_SHIFT) & (ENTRYS_PER_PMD - 1))
 /**
   Get Specifies the virtual address corresponding to the index of the page table entry.
 
@@ -163,7 +163,7 @@ typedef struct { UINTN PteVal; } PTE;
 
   @retval   the index of the page table entry.
  **/
-#define PTE_INDEX(Address)  (((Address) >> EFI_PAGE_SHIFT) & (ENTRYS_PER_PTE - 1))
+#define PTE_INDEX(Address)                  (((Address) >> EFI_PAGE_SHIFT) & (ENTRYS_PER_PTE - 1))
 
 /**
   Calculates the value of the page table entry based on the specified virtual address and properties.
@@ -173,7 +173,7 @@ typedef struct { UINTN PteVal; } PTE;
 
   @retval    the value of the page table entry.
  **/
-#define MAKE_PTE(Address, Attributes)   (PTE){((((Address) >> EFI_PAGE_SHIFT) << 12) | (Attributes))}
+#define MAKE_PTE(Address, Attributes)       (PTE){((((Address) >> EFI_PAGE_SHIFT) << 12) | (Attributes))}
 /**
   Calculates the value of the Huge page table entry based on the specified virtual address and properties.
 
@@ -191,8 +191,8 @@ typedef struct { UINTN PteVal; } PTE;
   @retval    1   Is huge page table entry.
   @retval    0   Isn't huge page table entry.
  **/
-#define IS_HUGE_PAGE(Val)   (((Val) & PAGE_HUGE) == PAGE_HUGE)
-#define HUGE_PAGE_SIZE    (PMD_SIZE)
+#define IS_HUGE_PAGE(Val)                   (((Val) & PAGE_HUGE) == PAGE_HUGE)
+#define HUGE_PAGE_SIZE                      (PMD_SIZE)
 
  /**
   Check that the global page directory table entry is empty.

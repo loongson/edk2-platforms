@@ -29,8 +29,6 @@ InstallProtocolInterfaces (
   EFI_HANDLE                          FwbHandle;
   EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL  *OldFwbInterface;
 
-  ASSERT (!FeaturePcdGet (PcdSmmSmramRequire));
-
   //
   // Find a handle with a matching device path that has supports FW Block
   // protocol

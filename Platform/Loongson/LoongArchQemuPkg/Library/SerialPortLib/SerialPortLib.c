@@ -17,7 +17,7 @@
 #include <Library/SerialPortLib.h>
 #include <LoongArchQemuPlatform.h>
 
-UINTN   gUartBase = PHYS_TO_UNCACHED(UART_BASE_ADDRESS);
+UINTN   gUartBase = UART_BASE_ADDRESS;
 UINTN   gBps      = UART_BPS;
 
 /**

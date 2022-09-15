@@ -21,7 +21,7 @@
 // The size, in bytes, of names of firmware configuration files, including at
 // least one terminating NUL byte.
 //
-#define QEMU_FW_CFG_FNAME_SIZE 56
+#define QEMU_FW_CFG_FNAME_SIZE      56
 
 //
 // If the following bit is set in the UINT32 fw_cfg revision / feature bitmap
@@ -33,19 +33,19 @@
 //
 // Macros for the FW_CFG_DMA_ACCESS.Control bitmap (in native encoding).
 //
-#define FW_CFG_DMA_CTL_ERROR  BIT0
-#define FW_CFG_DMA_CTL_READ   BIT1
-#define FW_CFG_DMA_CTL_SKIP   BIT2
-#define FW_CFG_DMA_CTL_SELECT BIT3
-#define FW_CFG_DMA_CTL_WRITE  BIT4
+#define FW_CFG_DMA_CTL_ERROR         BIT0
+#define FW_CFG_DMA_CTL_READ          BIT1
+#define FW_CFG_DMA_CTL_SKIP          BIT2
+#define FW_CFG_DMA_CTL_SELECT        BIT3
+#define FW_CFG_DMA_CTL_WRITE         BIT4
 
 //
 // The fw_cfg registers can be found at these IO Ports, on the IO-mapped
 // platforms (Ia32 and X64).
 //
-#define FW_CFG_IO_SELECTOR    0x510
-#define FW_CFG_IO_DATA        0x511
-#define FW_CFG_IO_DMA_ADDRESS 0x514
+#define FW_CFG_IO_SELECTOR          0x510
+#define FW_CFG_IO_DATA              0x511
+#define FW_CFG_IO_DMA_ADDRESS       0x514
 
 //
 // Numerically defined keys.
