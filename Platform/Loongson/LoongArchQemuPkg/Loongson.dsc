@@ -324,8 +324,6 @@
 
 #######################################################################################
   gLoongArchQemuPkgTokenSpaceGuid.PcdRamRegionsBottom                  | 0x90000000
-  gEfiMdePkgTokenSpaceGuid.PcdGuidedExtractHandlerTableAddress         | 0x90000000
-  gLoongArchQemuPkgTokenSpaceGuid.PcdGuidedExtractHandlerTableSize     | 0x10000
   gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamBase                 | 0x90010000
   gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamSize                 | 0x10000
   gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceTreeBase                    | 0x1c400000
