@@ -141,7 +141,7 @@ ResetSystemLibConstructor (
   )
 {
   EFI_STATUS  Status;
-  
+
   Status = GetPowerManagerByParseAcpiInfo ();
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "%a:%d\n",  __FUNCTION__, __LINE__));

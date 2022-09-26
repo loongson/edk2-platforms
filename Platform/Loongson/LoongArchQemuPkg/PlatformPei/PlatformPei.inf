@@ -64,8 +64,6 @@
   gLoongArchQemuPkgTokenSpaceGuid.PcdUefiRamTop
   gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamBase
   gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamSize
-  gLoongArchQemuPkgTokenSpaceGuid.PcdGuidedExtractHandlerTableSize
-  gEfiMdePkgTokenSpaceGuid.PcdGuidedExtractHandlerTableAddress
   gEmbeddedTokenSpaceGuid.PcdPrePiCpuMemorySize
   gEmbeddedTokenSpaceGuid.PcdPrePiCpuIoSize
 

@@ -40,8 +40,6 @@
 [FixedPcd]
   gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamBase
   gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamSize
-  gLoongArchQemuPkgTokenSpaceGuid.PcdGuidedExtractHandlerTableAddress
-  gLoongArchQemuPkgTokenSpaceGuid.PcdGuidedExtractHandlerTableSize
 
   gLoongArchQemuPkgTokenSpaceGuid.PcdFlashSecFvBase
   gLoongArchQemuPkgTokenSpaceGuid.PcdFlashSecFvSize

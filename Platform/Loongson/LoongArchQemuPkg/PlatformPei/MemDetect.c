@@ -105,21 +105,4 @@ InitializeRamRegions (
     AddMemoryRangeHob ( pEntry->BaseAddr, pEntry->BaseAddr + pEntry->Length);
   }
 
-  //
-  // Lock the scope of the cache.
-  //
-  BuildMemoryAllocationHob (
-    PcdGet64 (PcdSecPeiTempRamBase),
-    PcdGet32 (PcdSecPeiTempRamSize),
-    EfiACPIMemoryNVS
-    );
-
-  //
-  // SEC stores its table of GUIDed section handlers here.
-  //
-  BuildMemoryAllocationHob (
-    PcdGet64 (PcdGuidedExtractHandlerTableAddress),
-    PcdGet32 (PcdGuidedExtractHandlerTableSize),
-    EfiACPIMemoryNVS
-    );
 }

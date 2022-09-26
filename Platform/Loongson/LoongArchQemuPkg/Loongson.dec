@@ -43,8 +43,6 @@
   gLoongArchQemuPkgTokenSpaceGuid.PcdFlashSecModuleSize|0x0|UINT32|0x0000000b
   gLoongArchQemuPkgTokenSpaceGuid.PcdFlashEventLogBase|0x0|UINT64|0x0000000c
   gLoongArchQemuPkgTokenSpaceGuid.PcdFlashEventLogSize|0x0|UINT32|0x0000000d
-  gLoongArchQemuPkgTokenSpaceGuid.PcdGuidedExtractHandlerTableSize|0|UINT32|0x00000016
-  gLoongArchQemuPkgTokenSpaceGuid.PcdGuidedExtractHandlerTableAddress|0|UINT32|0x00000017
   gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceTreeBase|0x0|UINT64|0x00000018
   gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceTreePadding|256|UINT32|0x00000019
 
