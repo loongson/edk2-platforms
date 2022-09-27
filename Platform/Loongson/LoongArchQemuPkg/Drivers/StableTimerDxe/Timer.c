@@ -370,7 +370,7 @@ StableTimerDriverInitialize (
   //
   // Install interrupt handler for Stable Timer #0 (ISA IRQ0)
   //
-  TimerVector = 0;
+  TimerVector = EXCEPT_LOONGARCH_INT_TIMER;
   Status = mCpu->RegisterInterruptHandler (mCpu, TimerVector, TimerInterruptHandler);
   ASSERT_EFI_ERROR (Status);
 

@@ -33,72 +33,74 @@
 
 
 
-EFI_EXCEPTION_CALLBACK  gExceptionHandlers[MAX_LOONGARCH_INTERRUPT + 1];
+EFI_EXCEPTION_CALLBACK  gInterruptHandler[MAX_LOONGARCH_INTERRUPT + 1];
 EFI_EXCEPTION_CALLBACK  gDebuggerExceptionHandlers[MAX_LOONGARCH_INTERRUPT + 1];
 
 /**
   This function registers and enables the handler specified by InterruptHandler for a processor
-  interrupt or exception type specified by InterruptType. If InterruptHandler is NULL, then the
-  handler for the processor interrupt or exception type specified by InterruptType is uninstalled.
+  interrupt or exception type specified by InteruptNum. If InterruptHandler is NULL, then the
+  handler for the processor interrupt or exception type specified by InteruptNum is uninstalled.
   The installed handler is called once for each processor interrupt or exception.
 
-  @param  InterruptType    A pointer to the processor's current interrupt state. Set to TRUE if interrupts
-                           are enabled and FALSE if interrupts are disabled.
+  @param  InteruptNum    A number of the processor's current interrupt.
   @param  InterruptHandler A pointer to a function of type EFI_CPU_INTERRUPT_HANDLER that is called
                            when a processor interrupt occurs. If this parameter is NULL, then the handler
                            will be uninstalled.
 
   @retval EFI_SUCCESS           The handler for the processor interrupt was successfully installed or uninstalled.
-  @retval EFI_ALREADY_STARTED   InterruptHandler is not NULL, and a handler for InterruptType was
+  @retval EFI_ALREADY_STARTED   InterruptHandler is not NULL, and a handler for InteruptNum was
                                 previously installed.
-  @retval EFI_INVALID_PARAMETER InterruptHandler is NULL, and a handler for InterruptType was not
+  @retval EFI_INVALID_PARAMETER InterruptHandler is NULL, and a handler for InteruptNum was not
                                 previously installed.
-  @retval EFI_UNSUPPORTED       The interrupt specified by InterruptType is not supported.
+  @retval EFI_UNSUPPORTED       The interrupt specified by InteruptNum is not supported.
 
 **/
 EFI_STATUS
 RegisterInterruptHandler (
-  IN EFI_EXCEPTION_TYPE             InterruptType,
+  IN EFI_EXCEPTION_TYPE             InteruptNum,
   IN EFI_CPU_INTERRUPT_HANDLER      InterruptHandler
   )
 {
-  if (InterruptType > MAX_LOONGARCH_INTERRUPT) {
+  if (InteruptNum > MAX_LOONGARCH_INTERRUPT) {
     return EFI_UNSUPPORTED;
   }
 
   if ((InterruptHandler != NULL)
-    && (gExceptionHandlers[InterruptType] != NULL))
+    && (gInterruptHandler[InteruptNum] != NULL))
   {
     return EFI_ALREADY_STARTED;
   }
 
-  gExceptionHandlers[InterruptType] = InterruptHandler;
+  gInterruptHandler[InteruptNum] = InterruptHandler;
 
   return EFI_SUCCESS;
 }
 /**
   This function calls the corresponding exception handler based on the exception type.
 
-  @param  ExceptionType  Exception Type.
   @param  SystemContext  The system context at the time of the exception.
 
   @retval VOID
 **/
 STATIC VOID
 EFIAPI
-InterruptHandler (
-  IN     INT32           ExceptionType,
+CommonInterruptHandler (
   IN OUT EFI_SYSTEM_CONTEXT           SystemContext
   )
 {
   INT32 Pending;
-  /*irq [13-0] NMI IPI TI PCOV hw IP10-IP2 soft IP1-IP0*/
+  INT32 InterruptNum;
+  /*Interrupt [13-0] NMI IPI TI PCOV hw IP10-IP2 soft IP1-IP0*/
   Pending = ((SystemContext.SystemContextLoongArch64->ESTAT) &
              (SystemContext.SystemContextLoongArch64->ECFG) & 0x1fff);
-  if (Pending & (1 << 11/*TI*/)) {
-      gExceptionHandlers[ExceptionType] (ExceptionType, SystemContext);
-  } else {
-      DEBUG ((DEBUG_INFO, "Pending: 0x%0x, ExceptionType: 0x%0x\n", Pending, ExceptionType));
+  for (InterruptNum = 0; InterruptNum < MAX_LOONGARCH_INTERRUPT; InterruptNum++) {
+    if (Pending & (1 << InterruptNum)) {
+      if (gInterruptHandler[InterruptNum] != NULL) {
+        gInterruptHandler[InterruptNum] (InterruptNum, SystemContext);
+      } else {
+        DEBUG ((DEBUG_INFO, "Pending: 0x%0x, InterruptNum: 0x%0x\n", Pending, InterruptNum));
+      }
+    }
   }
 }
 
@@ -249,7 +251,7 @@ CommonExceptionEntry (
       /*
        * handle interrupt exception
        */
-      InterruptHandler (ExceptionType, SystemContext);
+      CommonInterruptHandler (SystemContext);
       if (!FpuStatus) {
         LOONGARCH_CSR_READQ (CsrEuen, LOONGARCH_CSR_EUEN);
         if (CsrEuen & CSR_EUEN_FPEN) {
@@ -294,7 +296,7 @@ InitializeExceptions (
   BOOLEAN              IrqEnabled;
   EFI_PHYSICAL_ADDRESS Address;
 
-  ZeroMem (gExceptionHandlers, sizeof (*gExceptionHandlers));
+  ZeroMem (gInterruptHandler, sizeof (*gInterruptHandler));
 
   //
   // Disable interrupts

@@ -289,7 +289,7 @@
   gEmbeddedTokenSpaceGuid.PcdPrePiCpuMemorySize                        | 48
   gEmbeddedTokenSpaceGuid.PcdPrePiCpuIoSize                            | 32
   gEfiMdePkgTokenSpaceGuid.PcdReportStatusCodePropertyMask             | 0x07
-  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel                     | 0x8010004F
+  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel                     | 0x8000004F
   # DEBUG_INIT      0x00000001  // Initialization
   # DEBUG_WARN      0x00000002  // Warnings
   # DEBUG_LOAD      0x00000004  // Load events
