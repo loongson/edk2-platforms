@@ -35,9 +35,6 @@
   gLoongArchQemuPkgTokenSpaceGuid.PcdFlashSecFvBase
   gLoongArchQemuPkgTokenSpaceGuid.PcdRamSize
 
-[FixedPcd]
-  gLoongArchQemuPkgTokenSpaceGuid.PcdRamRegionsBottom
-
 [LibraryClasses]
   MemoryAllocationLib
   PcdLib
