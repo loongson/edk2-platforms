@@ -14,54 +14,52 @@
 
 /**
   This function registers and enables the handler specified by InterruptHandler for a processor
-  interrupt or exception type specified by InterruptType. If InterruptHandler is NULL, then the
-  handler for the processor interrupt or exception type specified by InterruptType is uninstalled.
+  interrupt or exception type specified by InteruptNum. If InterruptHandler is NULL, then the
+  handler for the processor interrupt or exception type specified by InteruptNum is uninstalled.
   The installed handler is called once for each processor interrupt or exception.
 
-  @param  InterruptType    A pointer to the processor's current interrupt state. Set to TRUE if interrupts
-                           are enabled and FALSE if interrupts are disabled.
+  @param  InteruptNum    A number of the processor's current interrupt.
   @param  InterruptHandler A pointer to a function of type EFI_CPU_INTERRUPT_HANDLER that is called
                            when a processor interrupt occurs. If this parameter is NULL, then the handler
                            will be uninstalled.
 
   @retval EFI_SUCCESS           The handler for the processor interrupt was successfully installed or uninstalled.
-  @retval EFI_ALREADY_STARTED   InterruptHandler is not NULL, and a handler for InterruptType was
+  @retval EFI_ALREADY_STARTED   InterruptHandler is not NULL, and a handler for InteruptNum was
                                 previously installed.
-  @retval EFI_INVALID_PARAMETER InterruptHandler is NULL, and a handler for InterruptType was not
+  @retval EFI_INVALID_PARAMETER InterruptHandler is NULL, and a handler for InteruptNum was not
                                 previously installed.
-  @retval EFI_UNSUPPORTED       The interrupt specified by InterruptType is not supported.
+  @retval EFI_UNSUPPORTED       The interrupt specified by InteruptNum is not supported.
 
 **/
 EFI_STATUS
 RegisterInterruptHandler (
-  IN EFI_EXCEPTION_TYPE             InterruptType,
+  IN EFI_EXCEPTION_TYPE             InteruptNum,
   IN EFI_CPU_INTERRUPT_HANDLER      InterruptHandler
   );
 
 
 /**
   This function registers and enables the handler specified by InterruptHandler for a processor
-  interrupt or exception type specified by InterruptType. If InterruptHandler is NULL, then the
-  handler for the processor interrupt or exception type specified by InterruptType is uninstalled.
+  interrupt or exception type specified by InteruptNum. If InterruptHandler is NULL, then the
+  handler for the processor interrupt or exception type specified by InteruptNum is uninstalled.
   The installed handler is called once for each processor interrupt or exception.
 
-  @param  InterruptType    A pointer to the processor's current interrupt state. Set to TRUE if interrupts
-                           are enabled and FALSE if interrupts are disabled.
+  @param  InteruptNum    A number of the processor's current interrupt.
   @param  InterruptHandler A pointer to a function of type EFI_CPU_INTERRUPT_HANDLER that is called
                            when a processor interrupt occurs. If this parameter is NULL, then the handler
                            will be uninstalled.
 
   @retval EFI_SUCCESS           The handler for the processor interrupt was successfully installed or uninstalled.
-  @retval EFI_ALREADY_STARTED   InterruptHandler is not NULL, and a handler for InterruptType was
+  @retval EFI_ALREADY_STARTED   InterruptHandler is not NULL, and a handler for InteruptNum was
                                 previously installed.
-  @retval EFI_INVALID_PARAMETER InterruptHandler is NULL, and a handler for InterruptType was not
+  @retval EFI_INVALID_PARAMETER InterruptHandler is NULL, and a handler for InteruptNum was not
                                 previously installed.
-  @retval EFI_UNSUPPORTED       The interrupt specified by InterruptType is not supported.
+  @retval EFI_UNSUPPORTED       The interrupt specified by InteruptNum is not supported.
 
 **/
 EFI_STATUS
 RegisterDebuggerInterruptHandler (
-  IN EFI_EXCEPTION_TYPE             InterruptType,
+  IN EFI_EXCEPTION_TYPE             InteruptNum,
   IN EFI_CPU_INTERRUPT_HANDLER      InterruptHandler
   );
 
