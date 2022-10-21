@@ -325,7 +325,7 @@
 #######################################################################################
   gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamBase                 | 0x10000
   gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamSize                 | 0x10000
-  gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceTreeBase                    | 0x1c400000
+  gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceTreeBase                    | 0x200000
   #
   # minimal memory for uefi bios should be 512M
   # 0x00000000 - 0x10000000
@@ -444,7 +444,7 @@
   #
   # Variable
   #
-  Platform/Loongson/LoongArchQemuPkg/Drivers/QemuFlashFvbServicesRuntimeDxe/FvbServicesRuntimeDxe.inf
+
   OvmfPkg/EmuVariableFvbRuntimeDxe/Fvb.inf {
     <LibraryClasses>
       PlatformFvbLib|OvmfPkg/Library/EmuVariableFvbLib/EmuVariableFvbLib.inf

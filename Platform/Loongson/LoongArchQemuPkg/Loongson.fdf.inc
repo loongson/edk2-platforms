@@ -34,7 +34,6 @@ DEFINE VAR_ALL_SIZE               = 0x60000
 
 ############################################################################
 #Set Var Flash layout
-DEFINE VARIABLE_BASE_ADDRESS      = 0x1c3a0000
 DEFINE VARIABLE_SIZE              = 0x00010000
 DEFINE VAR_ALL_BLOCKS             = 0x60
 
@@ -54,21 +53,11 @@ DEFINE EVENT_LOG_OFFSET           = $(FWTWORKING_OFFSET) + $(FWTWORKING_SIZE)
 DEFINE EVENT_LOG_SIZE             = 0x8000
 
 # Set Variable
-SET gLoongArchQemuPkgTokenSpaceGuid.PcdFlashFdBase = $(FD_BASE_ADDRESS)
-
-SET gLoongArchQemuPkgTokenSpaceGuid.PcdOvmfFlashNvStorageVariableBase = $(FD_BASE_ADDRESS) + $(VARIABLE_OFFSET)
-SET gLoongArchQemuPkgTokenSpaceGuid.PcdAllVarSize = $(VAR_ALL_SIZE)
-
-SET gLoongArchQemuPkgTokenSpaceGuid.PcdFlashBlockSize = $(BLOCK_SIZE)
 SET gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64 = 0
 SET gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize = $(VARIABLE_SIZE)
 
 # Set FtwSpare
-SET gLoongArchQemuPkgTokenSpaceGuid.PcdOvmfFlashNvStorageFtwSpareBase  =  $(FD_BASE_ADDRESS) + $(SPARE_OFFSET)
-SET gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareBase64 = 0
 SET gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareSize = $(SPARE_SIZE)
 
 # Set FtwWorking
-SET gLoongArchQemuPkgTokenSpaceGuid.PcdOvmfFlashNvStorageFtwWorkingBase  =  $(FD_BASE_ADDRESS) + $(SPARE_OFFSET)  + $(SPARE_SIZE)
-SET gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingBase64 = 0
 SET gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingSize = $(FWTWORKING_SIZE)
