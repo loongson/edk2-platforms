@@ -52,6 +52,10 @@ slave_main:
     li.d      T0, (1 << 12)
     csrxchg   T0, T0, LOONGARCH_CSR_ECFG
 
+    addi.d    T0, ZERO, -1
+    li.d      T1, LOONGSON_IOCSR_IPI_EN
+    iocsrwr.w T0, T1
+
 1:
     # wait for wakeup
     idle 0
