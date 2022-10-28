@@ -16,7 +16,6 @@
 #endif
 #include "Library/Cpu.h"
 #include "CpuDxe.h"
-#include "LoongArchAsmMacro.h"
 
 /*
   Load the FPU with signalling NANS.  This bit pattern we're using has
@@ -25,7 +24,9 @@
 
   The value to initialize FCSR0 to comes in $A0.
  */
-ASM_FUNC(InitFpu)
+ASM_GLOBAL ASM_PFX(InitFpu)
+
+ASM_PFX(InitFpu):
   li.d    T1, CSR_EUEN_FPEN
   csrxchg T1, T1, LOONGARCH_CSR_EUEN
 

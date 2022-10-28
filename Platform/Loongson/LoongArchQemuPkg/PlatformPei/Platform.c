@@ -191,7 +191,6 @@ AddFdtHob (VOID)
   FdtHobData = BuildGuidHob (&gFdtHobGuid, sizeof *FdtHobData);
   ASSERT (FdtHobData != NULL);
   *FdtHobData = (UINTN)NewBase;
-
 }
 
 /**

@@ -19,7 +19,6 @@
 
 #include "Library/Cpu.h"
 #include "CpuDxe.h"
-#include "LoongArchAsmMacro.h"
 
 #define RSIZE   8       /* 64 bit mode register size */
 #define RLOGSIZE 3
@@ -29,8 +28,9 @@
    Main exception handler. Not really a leaf routine but not a normal
    function either. Save away the entire cpu state end enter exception mode.
  */
-ASM_FUNC(Exception_handler)
+ASM_GLOBAL ASM_PFX(Exception_handler)
 
+ASM_PFX(Exception_handler):
     csrrd   SP, LOONGARCH_CSR_KS1
 
     addi.d  T0, $r0, -0x10
@@ -262,7 +262,9 @@ ASM_FUNC(Exception_handler)
 /*
    Exception trampoline copied down to RAM after initialization.
  */
-ASM_FUNC(LoongArchException)
+ASM_GLOBAL ASM_PFX(LoongArchException)
+
+ASM_PFX(LoongArchException):
     csrwr   T0, LOONGARCH_CSR_KS0
     csrwr   SP, LOONGARCH_CSR_KS1
     pcaddi   T0, 0
@@ -277,7 +279,9 @@ LoongArchExceptionEnd:
 /*
    Set Exception Base Address.
  */
-ASM_FUNC(SetEbase)
+ASM_GLOBAL ASM_PFX(SetEbase)
+
+ASM_PFX(SetEbase):
     /*
      * clear Vint cofigure
      * all exceptions share the same interrupt entry

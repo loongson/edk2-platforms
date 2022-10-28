@@ -31,40 +31,44 @@
 
 [Protocols]
 
+## In the PcdsFixedAtBuild and PcdsDynamic areas, numbers start at 0x0.
 [PcdsFixedAtBuild, PcdsDynamic]
-  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashPeiFvBase|0x0|UINT64|0x00000003
-  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashPeiFvSize|0x0|UINT32|0x00000004
-  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashDxeFvOffset|0x0|UINT64|0x00000007
-  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashDxeFvBase|0x0|UINT64|0x00000008
-  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashDxeFvSize|0x0|UINT32|0x00000009
-  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashSecModuleBase|0x0|UINT64|0x0000000a
-  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashSecModuleSize|0x0|UINT32|0x0000000b
-  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashEventLogBase|0x0|UINT64|0x0000000c
-  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashEventLogSize|0x0|UINT32|0x0000000d
-  gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceTreeBase|0x0|UINT64|0x00000018
-  gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceTreePadding|256|UINT32|0x00000019
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashPeiFvBase|0x0|UINT64|0x00000000
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashPeiFvSize|0x0|UINT32|0x00000001
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashDxeFvOffset|0x0|UINT64|0x00000002
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashDxeFvBase|0x0|UINT64|0x00000003
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashDxeFvSize|0x0|UINT32|0x00000004
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashSecModuleBase|0x0|UINT64|0x00000005
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashSecModuleSize|0x0|UINT32|0x00000006
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashEventLogBase|0x0|UINT64|0x00000007
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashEventLogSize|0x0|UINT32|0x00000008
+  gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceTreeBase|0x0|UINT64|0x00000009
+  gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceTreePadding|256|UINT32|0x0000000a
 
-  gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamBase|0|UINT64|0x0000001c
-  gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamSize|0|UINT32|0x0000001d
-  gLoongArchQemuPkgTokenSpaceGuid.PcdUefiRamTop|0x0|UINT64|0x0000001e
-  gLoongArchQemuPkgTokenSpaceGuid.PcdRamRegionsBottom|0x0|UINT64|0x00000022
-  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashSecFvBase|0x0|UINT64|0x00000028
-  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashSecFvSize|0x0|UINT32|0x00000029
+  gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamBase|0|UINT64|0x0000000b
+  gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamSize|0|UINT32|0x0000000c
+  gLoongArchQemuPkgTokenSpaceGuid.PcdUefiRamTop|0x0|UINT64|0x0000000d
+  gLoongArchQemuPkgTokenSpaceGuid.PcdRamRegionsBottom|0x0|UINT64|0x0000000e
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashSecFvBase|0x0|UINT64|0x0000000f
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashSecFvSize|0x0|UINT32|0x00000010
 
+## In the PcdsFixedAtBuild.LOONGARCH64 area, numbers start at 0x10000.
 [PcdsFixedAtBuild.LOONGARCH64]
-   gEmbeddedTokenSpaceGuid.PcdPrePiCpuMemorySize|32|UINT8|0x00000010
-   gEmbeddedTokenSpaceGuid.PcdPrePiCpuIoSize|0|UINT8|0x00000011
-   gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceSpaceStartAddress|0x10000000|UINT32|0x00000012
-   gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceSpaceLength|0x80000000|UINT32|0x00000013
+   gEmbeddedTokenSpaceGuid.PcdPrePiCpuMemorySize|32|UINT8|0x00010000
+   gEmbeddedTokenSpaceGuid.PcdPrePiCpuIoSize|0|UINT8|0x00010001
+   gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceSpaceStartAddress|0x10000000|UINT32|0x00010002
+   gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceSpaceLength|0x80000000|UINT32|0x00010003
 
+## In the PcdsDynamic area, numbers start at 0x20000.
 [PcdsDynamic]
-  gLoongArchQemuPkgTokenSpaceGuid.PcdRamSize|0x40000000|UINT64|0x00000041
-  gLoongArchQemuPkgTokenSpaceGuid.PcdFwCfgSelectorAddress|0x0|UINT64|0x00000042
-  gLoongArchQemuPkgTokenSpaceGuid.PcdFwCfgDataAddress|0x0|UINT64|0x00000043
-  gLoongArchQemuPkgTokenSpaceGuid.PcdSwapPageDir|0x0|UINT64|0x00000044
-  gLoongArchQemuPkgTokenSpaceGuid.PcdInvalidPgd|0x0|UINT64|0x00000045
-  gLoongArchQemuPkgTokenSpaceGuid.PcdInvalidPud|0x0|UINT64|0x00000046
-  gLoongArchQemuPkgTokenSpaceGuid.PcdInvalidPmd|0x0|UINT64|0x00000047
-  gLoongArchQemuPkgTokenSpaceGuid.PcdInvalidPte|0x0|UINT64|0x00000048
+  gLoongArchQemuPkgTokenSpaceGuid.PcdRamSize|0x40000000|UINT64|0x00020000
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFwCfgSelectorAddress|0x0|UINT64|0x00020001
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFwCfgDataAddress|0x0|UINT64|0x00020002
+  gLoongArchQemuPkgTokenSpaceGuid.PcdSwapPageDir|0x0|UINT64|0x00020003
+  gLoongArchQemuPkgTokenSpaceGuid.PcdInvalidPgd|0x0|UINT64|0x00020004
+  gLoongArchQemuPkgTokenSpaceGuid.PcdInvalidPud|0x0|UINT64|0x00020005
+  gLoongArchQemuPkgTokenSpaceGuid.PcdInvalidPmd|0x0|UINT64|0x00020006
+  gLoongArchQemuPkgTokenSpaceGuid.PcdInvalidPte|0x0|UINT64|0x00020007
 
+## In the PcdsFeatureFlag area, numbers start at 0x30000.
 [PcdsFeatureFlag]

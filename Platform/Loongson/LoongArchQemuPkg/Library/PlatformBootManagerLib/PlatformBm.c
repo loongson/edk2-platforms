@@ -757,4 +757,3 @@ PlatformBootManagerUnableToBoot (
     EfiBootManagerBoot (&BootManagerMenu);
   }
 }
-

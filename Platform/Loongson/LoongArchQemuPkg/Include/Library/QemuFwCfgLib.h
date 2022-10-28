@@ -190,4 +190,3 @@ QemuFwCfgFindFile (
   );
 
 #endif
-
