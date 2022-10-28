@@ -27,14 +27,21 @@
 
 [Guids]
   gLoongArchQemuPkgTokenSpaceGuid  = { 0x0e0383ce, 0x0151, 0x4d01, { 0x80, 0x0e, 0x3f, 0xef, 0x8b, 0x27, 0x6d, 0x52 } }
+  gEfiLoongsonBootparamsTableGuid  = { 0x4660f721, 0x2ec5, 0x416a, { 0x89, 0x9a, 0x43, 0x18, 0x02, 0x50, 0xa0, 0xc9 } }
+
+[Protocols]
 
 ## In the PcdsFixedAtBuild and PcdsDynamic areas, numbers start at 0x0.
 [PcdsFixedAtBuild, PcdsDynamic]
   gLoongArchQemuPkgTokenSpaceGuid.PcdFlashPeiFvBase|0x0|UINT64|0x00000000
   gLoongArchQemuPkgTokenSpaceGuid.PcdFlashPeiFvSize|0x0|UINT32|0x00000001
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashDxeFvOffset|0x0|UINT64|0x00000002
   gLoongArchQemuPkgTokenSpaceGuid.PcdFlashDxeFvBase|0x0|UINT64|0x00000003
   gLoongArchQemuPkgTokenSpaceGuid.PcdFlashDxeFvSize|0x0|UINT32|0x00000004
-
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashSecModuleBase|0x0|UINT64|0x00000005
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashSecModuleSize|0x0|UINT32|0x00000006
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashEventLogBase|0x0|UINT64|0x00000007
+  gLoongArchQemuPkgTokenSpaceGuid.PcdFlashEventLogSize|0x0|UINT32|0x00000008
   gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceTreeBase|0x0|UINT64|0x00000009
   gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceTreePadding|256|UINT32|0x0000000a
 
@@ -49,6 +56,8 @@
 [PcdsFixedAtBuild.LOONGARCH64]
    gEmbeddedTokenSpaceGuid.PcdPrePiCpuMemorySize|32|UINT8|0x00010000
    gEmbeddedTokenSpaceGuid.PcdPrePiCpuIoSize|0|UINT8|0x00010001
+   gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceSpaceStartAddress|0x10000000|UINT32|0x00010002
+   gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceSpaceLength|0x80000000|UINT32|0x00010003
 
 ## In the PcdsDynamic area, numbers start at 0x20000.
 [PcdsDynamic]
@@ -61,3 +70,5 @@
   gLoongArchQemuPkgTokenSpaceGuid.PcdInvalidPmd|0x0|UINT64|0x00020006
   gLoongArchQemuPkgTokenSpaceGuid.PcdInvalidPte|0x0|UINT64|0x00020007
 
+## In the PcdsFeatureFlag area, numbers start at 0x30000.
+[PcdsFeatureFlag]
