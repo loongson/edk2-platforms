@@ -43,13 +43,9 @@ CalcConstFreq (
   ClockMultiplier = Result & 0xffff;
   ClockDivide = (Result >> 16) & 0xffff;
 
-  if ((!BaseFreq)
-    || (!ClockMultiplier)
-    || (!ClockDivide))
-  {
+  if ((!BaseFreq) || (!ClockMultiplier) || (!ClockDivide)) {
     return 0;
-  }
-  else {
+  } else {
     return (BaseFreq * ClockMultiplier / ClockDivide);
   }
 }
@@ -128,7 +124,7 @@ NanoSecondDelay (
 
   if (NanoSeconds % 1000 == 0) {
     MicroSeconds = NanoSeconds/1000;
-  }else {
+  } else {
     MicroSeconds = NanoSeconds/1000 + 1;
   }
   MicroSecondDelay (MicroSeconds);

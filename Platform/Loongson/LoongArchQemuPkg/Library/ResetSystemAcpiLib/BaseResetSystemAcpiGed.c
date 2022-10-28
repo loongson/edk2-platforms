@@ -115,7 +115,6 @@ GetPowerManagerByParseAcpiInfo (VOID)
   return RETURN_NOT_FOUND;
 
 Done:
-
   mPowerManager.ResetRegAddr        = Fadt->ResetReg.Address;
   mPowerManager.ResetValue          = Fadt->ResetValue;
   mPowerManager.SleepControlRegAddr = Fadt->SleepControlReg.Address;

@@ -13,14 +13,15 @@
 #endif
 
 #include "Library/Cpu.h"
-#include "LoongArchAsmMacro.h"
 
 #  Query the page table.
 #
 #  @param  VOID
 #
 #  @retval  VOID
-ASM_FUNC(HandleTlbRefill)
+ASM_GLOBAL ASM_PFX(HandleTlbRefill)
+
+ASM_PFX(HandleTlbRefill):
   csrwr T0, LOONGARCH_CSR_TLBRSAVE
   csrrd T0, LOONGARCH_CSR_PGD
   lddir T0, T0, 3   #Put pud BaseAddress into T0

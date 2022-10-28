@@ -13,12 +13,13 @@
 #endif
 
 #include "Library/Cpu.h"
-#include "LoongArchAsmMacro.h"
 #
 # Set cpu interrupts
 # @param A0 The interrupt number
 #
-ASM_FUNC(CpuSetIP)
+ASM_GLOBAL ASM_PFX(CpuSetIP)
+
+ASM_PFX(CpuSetIP):
     csrrd   T0, LOONGARCH_CSR_ECFG
     or      T0, T0, A0
     csrwr   T0, LOONGARCH_CSR_ECFG
@@ -30,6 +31,8 @@ ASM_FUNC(CpuSetIP)
 #@param[] VOID
 #
 #@retval  timer count value.
-ASM_FUNC(LoongArchReadTime)
+ASM_GLOBAL ASM_PFX(LoongArchReadTime)
+
+ASM_PFX(LoongArchReadTime):
     rdtime.d   A0, ZERO
     jirl    ZERO, RA,0

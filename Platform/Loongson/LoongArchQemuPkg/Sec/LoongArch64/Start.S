@@ -15,12 +15,11 @@
 #endif
 
 #include <Library/Cpu.h>
-#include "LoongArchAsmMacro.h"
 
     .text
-    .globl  _ModuleEntryPoint
-_ModuleEntryPoint:
+    ASM_GLOBAL ASM_PFX(_ModuleEntryPoint)
 
+ASM_PFX(_ModuleEntryPoint):
     /* configure reset ebase */
     li.d    T0, 0x1c000000
     csrwr   T0, LOONGARCH_CSR_EBASE
