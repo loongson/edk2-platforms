@@ -20,6 +20,7 @@
 #include "mmu.h"
 #include <Library/QemuFwCfgLib.h>
 #include "MmuLibCore.h"
+#include <Library/CacheMaintenanceLib.h>
 
 /**
   Return the Virtual Memory Map of your platform
@@ -57,8 +58,8 @@ GetMemoryMapFromFwCfg (
                          );
   VirtualMemoryTable[Index].PhysicalBase = 0x10000000;
   VirtualMemoryTable[Index].VirtualBase  = VirtualMemoryTable[Index].PhysicalBase;
-  VirtualMemoryTable[Index].Length       = 0x80000000;
-  VirtualMemoryTable[Index].Attributes   = PAGE_VALID | PAGE_USER |  CACHE_CC | PAGE_DIRTY;
+  VirtualMemoryTable[Index].Length       = 0x10000000;
+  VirtualMemoryTable[Index].Attributes   = PAGE_VALID | PLV_KERNEL |  CACHE_SUC | PAGE_DIRTY | PAGE_GLOBAL;
   ++Index;
 
   Status = QemuFwCfgFindFile ("etc/memmap", &FwCfgItem, &FwCfgSize);
@@ -85,7 +86,7 @@ GetMemoryMapFromFwCfg (
     VirtualMemoryTable[Index].PhysicalBase = pEntry->BaseAddr;
     VirtualMemoryTable[Index].VirtualBase  = VirtualMemoryTable[Index].PhysicalBase;
     VirtualMemoryTable[Index].Length       = pEntry->Length;
-    VirtualMemoryTable[Index].Attributes   = PAGE_VALID | PAGE_USER |  CACHE_CC | PAGE_DIRTY;
+    VirtualMemoryTable[Index].Attributes   = PAGE_VALID | PLV_KERNEL |  CACHE_CC | PAGE_DIRTY | PAGE_GLOBAL;
     ++Index;
   }
 
@@ -124,7 +125,6 @@ ConfigureMmu (VOID)
   UINTN PteWide = PTE_WIDE;
   UINTN PageEnable = 1 << 4;
   VOID *TlbReEntry;
-  UINTN PageSize;
 
   SwapperPageDir = AllocatePages (EFI_SIZE_TO_PAGES (PGD_TABLE_SIZE));
   InvalidPgd = AllocatePages (EFI_SIZE_TO_PAGES (PGD_TABLE_SIZE));
@@ -171,35 +171,32 @@ ConfigureMmu (VOID)
     MemoryTable++;
   }
 
-  /*set page size*/
-  WRITE_CSR_PAGE_SIZE (DEFAULT_PAGE_SIZE);
-  WRITE_CSR_STLB_PAGE_SIZE (DEFAULT_PAGE_SIZE);
-  WRITE_CSR_TLBREFILL_PAGE_SIZE (DEFAULT_PAGE_SIZE);
-  READ_CSR_PAGE_SIZE (PageSize);
-  if (PageSize != DEFAULT_PAGE_SIZE) {
-    goto FreeTranslationTable;
-  }
-
   TlbReEntry = AllocatePages (1);
   if (TlbReEntry == NULL) {
     goto FreeTranslationTable;
   }
   CopyMem ((char *)TlbReEntry, HandleTlbRefill, (HandleTlbRefillEnd - HandleTlbRefill));
-  SET_REFILL_TLBBASE ((UINTN)HandleTlbRefill);
+  InvalidateInstructionCacheRange ((VOID *)(UINTN)HandleTlbRefill, (UINTN)(HandleTlbRefillEnd - HandleTlbRefill));
 
   DEBUG ((DEBUG_VERBOSE,
     "%a  %d PteShift %d PteWide %d PmdShift %d PmdWide %d PudShift %d PudWide %d PgdShift %d PgdWide %d.\n",
     __func__, __LINE__,
     PteShift, PteWide, PmdShift, PmdWide,PudShift, PudWide, PgdShift, PgdWide));
 
-  LOONGARCH_CSR_WRITEQ (PteShift | PteWide << 5 | PmdShift << 10 | PmdWide << 15 | PudShift << 20 | PudWide << 25,
-    LOONGARCH_CSR_PWCTL0);
-  LOONGARCH_CSR_WRITEQ (PgdShift | PgdWide << 6, LOONGARCH_CSR_PWCTL1);
-  LOONGARCH_CSR_WRITEQ ((UINTN)SwapperPageDir, LOONGARCH_CSR_PGDL);
-  LOONGARCH_CSR_WRITEQ ((UINTN)InvalidPgd, LOONGARCH_CSR_PGDH);
+  SetTlbRefillFuncBase ((UINTN)TlbReEntry);
+  /*set page size*/
+  WriteCsrPageSize (DEFAULT_PAGE_SIZE);
+  WriteCsrStlbPageSize (DEFAULT_PAGE_SIZE);
+  WriteCsrTlbRefillPageSize (DEFAULT_PAGE_SIZE);
+
+  LoongArchWriteqCsrPwctl0 ((PteShift | PteWide << 5 | PmdShift << 10 | PmdWide << 15 | PudShift << 20 | PudWide << 25
+              ));
+  LoongArchWriteqCsrPwctl1 (PgdShift | PgdWide << 6);
+  LoongArchWriteqCsrPgdl ((UINTN)SwapperPageDir);
+  LoongArchWriteqCsrPgdh ((UINTN)InvalidPgd);
 
   DEBUG ((DEBUG_INFO, "%a %d Enable Mmu Start PageBassAddress %p.\n", __func__, __LINE__, SwapperPageDir));
-  LOONGARCH_CSR_XCHGQ ( PageEnable, 1 << 4, LOONGARCH_CSR_CRMD);
+  LoongArchXchgCsrCrmd ( PageEnable, 1 << 4);
   DEBUG ((DEBUG_INFO, "%a %d Enable Mmu End.\n", __func__, __LINE__));
 
   return ;

@@ -71,7 +71,7 @@ SetPitCount (
 
   Count &= LOONGARCH_CSR_TMCFG_TIMEVAL;
   Count |= LOONGARCH_CSR_TMCFG_EN | LOONGARCH_CSR_TMCFG_PERIOD;
-  LOONGARCH_CSR_WRITEQ (Count, LOONGARCH_CSR_TMCFG);
+  LoongarchWriteqTmcfg (Count);
 }
 
 /**
@@ -96,7 +96,7 @@ TimerInterruptHandler (
   //
   // Clear interrupt.
   //
-  LOONGARCH_CSR_WRITEQ (0x1, LOONGARCH_CSR_TINTCLR);
+  LoongarchWriteqTintclr (0x1);
 
   if (mTimerNotifyFunction != NULL) {
     //
@@ -121,7 +121,6 @@ TimerInterruptHandler (
   then EFI_INVALID_PARAMETER is returned.  If an error occurs attempting to
   register the NotifyFunction with the timer interrupt, then EFI_DEVICE_ERROR
   is returned.
-
 
   @param This             The EFI_TIMER_ARCH_PROTOCOL instance.
   @param NotifyFunction   The function to call when a timer interrupt fires.  This
@@ -179,7 +178,6 @@ TimerDriverRegisterHandler (
   Instead, it must either turn off the timer hardware, or it must adjust the
   interrupt controller so that a CPU interrupt is not generated when the timer
   interrupt fires.
-
 
   @param This            The EFI_TIMER_ARCH_PROTOCOL instance.
   @param TimerPeriod     The rate to program the timer interrupt in 100 nS units.  If
@@ -243,7 +241,6 @@ TimerDriverSetTimerPeriod (
   is NULL, then EFI_INVALID_PARAMETER is returned.  If a TimerPeriod of 0 is
   returned, then the timer is currently disabled.
 
-
   @param This            The EFI_TIMER_ARCH_PROTOCOL instance.
   @param TimerPeriod     A pointer to the timer period to retrieve in 100 ns units.  If
                          0 is returned, then the timer is currently disabled.
@@ -289,7 +286,7 @@ ExitBootServicesEvent (
   /*
    * Disable timer interrupt when exiting boot service
    */
-  LOONGARCH_CSR_WRITEQ (0, LOONGARCH_CSR_TMCFG);
+  LoongarchWriteqTmcfg (0);
 }
 
 /**
@@ -301,7 +298,6 @@ ExitBootServicesEvent (
   enabled when this service is called, then the registered handler will be invoked. The
   registered handler should not be able to distinguish a hardware-generated timer
   interrupt from a software-generated timer interrupt.
-
 
   @param This              The EFI_TIMER_ARCH_PROTOCOL instance.
 

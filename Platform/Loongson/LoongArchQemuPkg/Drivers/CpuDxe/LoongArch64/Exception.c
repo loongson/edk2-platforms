@@ -31,8 +31,6 @@
 #include <Library/UefiLib.h>
 #include <Guid/DebugImageInfoTable.h>
 
-
-
 EFI_EXCEPTION_CALLBACK  gInterruptHandler[MAX_LOONGARCH_INTERRUPT + 1];
 EFI_EXCEPTION_CALLBACK  gDebuggerExceptionHandlers[MAX_LOONGARCH_INTERRUPT + 1];
 
@@ -244,7 +242,7 @@ CommonExceptionEntry (
   ExceptionType = SystemContext.SystemContextLoongArch64->ESTAT & CSR_ESTAT_EXC;
   ExceptionType = ExceptionType >> CSR_ESTAT_EXC_SHIFT;
 
-  LOONGARCH_CSR_READQ (CsrEuen, LOONGARCH_CSR_EUEN);
+  LoongArchReadqCsrEuen (&CsrEuen);
   FpuStatus = CsrEuen & CSR_EUEN_FPEN;
   switch (ExceptionType) {
     case EXC_INT:
@@ -253,14 +251,14 @@ CommonExceptionEntry (
        */
       CommonInterruptHandler (SystemContext);
       if (!FpuStatus) {
-        LOONGARCH_CSR_READQ (CsrEuen, LOONGARCH_CSR_EUEN);
+        LoongArchReadqCsrEuen (&CsrEuen);
         if (CsrEuen & CSR_EUEN_FPEN) {
           /*
            * Since Hw FP is enabled during interrupt handler,
            * disable FP
            */
            CsrEuen &= ~CSR_EUEN_FPEN;
-           LOONGARCH_CSR_WRITEQ (CsrEuen, LOONGARCH_CSR_EUEN);
+           LoongArchWriteqCsrEuen (CsrEuen);
         }
       }
       break;
@@ -269,7 +267,7 @@ CommonExceptionEntry (
        * Hardware FP disabled exception,
        * Enable and init FP registers here
        */
-      LOONGARCH_ENABLR_FPU ();
+      LoongArchEnableFpu ();
       InitFpu(FPU_CSR_RN);
       break;
     default:

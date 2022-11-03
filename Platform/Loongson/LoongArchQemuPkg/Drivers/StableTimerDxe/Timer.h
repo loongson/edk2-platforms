@@ -12,7 +12,6 @@
 
 #include <Protocol/Timer.h>
 
-
 #define DEFAULT_TIMER_TICK_DURATION 100000 //10ms = 100000 100 ns units
 #define SR_IP7                      (1 << 15)
 //
@@ -56,7 +55,6 @@ TimerDriverInitialize (
   interrupt controller so that a CPU interrupt is not generated when the timer
   interrupt fires.
 
-
   @param This            The EFI_TIMER_ARCH_PROTOCOL instance.
   @param NotifyFunction  The rate to program the timer interrupt in 100 nS units.  If
                          the timer hardware is not programmable, then EFI_UNSUPPORTED is
@@ -92,7 +90,6 @@ TimerDriverRegisterHandler (
   interrupt controller so that a CPU interrupt is not generated when the timer
   interrupt fires.
 
-
   @param This            The EFI_TIMER_ARCH_PROTOCOL instance.
   @param TimerPeriod     The rate to program the timer interrupt in 100 nS units.  If
                          the timer hardware is not programmable, then EFI_UNSUPPORTED is
@@ -121,7 +118,6 @@ TimerDriverSetTimerPeriod (
   is NULL, then EFI_INVALID_PARAMETER is returned.  If a TimerPeriod of 0 is
   returned, then the timer is currently disabled.
 
-
   @param This            The EFI_TIMER_ARCH_PROTOCOL instance.
   @param TimerPeriod     A pointer to the timer period to retrieve in 100 ns units.  If
                          0 is returned, then the timer is currently disabled.
@@ -148,7 +144,6 @@ TimerDriverGetTimerPeriod (
   registered handler should not be able to distinguish a hardware-generated timer
   interrupt from a software-generated timer interrupt.
 
-
   @param This              The EFI_TIMER_ARCH_PROTOCOL instance.
 
   @retval EFI_SUCCESS       The soft timer interrupt was generated.
@@ -159,6 +154,36 @@ EFI_STATUS
 EFIAPI
 TimerDriverGenerateSoftInterrupt (
   IN EFI_TIMER_ARCH_PROTOCOL  *This
+  )
+;
+
+/**
+  Write Csr TMCFG register.
+
+  @param A0 The value used to write to the TMCFG register
+
+  @retval none
+
+**/
+extern
+VOID
+LoongarchWriteqTmcfg (
+  IN UINT64  Val
+  )
+;
+
+/**
+  Write Csr TINTCLR register.
+
+  @param A0 The value used to write to the TINTCLR register
+
+  @retval none
+
+**/
+extern
+VOID
+LoongarchWriteqTintclr (
+  IN UINT64  Val
   )
 ;
 

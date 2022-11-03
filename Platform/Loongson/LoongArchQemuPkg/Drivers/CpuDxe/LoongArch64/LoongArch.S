@@ -23,11 +23,10 @@
 #define RSIZE   8       /* 64 bit mode register size */
 #define RLOGSIZE 3
 
-
-/*
-   Main exception handler. Not really a leaf routine but not a normal
-   function either. Save away the entire cpu state end enter exception mode.
- */
+#
+#   Main exception handler. Not really a leaf routine but not a normal
+#   function either. Save away the entire cpu state end enter exception mode.
+#
 ASM_GLOBAL ASM_PFX(Exception_handler)
 
 ASM_PFX(Exception_handler):
@@ -67,9 +66,9 @@ ASM_PFX(Exception_handler):
     st.d   S7, SP, S7_NUM * RSIZE
     st.d   S8, SP, S8_NUM * RSIZE
 
-    /*
-     * save T0/SP from scratch registers on stack
-     */
+    #
+    #  save T0/SP from scratch registers on stack
+    #
     csrrd  T0, LOONGARCH_CSR_KS0
     st.d   T0, SP, T0_NUM * RSIZE
     csrrd  T0, LOONGARCH_CSR_KS1
@@ -92,7 +91,9 @@ ASM_PFX(Exception_handler):
     csrrd   T0, LOONGARCH_CSR_EUEN
     st.d    T0, SP, (LOONGARCH_CSR_EUEN + BASE_NUM)  * RSIZE
 
-    /* Save FPU context */
+    #
+    #  Save FPU context
+    #
     ori     T1, ZERO, CSR_EUEN_FPEN
     and     T2, T0, T1
     beqz    T2, 1f
@@ -168,10 +169,10 @@ ASM_PFX(Exception_handler):
     and     T2, T0, T1
     beqz    T2, 2f
 
-    /*
-     * check previous FP state
-     * restore FP contect if FP enabled
-     */
+    #
+    #  check previous FP state
+    #  restore FP contect if FP enabled
+    #
     fld.d   $f0,  SP, (FP0_NUM + FP_BASE_INDEX) * RSIZE
     fld.d   $f1,  SP, (FP1_NUM + FP_BASE_INDEX) * RSIZE
     fld.d   $f2,  SP, (FP2_NUM + FP_BASE_INDEX) * RSIZE
@@ -259,9 +260,9 @@ ASM_PFX(Exception_handler):
     ld.d    SP, SP, SP_NUM * RSIZE
     ertn
 
-/*
-   Exception trampoline copied down to RAM after initialization.
- */
+#
+#   Exception trampoline copied down to RAM after initialization.
+#
 ASM_GLOBAL ASM_PFX(LoongArchException)
 
 ASM_PFX(LoongArchException):
@@ -276,21 +277,44 @@ ASM_PFX(LoongArchException):
 .globl  LoongArchExceptionEnd
 LoongArchExceptionEnd:
 
-/*
-   Set Exception Base Address.
- */
+#
+#   Set Exception Base Address.
+#
 ASM_GLOBAL ASM_PFX(SetEbase)
 
 ASM_PFX(SetEbase):
-    /*
-     * clear Vint cofigure
-     * all exceptions share the same interrupt entry
-     */
+    #
+    #  clear Vint cofigure
+    #  all exceptions share the same interrupt entry
+    #
     csrrd   T0, LOONGARCH_CSR_ECFG
     li.d    T1, ~0x70000
     and     T0, T0, T1
     csrwr   T0, LOONGARCH_CSR_ECFG
 
-    /*set ebase*/
+    #  set ebase
     csrwr   A0, LOONGARCH_CSR_EBASE
     jirl    ZERO, RA, 0
+
+#
+#  Read Csr EUEN register.
+#  @param   A0 Pointer to the variable used to store the EUEN register value
+#  @retval  none
+#
+ASM_GLOBAL ASM_PFX(LoongArchReadqCsrEuen)
+
+ASM_PFX(LoongArchReadqCsrEuen):
+    csrrd T0, LOONGARCH_CSR_EUEN
+    stptr.d T0, A0, 0
+    jirl    ZERO, RA,0
+
+#
+#  Write Csr EUEN register.
+#  @param  A0  The value used to write to the EUEN register
+#  @retval  none
+#
+ASM_GLOBAL ASM_PFX(LoongArchWriteqCsrEuen)
+
+ASM_PFX(LoongArchWriteqCsrEuen):
+    csrwr A0, LOONGARCH_CSR_EUEN
+    jirl    ZERO, RA,0
