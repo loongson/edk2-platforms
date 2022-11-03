@@ -17,6 +17,7 @@
   CONSTRUCTOR                    = MmuInitialize
 [Sources.common]
   MmuLibCore.c
+  Mmu.S
 
 [Packages]
   MdePkg/MdePkg.dec

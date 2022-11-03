@@ -21,7 +21,7 @@
 
 ASM_PFX(_ModuleEntryPoint):
     /* configure reset ebase */
-    li.d    T0, 0x1c000000
+    la.pcrel    T0, DeadLoop
     csrwr   T0, LOONGARCH_CSR_EBASE
 
     /*disable interrupt*/
@@ -77,3 +77,8 @@ slave_main:
     iocsrrd.d T0, T1
     or        RA, T0, ZERO
     jirl      ZERO, RA, 0x0
+
+    ASM_GLOBAL ASM_PFX(DeadLoop)
+.align 12
+ASM_PFX(DeadLoop):
+    b DeadLoop

@@ -17,13 +17,13 @@
 #include "Library/Cpu.h"
 #include "CpuDxe.h"
 
-/*
-  Load the FPU with signalling NANS.  This bit pattern we're using has
-  the property that no matter whether considered as single or as double
-  precision represents signaling NANS.
-
-  The value to initialize FCSR0 to comes in $A0.
- */
+#
+#  Load the FPU with signalling NANS.  This bit pattern we're using has
+#  the property that no matter whether considered as single or as double
+#  precision represents signaling NANS.
+#
+#  The value to initialize FCSR0 to comes in $A0.
+#
 ASM_GLOBAL ASM_PFX(InitFpu)
 
 ASM_PFX(InitFpu):
@@ -66,3 +66,35 @@ ASM_PFX(InitFpu):
   movgr2fr.d      $f31, T1
 
   jirl ZERO, RA, 0
+
+#
+#  Enables  floating-point unit
+#
+#  @param  VOID
+#
+#  @retval  VOID
+#
+ASM_GLOBAL ASM_PFX(LoongArchEnableFpu)
+
+ASM_PFX(LoongArchEnableFpu):
+    li.d    T0, 1
+    li.d    T1, CSR_EUEN_FPEN_SHIFT
+    sll.d   T0, T0, T1
+    csrxchg T0, T0, LOONGARCH_CSR_EUEN
+    jirl    ZERO, RA,0
+
+#
+#  Disable  floating-point unit
+#
+#  @param  VOID
+#
+#  @retval  VOID
+#
+ASM_GLOBAL ASM_PFX(LoongArchDisableFpu)
+
+ASM_PFX(LoongArchDisableFpu):
+    li.d    T0, 1
+    li.d    T1, CSR_EUEN_FPEN_SHIFT
+    sll.d   T0, T0, T1
+    csrxchg ZERO, T0, LOONGARCH_CSR_EUEN
+    jirl    ZERO, RA,0

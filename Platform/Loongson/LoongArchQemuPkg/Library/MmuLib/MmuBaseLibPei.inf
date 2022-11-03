@@ -37,6 +37,7 @@
 
 [LibraryClasses]
   MemoryAllocationLib
+  CacheMaintenanceLib
   PcdLib
   DebugLib
   QemuFwCfgLib

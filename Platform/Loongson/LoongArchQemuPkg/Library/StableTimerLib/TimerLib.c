@@ -37,9 +37,12 @@ CalcConstFreq (
   UINT32 BaseFreq;
   UINT32 ClockMultiplier;
   UINT32 ClockDivide;
+  UINT64 Val;
 
-  LOONGARCH_GET_CPUCFG (BaseFreq, LOONGARCH_CPUCFG4);
-  LOONGARCH_GET_CPUCFG (Result, LOONGARCH_CPUCFG5);
+  LoongArchReadCpuCfg (&Val, LOONGARCH_CPUCFG4);
+  BaseFreq = (UINT32)Val;
+  LoongArchReadCpuCfg (&Val, LOONGARCH_CPUCFG5);
+  Result = (UINT32)Val;
   ClockMultiplier = Result & 0xffff;
   ClockDivide = (Result >> 16) & 0xffff;
 

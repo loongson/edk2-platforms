@@ -393,99 +393,6 @@ PteAllocGet (
   return (pmd_none (*Pmd) && PteAlloc (Pmd))?
     NULL: PteOffset (Pmd, Address);
 }
- /**
-  Convert page middle directory table entry  to tlb entry.
-
-  @param  PmdVal   page middle directory table entry value.
-
-  @retval  tlb entry value.
- **/
-UINTN
-PmdToTlbEntry (
-  UINTN PmdVal
-  )
-{
-  UINTN Value;
-
-  Value = PmdVal ^ PAGE_HUGE;
-  Value |= ((Value & PAGE_HGLOBAL) >>
-           (PAGE_HGLOBAL_SHIFT - PAGE_GLOBAL_SHIFT));
-
-  return Value;
-}
-
- /**
-  Update huge tlb.
-
-  @param  address  The address corresponding to tlb.
-  @param  Pte   A pointer to the page table entry.
-
-  @retval  VOID.
- **/
-VOID
-UpdateHugeTlb (
-  IN UINTN address,
-  PTE *Pte)
-{
-  INTN Idx;
-  UINTN TlbEntry;
-  address &= (PAGE_MASK << 1);
-  LOONGARCH_CSR_WRITEQ (address, LOONGARCH_CSR_TLBEHI);
-  LOONGARCH_TLB_SRCH();
-  LOONGARCH_CSR_READQ (Idx, LOONGARCH_CSR_TLBIDX);
-
-  if (Idx < 0) {
-    return ;
-  }
-  WRITE_CSR_PAGE_SIZE (HUGE_PAGE_SIZE);
-  TlbEntry = PmdToTlbEntry(PTE_VAL (*Pte));
-  LOONGARCH_CSR_WRITEQ(TlbEntry, LOONGARCH_CSR_TLBELO0);
-  LOONGARCH_CSR_WRITEQ(TlbEntry + (HUGE_PAGE_SIZE >> 1), LOONGARCH_CSR_TLBELO1);
-  LOONGARCH_TLB_WR ();
-
-  WRITE_CSR_PAGE_SIZE (DEFAULT_PAGE_SIZE);
-
-  return ;
-}
- /**
-  Update tlb.
-
-  @param  address  The address corresponding to tlb.
-  @param  Pte   A pointer to the page table entry.
-
-  @retval  VOID.
- **/
-VOID
-UpdateTlb (
-  IN UINTN address,
-  PTE *Pte)
-{
-  INTN Idx;
-  if (IS_HUGE_PAGE (Pte->PteVal)) {
-    return UpdateHugeTlb(address, Pte);
-  }
-
-  address &= (PAGE_MASK << 1);
-  LOONGARCH_CSR_WRITEQ (address, LOONGARCH_CSR_TLBEHI);
-  LOONGARCH_TLB_SRCH();
-  LOONGARCH_CSR_READQ (Idx, LOONGARCH_CSR_TLBIDX);
-
-  if (Idx < 0) {
-    return ;
-  }
-
-  if ((UINTN)Pte & sizeof(PTE)) {
-    Pte--;
-  }
-
-  WRITE_CSR_PAGE_SIZE (DEFAULT_PAGE_SIZE);
-  LOONGARCH_CSR_WRITEQ(PTE_VAL (*Pte), LOONGARCH_CSR_TLBELO0);
-  Pte++;
-  LOONGARCH_CSR_WRITEQ(PTE_VAL (*Pte), LOONGARCH_CSR_TLBELO1);
-  LOONGARCH_TLB_WR ();
-
-  return ;
-}
 
 /**
   Gets the physical address of the page table entry corresponding to the specified virtual address.
@@ -571,7 +478,7 @@ MemoryMapPteRange (
 
     SetPte (Pte, PteVal);
     if (UpDate) {
-      UpdateTlb (Address, Pte);
+      LoongarchInvalidTlb(Address);
     }
   } while (Pte++, Address += EFI_PAGE_SIZE, Address != End);
 
@@ -638,7 +545,6 @@ MemoryMapPmdRange (
          if (Pte == NULL) {
            continue ;
          }
-         UpdateTlb (AddressStart_HugePage, Pte);
          if (AddressEnd_HugePage > End) {
            Next = End;
          }
@@ -747,7 +653,7 @@ EfiAttributeToLoongArchAttribute (
   IN UINTN  EfiAttributes
   )
 {
-  UINTN  LoongArchAttributes = PAGE_VALID | PAGE_DIRTY | CACHE_CC | PAGE_USER;
+  UINTN  LoongArchAttributes = PAGE_VALID | PAGE_DIRTY | CACHE_CC | PAGE_USER | PAGE_GLOBAL;
   switch (EfiAttributes & EFI_MEMORY_CACHETYPE_MASK) {
     case EFI_MEMORY_UC:
       LoongArchAttributes |= CACHE_SUC;

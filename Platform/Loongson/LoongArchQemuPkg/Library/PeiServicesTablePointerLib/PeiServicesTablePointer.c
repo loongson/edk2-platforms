@@ -11,6 +11,7 @@
 #include <Library/PeiServicesTablePointerLib.h>
 #include <Library/DebugLib.h>
 #include "Library/Cpu.h"
+#include "PeiServicesTablePointer.h"
 
 /**
   Caches a pointer PEI Services Table.
@@ -28,7 +29,7 @@ SetPeiServicesTablePointer (
   IN CONST EFI_PEI_SERVICES ** PeiServicesTablePointer
   )
 {
-  LOONGARCH_CSR_WRITEQ ((UINTN)PeiServicesTablePointer, LOONGARCH_CSR_KS0);
+  LoongarchWriteqKs0 ((UINTN)PeiServicesTablePointer);
 }
 
 /**
@@ -50,7 +51,8 @@ GetPeiServicesTablePointer (
 {
   UINTN  val;
 
-  LOONGARCH_CSR_READQ (val, LOONGARCH_CSR_KS0);
+  LoongarchReadqKs0 (&val);
+
   return (CONST EFI_PEI_SERVICES **)val;
 }
 

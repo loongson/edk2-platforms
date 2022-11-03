@@ -40,4 +40,20 @@ EFIAPI
 CalcConstFreq (
   VOID
   );
+
+/*
+  Reads data from the specified CPUCFG register.
+
+  @param[OUT]  Val   Pointer to the variable used to store the CPUCFG register value.
+  @param[IN]  reg    Specifies the register number of the CPUCFG to read the data.
+
+  @retval  none
+ */
+extern
+VOID
+LoongArchReadCpuCfg (
+  UINT64   *Val,
+  UINT64   reg
+  );
+
 #endif

@@ -37,7 +37,6 @@ RegisterInterruptHandler (
   IN EFI_CPU_INTERRUPT_HANDLER      InterruptHandler
   );
 
-
 /**
   This function registers and enables the handler specified by InterruptHandler for a processor
   interrupt or exception type specified by InteruptNum. If InterruptHandler is NULL, then the
@@ -146,6 +145,58 @@ extern
 VOID
 InitFpu (
   UINT32 fcsr
+  );
+
+/*
+  Read Csr EUEN register.
+
+  @param  CsrEuen Pointer to the variable used to store the EUEN register value
+
+  @retval  none
+ */
+extern
+VOID
+LoongArchReadqCsrEuen (
+  UINT64   *CsrEuen
+  );
+
+/*
+  Write Csr EUEN register.
+
+  @param   The value used to write to the EUEN register
+
+  @retval  none
+ */
+extern
+VOID
+LoongArchWriteqCsrEuen (
+  UINT64   CsrEuen
+  );
+
+/*
+  Enables  floating-point unit
+
+  @param  VOID
+
+  @retval  VOID
+ */
+extern
+VOID
+LoongArchEnableFpu (
+  VOID
+  );
+
+/*
+  Disable  floating-point unit
+
+  @param  VOID
+
+  @retval  VOID
+ */
+extern
+VOID
+LoongArchDisableFpu (
+  VOID
   );
 
 #endif // __CPU_DXE_H__

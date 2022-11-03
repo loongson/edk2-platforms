@@ -31,6 +31,7 @@
 [Sources]
   Timer.h
   Timer.c
+  TimerConfig.S
 
 [Protocols]
   gEfiCpuArchProtocolGuid       ## CONSUMES

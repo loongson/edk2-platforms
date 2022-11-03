@@ -79,7 +79,6 @@ typedef struct { UINTN PteVal; } PTE;
  **/
 #define PTE_VAL(x)                          ((x).PteVal)
 
-
 #define PGD_TABLE_SIZE                      (ENTRYS_PER_PGD * sizeof(PGD))
 #define PUD_TABLE_SIZE                      (ENTRYS_PER_PUD * sizeof(PUD))
 #define PMD_TABLE_SIZE                      (ENTRYS_PER_PMD * sizeof(PMD))
@@ -175,6 +174,12 @@ typedef struct { UINTN PteVal; } PTE;
  **/
 #define MAKE_PTE(Address, Attributes)       (PTE){((((Address) >> EFI_PAGE_SHIFT) << 12) | (Attributes))}
 /**
+  Get Global bit from Attributes
+
+  @param  Attributes  Specifies the Attributes.
+ * */
+#define GET_GLOBALBIT(Attributes) ((Attributes & PAGE_GLOBAL) >> PAGE_GLOBAL_SHIFT)
+/**
   Calculates the value of the Huge page table entry based on the specified virtual address and properties.
 
   @param  Address  Specifies the virtual address.
@@ -182,7 +187,10 @@ typedef struct { UINTN PteVal; } PTE;
 
   @retval    the value of the HUGE page table entry.
  **/
-#define MAKE_HUGE_PTE(Address, Attributes)  (((((Address) >> PMD_SHIFT) << PMD_SHIFT) | ((Attributes) | PAGE_HUGE)))
+#define MAKE_HUGE_PTE(Address, Attributes)  (((((Address) >> PMD_SHIFT) << PMD_SHIFT) | \
+                                             ((Attributes) | (GET_GLOBALBIT(Attributes) << PAGE_HGLOBAL_SHIFT) | \
+                                             PAGE_HUGE)))
+
  /**
   Check whether the large page table entry is.
 
@@ -191,7 +199,9 @@ typedef struct { UINTN PteVal; } PTE;
   @retval    1   Is huge page table entry.
   @retval    0   Isn't huge page table entry.
  **/
-#define IS_HUGE_PAGE(Val)                   (((Val) & PAGE_HUGE) == PAGE_HUGE)
+#define IS_HUGE_PAGE(Val)                   ((((Val) & PAGE_HUGE) == PAGE_HUGE) && \
+                                             (((Val) & PAGE_HGLOBAL) == PAGE_HGLOBAL))
+
 #define HUGE_PAGE_SIZE                      (PMD_SIZE)
 
  /**

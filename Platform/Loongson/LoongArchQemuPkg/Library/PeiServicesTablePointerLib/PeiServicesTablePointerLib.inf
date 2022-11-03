@@ -20,6 +20,7 @@
 
 [Sources]
   PeiServicesTablePointer.c
+  PeiServicesTablePointerLib.S
 
 [Packages]
   Platform/Loongson/LoongArchQemuPkg/Loongson.dec
