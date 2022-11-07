@@ -1,7 +1,7 @@
 /** @file
    LoongArch Qemu Platform macro definition.
 
-   Copyright (c) 2021, Loongson Limited. All rights reserved.
+   Copyright (c) 2022, Loongson Limited. All rights reserved.
 
    SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -9,7 +9,6 @@
 
 #ifndef LOONGARCH_QEMU_PLATFORM_H_
 #define LOONGARCH_QEMU_PLATFORM_H_
-
 
 /* Acpi pm device */
 #define LS7A_PCH_REG_BASE             0x10000000UL
@@ -19,7 +18,6 @@
 
 #define ACPI_BITMASK_SLEEP_TYPE       0x1C00
 #define ACPI_BITMASK_SLEEP_ENABLE     0x2000
-
 
 //---------------------------------------------
 // UART Register Offsets

@@ -2,7 +2,7 @@
 #
 # LoongArch for LoongArch
 #
-# Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+# Copyright (c) 2022 Loongson Technology Corporation Limited. All rights reserved.<BR>
 #
 # SPDX-License-Identifier: BSD-2-Clause-Patent
 #
@@ -15,12 +15,24 @@
 #include "Library/Cpu.h"
 #include "mmu.h"
 
+ASM_GLOBAL ASM_PFX(HandleTlbRefill)
+ASM_GLOBAL  HandleTlbRefillEnd
+ASM_GLOBAL ASM_PFX(LoongarchInvalidTlb)
+ASM_GLOBAL ASM_PFX(SetTlbRefillFuncBase)
+ASM_GLOBAL ASM_PFX(WriteCsrPageSize)
+ASM_GLOBAL ASM_PFX(WriteCsrTlbRefillPageSize)
+ASM_GLOBAL ASM_PFX(WriteCsrStlbPageSize)
+ASM_GLOBAL ASM_PFX(LoongArchWriteqCsrPwctl0)
+ASM_GLOBAL ASM_PFX(LoongArchWriteqCsrPwctl1)
+ASM_GLOBAL ASM_PFX(LoongArchWriteqCsrPgdl)
+ASM_GLOBAL ASM_PFX(LoongArchWriteqCsrPgdh)
+ASM_GLOBAL ASM_PFX(LoongArchXchgCsrCrmd)
+
 #  Refill the page table.
 #
 #  @param  VOID
 #
 #  @retval  VOID
-ASM_GLOBAL ASM_PFX(HandleTlbRefill)
 
 ASM_PFX(HandleTlbRefill):
   csrwr T0, LOONGARCH_CSR_TLBRSAVE
@@ -33,7 +45,6 @@ ASM_PFX(HandleTlbRefill):
   tlbfill
   csrrd T0, LOONGARCH_CSR_TLBRSAVE
   ertn
-ASM_GLOBAL  HandleTlbRefillEnd
 HandleTlbRefillEnd:
 
 #
@@ -41,7 +52,6 @@ HandleTlbRefillEnd:
 # @param A0 The address corresponding to the invalid page table entry
 # @retval  none
 #
-ASM_GLOBAL ASM_PFX(LoongarchInvalidTlb)
 
 ASM_PFX(LoongarchInvalidTlb):
     invtlb  INVTLB_ADDR_GTRUE_OR_ASID, ZERO, A0
@@ -52,7 +62,6 @@ ASM_PFX(LoongarchInvalidTlb):
 # @param A0 The address of tlb refill function
 # @retval  none
 #
-ASM_GLOBAL ASM_PFX(SetTlbRefillFuncBase)
 
 ASM_PFX(SetTlbRefillFuncBase):
     csrwr   A0, LOONGARCH_CSR_TLBREBASE
@@ -63,7 +72,6 @@ ASM_PFX(SetTlbRefillFuncBase):
 #  @param  A0  Page Size.
 #  @retval  none
 #
-ASM_GLOBAL ASM_PFX(WriteCsrPageSize)
 
 ASM_PFX(WriteCsrPageSize):
     li.d    T0, CSR_TLBIDX_SIZE
@@ -77,7 +85,6 @@ ASM_PFX(WriteCsrPageSize):
 #  @param  A0  Page Size.
 #  @retval  none
 #
-ASM_GLOBAL ASM_PFX(WriteCsrTlbRefillPageSize)
 
 ASM_PFX(WriteCsrTlbRefillPageSize):
     li.d    T0, CSR_TLBREHI_PS_SHIFT
@@ -93,7 +100,6 @@ ASM_PFX(WriteCsrTlbRefillPageSize):
 #
 #  @retval  VOID
 #
-ASM_GLOBAL ASM_PFX(WriteCsrStlbPageSize)
 
 ASM_PFX(WriteCsrStlbPageSize):
     csrwr  A0, LOONGARCH_CSR_STLBPGSIZE
@@ -104,7 +110,6 @@ ASM_PFX(WriteCsrStlbPageSize):
 #  @param  A0  The value used to write to the PWCTL0 register
 #  @retval  none
 #
-ASM_GLOBAL ASM_PFX(LoongArchWriteqCsrPwctl0)
 
 ASM_PFX(LoongArchWriteqCsrPwctl0):
     csrwr A0, LOONGARCH_CSR_PWCTL0
@@ -115,7 +120,6 @@ ASM_PFX(LoongArchWriteqCsrPwctl0):
 #  @param  A0  The value used to write to the PWCTL1 register
 #  @retval  none
 #
-ASM_GLOBAL ASM_PFX(LoongArchWriteqCsrPwctl1)
 
 ASM_PFX(LoongArchWriteqCsrPwctl1):
     csrwr A0, LOONGARCH_CSR_PWCTL1
@@ -126,7 +130,6 @@ ASM_PFX(LoongArchWriteqCsrPwctl1):
 #  @param  A0  The value used to write to the PGDL register
 #  @retval  none
 #
-ASM_GLOBAL ASM_PFX(LoongArchWriteqCsrPgdl)
 
 ASM_PFX(LoongArchWriteqCsrPgdl):
     csrwr A0, LOONGARCH_CSR_PGDL
@@ -137,7 +140,6 @@ ASM_PFX(LoongArchWriteqCsrPgdl):
 #  @param  A0  The value used to write to the PGDH register
 #  @retval  none
 #
-ASM_GLOBAL ASM_PFX(LoongArchWriteqCsrPgdh)
 
 ASM_PFX(LoongArchWriteqCsrPgdh):
     csrwr A0, LOONGARCH_CSR_PGDH
@@ -150,7 +152,6 @@ ASM_PFX(LoongArchWriteqCsrPgdh):
 #
 #  @retval  VOID
 #
-ASM_GLOBAL ASM_PFX(LoongArchXchgCsrCrmd)
 
 ASM_PFX(LoongArchXchgCsrCrmd):
     csrxchg A0, A1, LOONGARCH_CSR_CRMD

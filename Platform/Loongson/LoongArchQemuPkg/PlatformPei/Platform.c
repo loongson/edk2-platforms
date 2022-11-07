@@ -1,14 +1,13 @@
 /** @file
   Platform PEI driver
 
-  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+  Copyright (c) 2022 Loongson Technology Corporation Limited. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
   @par Glossary:
     - Mem - Memory
 **/
-
 
 //
 // The package level header files this module uses

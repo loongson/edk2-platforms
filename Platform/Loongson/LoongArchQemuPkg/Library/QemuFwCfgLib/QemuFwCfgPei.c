@@ -1,7 +1,7 @@
 /** @file
   fw_cfg library implementation.
 
-  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+  Copyright (c) 2022 Loongson Technology Corporation Limited. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -50,7 +50,6 @@ QemuFwCfgIsAvailable (
   DEBUG ((DEBUG_INFO, "QemuFwCfg interface is supported.\n"));
   return TRUE;
 }
-
 
 /**
   Returns a boolean indicating if the firmware configuration interface is

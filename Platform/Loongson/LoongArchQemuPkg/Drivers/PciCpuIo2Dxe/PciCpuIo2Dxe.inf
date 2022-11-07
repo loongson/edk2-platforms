@@ -1,7 +1,7 @@
 ## @file
 #  Produces the CPU I/O 2 Protocol by using the services of the I/O Library.
 #
-#  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+#  Copyright (c) 2022 Loongson Technology Corporation Limited. All rights reserved.<BR>
 #
 # SPDX-License-Identifier: BSD-2-Clause-Patent
 #

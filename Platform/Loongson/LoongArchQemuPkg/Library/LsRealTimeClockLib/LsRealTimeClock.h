@@ -1,12 +1,11 @@
 /** @file
   Implement EFI RealTimeClock runtime services via RTC Lib.
 
-  Copyright (c) 2021, Loongson Limited. All rights reserved.
+  Copyright (c) 2022, Loongson Limited. All rights reserved.
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
-
 
 #ifndef LS_REAL_TIME_CLOCK_H_
 #define LS_REAL_TIME_CLOCK_H_

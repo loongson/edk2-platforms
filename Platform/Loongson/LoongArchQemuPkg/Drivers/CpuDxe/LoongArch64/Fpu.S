@@ -2,7 +2,7 @@
 #
 # Fpu for LoongArch
 #
-# Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+# Copyright (c) 2022 Loongson Technology Corporation Limited. All rights reserved.<BR>
 #
 # SPDX-License-Identifier: BSD-2-Clause-Patent
 #
@@ -17,6 +17,10 @@
 #include "Library/Cpu.h"
 #include "CpuDxe.h"
 
+ASM_GLOBAL ASM_PFX(InitFpu)
+ASM_GLOBAL ASM_PFX(LoongArchEnableFpu)
+ASM_GLOBAL ASM_PFX(LoongArchDisableFpu)
+
 #
 #  Load the FPU with signalling NANS.  This bit pattern we're using has
 #  the property that no matter whether considered as single or as double
@@ -24,7 +28,6 @@
 #
 #  The value to initialize FCSR0 to comes in $A0.
 #
-ASM_GLOBAL ASM_PFX(InitFpu)
 
 ASM_PFX(InitFpu):
   li.d    T1, CSR_EUEN_FPEN
@@ -74,7 +77,6 @@ ASM_PFX(InitFpu):
 #
 #  @retval  VOID
 #
-ASM_GLOBAL ASM_PFX(LoongArchEnableFpu)
 
 ASM_PFX(LoongArchEnableFpu):
     li.d    T0, 1
@@ -90,7 +92,6 @@ ASM_PFX(LoongArchEnableFpu):
 #
 #  @retval  VOID
 #
-ASM_GLOBAL ASM_PFX(LoongArchDisableFpu)
 
 ASM_PFX(LoongArchDisableFpu):
     li.d    T0, 1
