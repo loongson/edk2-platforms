@@ -116,6 +116,7 @@
   PciCapLib                        | OvmfPkg/Library/BasePciCapLib/BasePciCapLib.inf
   PciCapPciSegmentLib              | OvmfPkg/Library/BasePciCapPciSegmentLib/BasePciCapPciSegmentLib.inf
   PciCapPciIoLib                   | OvmfPkg/Library/UefiPciCapPciIoLib/UefiPciCapPciIoLib.inf
+  DxeHardwareInfoLib               | OvmfPkg/Library/HardwareInfoLib/DxeHardwareInfoLib.inf
   IoLib                            | MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic.inf
   SerialPortLib                    | Platform/Loongson/LoongArchQemuPkg/Library/SerialPortLib/SerialPortLib.inf
   EfiResetSystemLib                | Platform/Loongson/LoongArchQemuPkg/Library/ResetSystemAcpiLib/BaseResetSystemAcpiGedLib.inf
@@ -143,7 +144,7 @@
   PciPcdProducerLib                | OvmfPkg/Fdt/FdtPciPcdProducerLib/FdtPciPcdProducerLib.inf
   PciSegmentLib                    | MdePkg/Library/BasePciSegmentLibPci/BasePciSegmentLibPci.inf
   PciHostBridgeLib                 | OvmfPkg/Fdt/FdtPciHostBridgeLib/FdtPciHostBridgeLib.inf
-  PciHostBridgeUtilityLib          | ArmVirtPkg/Library/ArmVirtPciHostBridgeUtilityLib/ArmVirtPciHostBridgeUtilityLib.inf
+  PciHostBridgeUtilityLib          | OvmfPkg/Library/PciHostBridgeUtilityLib/PciHostBridgeUtilityLib.inf
   MmuLib                           | Platform/Loongson/LoongArchQemuPkg/Library/MmuLib/MmuBaseLib.inf
   FileExplorerLib                  | MdeModulePkg/Library/FileExplorerLib/FileExplorerLib.inf
 
