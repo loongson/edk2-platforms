@@ -1,7 +1,7 @@
 /** @file
   Produces the CPU I/O 2 Protocol.
 
-  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+  Copyright (c) 2022 Loongson Technology Corporation Limited. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -515,7 +515,6 @@ STATIC EFI_CPU_IO2_PROTOCOL mCpuIo2 = {
     CpuIoServiceWrite
   }
 };
-
 
 /**
   The user Entry Point for module CpuIo2Dxe. The user code starts with this function.

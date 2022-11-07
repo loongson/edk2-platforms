@@ -1,6 +1,6 @@
 /** @file
 
-  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+  Copyright (c) 2022 Loongson Technology Corporation Limited. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -165,7 +165,6 @@ InternalQemuFwCfgReadBytes (
   MmioReadBytes (Size, Buffer);
 }
 
-
 /**
   Reads firmware configuration bytes into a buffer
 
@@ -218,7 +217,6 @@ QemuFwCfgWriteBytes (
   }
 }
 
-
 /**
   Skip bytes in the firmware configuration item.
 
@@ -264,7 +262,6 @@ QemuFwCfgSkipBytes (
   }
 }
 
-
 /**
   Reads a UINT8 firmware configuration value
 
@@ -283,7 +280,6 @@ QemuFwCfgRead8 (
 
   return Result;
 }
-
 
 /**
   Reads a UINT16 firmware configuration value
@@ -304,7 +300,6 @@ QemuFwCfgRead16 (
   return Result;
 }
 
-
 /**
   Reads a UINT32 firmware configuration value
 
@@ -324,7 +319,6 @@ QemuFwCfgRead32 (
   return Result;
 }
 
-
 /**
   Reads a UINT64 firmware configuration value
 
@@ -343,7 +337,6 @@ QemuFwCfgRead64 (
 
   return Result;
 }
-
 
 /**
   Find the configuration item corresponding to the firmware configuration file.

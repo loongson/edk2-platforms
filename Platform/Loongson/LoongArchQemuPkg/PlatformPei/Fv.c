@@ -1,12 +1,11 @@
 /** @file
   Build FV related hobs for platform.
 
-  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+  Copyright (c) 2022 Loongson Technology Corporation Limited. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
-
 
 #include "PiPei.h"
 #include "Platform.h"
@@ -14,7 +13,6 @@
 #include <Library/HobLib.h>
 #include <Library/PeiServicesLib.h>
 #include <Library/PcdLib.h>
-
 
 /**
   Publish PEI & DXE (Decompressed) Memory based FVs to let PEI

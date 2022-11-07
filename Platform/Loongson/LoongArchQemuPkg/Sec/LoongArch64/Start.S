@@ -2,7 +2,7 @@
 #
 # Start for LoongArch
 #
-# Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+# Copyright (c) 2022 Loongson Technology Corporation Limited. All rights reserved.<BR>
 #
 # SPDX-License-Identifier: BSD-2-Clause-Patent
 #
@@ -16,9 +16,10 @@
 
 #include <Library/Cpu.h>
 
-    .text
-    ASM_GLOBAL ASM_PFX(_ModuleEntryPoint)
+ASM_GLOBAL ASM_PFX(_ModuleEntryPoint)
+ASM_GLOBAL ASM_PFX(DeadLoop)
 
+.text
 ASM_PFX(_ModuleEntryPoint):
     /* configure reset ebase */
     la.pcrel    T0, DeadLoop
@@ -78,7 +79,6 @@ slave_main:
     or        RA, T0, ZERO
     jirl      ZERO, RA, 0x0
 
-    ASM_GLOBAL ASM_PFX(DeadLoop)
 .align 12
 ASM_PFX(DeadLoop):
     b DeadLoop

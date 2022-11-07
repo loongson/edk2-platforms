@@ -1,12 +1,11 @@
 /** @file
   Memory Detection for Virtual Machines.
 
-  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+  Copyright (c) 2022 Loongson Technology Corporation Limited. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
-
 
 //
 // The package level header files this module uses
@@ -49,7 +48,6 @@ PublishPeiMemory (
   Base = PcdGet64 (PcdSecPeiTempRamBase) + PcdGet32 (PcdSecPeiTempRamSize);
   RamTop = PcdGet64 (PcdUefiRamTop);
   Size = RamTop - Base;
-
 
   //
   // Publish this memory to the PEI Core
@@ -104,5 +102,4 @@ InitializeRamRegions (
 
     AddMemoryRangeHob ( pEntry->BaseAddr, pEntry->BaseAddr + pEntry->Length);
   }
-
 }

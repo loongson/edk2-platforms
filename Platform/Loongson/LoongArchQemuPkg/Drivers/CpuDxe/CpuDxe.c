@@ -1,12 +1,11 @@
 /** @file
   CPU DXE Module to produce CPU ARCH Protocol
 
-  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+  Copyright (c) 2022 Loongson Technology Corporation Limited. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
-
 
 #include <Guid/IdleLoopEvent.h>
 #include <Uefi.h>
@@ -74,7 +73,6 @@ CpuFlushCpuDataCache (
   return EFI_SUCCESS;
 }
 
-
 /**
   This function enables interrupt processing by the processor.
 
@@ -96,7 +94,6 @@ CpuEnableInterrupt (
   return EFI_SUCCESS;
 }
 
-
 /**
   This function disables interrupt processing by the processor.
 
@@ -117,7 +114,6 @@ CpuDisableInterrupt (
   mInterruptState = FALSE;
   return EFI_SUCCESS;
 }
-
 
 /**
   This function retrieves the processor's current interrupt state a returns it in
@@ -146,7 +142,6 @@ CpuGetInterruptState (
   *State = mInterruptState;
   return EFI_SUCCESS;
 }
-
 
 /**
   This function generates an INIT on the processor. If this function succeeds, then the
@@ -336,7 +331,6 @@ EFI_CPU_ARCH_PROTOCOL Cpu = {
   0,          // NumberOfTimers
   4,          // DmaBufferAlignment
 };
-
 
 /**
   Initialize the state information for the CPU Architectural Protocol.

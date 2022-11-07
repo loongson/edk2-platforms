@@ -2,7 +2,7 @@
 #
 # LoongArch for LoongArch
 #
-# Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+# Copyright (c) 2022 Loongson Technology Corporation Limited. All rights reserved.<BR>
 #
 # SPDX-License-Identifier: BSD-2-Clause-Patent
 #
@@ -23,11 +23,16 @@
 #define RSIZE   8       /* 64 bit mode register size */
 #define RLOGSIZE 3
 
+ASM_GLOBAL ASM_PFX(Exception_handler)
+ASM_GLOBAL ASM_PFX(LoongArchException)
+ASM_GLOBAL ASM_PFX(SetEbase)
+ASM_GLOBAL ASM_PFX(LoongArchReadqCsrEuen)
+ASM_GLOBAL ASM_PFX(LoongArchWriteqCsrEuen)
+
 #
 #   Main exception handler. Not really a leaf routine but not a normal
 #   function either. Save away the entire cpu state end enter exception mode.
 #
-ASM_GLOBAL ASM_PFX(Exception_handler)
 
 ASM_PFX(Exception_handler):
     csrrd   SP, LOONGARCH_CSR_KS1
@@ -263,7 +268,6 @@ ASM_PFX(Exception_handler):
 #
 #   Exception trampoline copied down to RAM after initialization.
 #
-ASM_GLOBAL ASM_PFX(LoongArchException)
 
 ASM_PFX(LoongArchException):
     csrwr   T0, LOONGARCH_CSR_KS0
@@ -280,7 +284,6 @@ LoongArchExceptionEnd:
 #
 #   Set Exception Base Address.
 #
-ASM_GLOBAL ASM_PFX(SetEbase)
 
 ASM_PFX(SetEbase):
     #
@@ -301,7 +304,6 @@ ASM_PFX(SetEbase):
 #  @param   A0 Pointer to the variable used to store the EUEN register value
 #  @retval  none
 #
-ASM_GLOBAL ASM_PFX(LoongArchReadqCsrEuen)
 
 ASM_PFX(LoongArchReadqCsrEuen):
     csrrd T0, LOONGARCH_CSR_EUEN
@@ -313,7 +315,6 @@ ASM_PFX(LoongArchReadqCsrEuen):
 #  @param  A0  The value used to write to the EUEN register
 #  @retval  none
 #
-ASM_GLOBAL ASM_PFX(LoongArchWriteqCsrEuen)
 
 ASM_PFX(LoongArchWriteqCsrEuen):
     csrwr A0, LOONGARCH_CSR_EUEN

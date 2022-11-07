@@ -1,7 +1,7 @@
 /** @file
   UART Serial Port library functions
 
-  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+  Copyright (c) 2022 Loongson Technology Corporation Limited. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -55,7 +55,6 @@ SerialPortInitialize (
   //
   // Configure baud rate
   //
-
 
   MmioWrite8 ((UINTN) (gUartBase + LCR_OFFSET), CFCR_8BITS);
   MmioWrite8 ((UINTN) (gUartBase + MCR_OFFSET), MCR_IENABLE | MCR_DTR | MCR_RTS);
@@ -250,7 +249,7 @@ SerialPortReadRegister (
   UINTN  Offset
   )
 {
-    return MmioRead8 (Base + Offset);
+  return MmioRead8 (Base + Offset);
 }
 
 /**
@@ -269,7 +268,7 @@ SerialPortWriteRegister (
   UINT8  Value
   )
 {
-    return MmioWrite8 (Base + Offset, Value);
+  return MmioWrite8 (Base + Offset, Value);
 }
 
 /**

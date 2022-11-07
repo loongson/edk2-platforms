@@ -1,7 +1,7 @@
 /** @file
   Implementation for PlatformBootManagerLib library class interfaces.
 
-  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+  Copyright (c) 2022 Loongson Technology Corporation Limited. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -156,7 +156,6 @@ FilterAndProcess (
   gBS->FreePool (Handles);
 }
 
-
 /**
   This FILTER_FUNCTION checks if a handle corresponds to a PCI display device.
 
@@ -196,7 +195,6 @@ IsPciDisplay (
   return IS_PCI_DISPLAY (&Pci);
 }
 
-
 /**
   This CALLBACK_FUNCTION attempts to connect a handle non-recursively, asking
   the matching driver to produce all first-level child handles.
@@ -224,7 +222,6 @@ Connect (
   DEBUG ((EFI_ERROR (Status) ? DEBUG_ERROR : DEBUG_VERBOSE, "%a: %s: %r\n",
     __FUNCTION__, ReportText, Status));
 }
-
 
 /**
   This CALLBACK_FUNCTION retrieves the EFI_DEVICE_PATH_PROTOCOL from the
@@ -338,7 +335,6 @@ PlatformRegisterFvBootOption (
   EfiBootManagerFreeLoadOption (&NewOption);
   EfiBootManagerFreeLoadOptions (BootOptions, BootOptionCount);
 }
-
 
 /**
   Remove all MemoryMapped (...)/FvFile (...) and Fv (...)/FvFile (...) boot options
@@ -515,7 +511,6 @@ PlatformRegisterOptionsAndKeys (
   ASSERT (Status == EFI_SUCCESS || Status == EFI_ALREADY_STARTED);
 }
 
-
 //
 // BDS Platform Functions
 //
@@ -623,16 +618,12 @@ PlatformBootManagerAfterConsole (
   //
   // Show the splash screen.
   //
-  DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
   BootLogoEnableLogo ();
-  DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
 
   //
   // Connect the rest of the devices.
   //
-  DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
   EfiBootManagerConnectAll ();
-  DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
 
   //
   // Process QEMU's -kernel command line option. Note that the kernel booted
@@ -640,31 +631,23 @@ PlatformBootManagerAfterConsole (
   // first (see above) -- PCI enumeration blocks ACPI table installation, if
   // there is a PCI host.
   //
-  DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
   TryRunningQemuKernel ();
-  DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
 
   //
   // Enumerate all possible boot options, then filter and reorder them based on
   // the QEMU configuration.
   //
-  DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
   EfiBootManagerRefreshAllBootOption ();
-  DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
 
   //
   // Register UEFI Shell
   //
-  DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
   PlatformRegisterFvBootOption (
     &gUefiShellFileGuid, L"EFI Internal Shell", LOAD_OPTION_ACTIVE
     );
-  DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
 
   RemoveStaleFvFileOptions ();
-  DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
   SetBootOrderFromQemu ();
-  DEBUG ((DEBUG_INFO, "PlatformBootManagerAfterConsole, func: %a, line: %d\n", __func__, __LINE__));
 }
 
 /**

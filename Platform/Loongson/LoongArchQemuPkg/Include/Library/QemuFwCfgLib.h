@@ -1,7 +1,7 @@
 /** @file
   QEMU/KVM Firmware Configuration access
 
-  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+  Copyright (c) 2022 Loongson Technology Corporation Limited. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -45,7 +45,6 @@ QemuFwCfgIsAvailable (
   VOID
   );
 
-
 /**
   Selects a firmware configuration item for reading.
 
@@ -60,7 +59,6 @@ EFIAPI
 QemuFwCfgSelectItem (
   IN FIRMWARE_CONFIG_ITEM   QemuFwCfgItem
   );
-
 
 /**
   Reads firmware configuration bytes into a buffer
@@ -80,7 +78,6 @@ QemuFwCfgReadBytes (
   IN VOID                   *Buffer  OPTIONAL
   );
 
-
 /**
   Writes firmware configuration bytes from a buffer
 
@@ -99,7 +96,6 @@ QemuFwCfgWriteBytes (
   IN VOID                   *Buffer
   );
 
-
 /**
   Skip bytes in the firmware configuration item.
 
@@ -115,7 +111,6 @@ QemuFwCfgSkipBytes (
   IN UINTN                  Size
   );
 
-
 /**
   Reads a UINT8 firmware configuration value
 
@@ -127,7 +122,6 @@ EFIAPI
 QemuFwCfgRead8 (
   VOID
   );
-
 
 /**
   Reads a UINT16 firmware configuration value
@@ -141,7 +135,6 @@ QemuFwCfgRead16 (
   VOID
   );
 
-
 /**
   Reads a UINT32 firmware configuration value
 
@@ -154,7 +147,6 @@ QemuFwCfgRead32 (
   VOID
   );
 
-
 /**
   Reads a UINT64 firmware configuration value
 
@@ -166,7 +158,6 @@ EFIAPI
 QemuFwCfgRead64 (
   VOID
   );
-
 
 /**
   Find the configuration item corresponding to the firmware configuration file.

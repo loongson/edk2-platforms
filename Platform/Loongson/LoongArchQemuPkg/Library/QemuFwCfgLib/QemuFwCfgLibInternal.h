@@ -1,7 +1,7 @@
 /** @file
   fw_cfg library implementation.
 
-  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+  Copyright (c) 2022 Loongson Technology Corporation Limited. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -25,7 +25,6 @@ BOOLEAN
 InternalQemuFwCfgIsAvailable (
   VOID
   );
-
 
 /**
   Returns a boolean indicating whether QEMU provides the DMA-like access method

@@ -1,7 +1,7 @@
 /** @file
   Implement EFI RealTimeClock runtime services via RTC Lib.
 
-  Copyright (c) 2021, Loongson Limited. All rights reserved.
+  Copyright (c) 2022, Loongson Limited. All rights reserved.
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -95,7 +95,6 @@ LibGetTime (
   return EFI_SUCCESS;
 }
 
-
 /**
   Sets the current local time and date information.
 
@@ -130,7 +129,6 @@ LibSetTime (
   return EFI_SUCCESS;
 }
 
-
 /**
   Returns the current wakeup alarm clock setting.
 
@@ -154,7 +152,6 @@ LibGetWakeupTime (
   // Not a required feature
   return EFI_UNSUPPORTED;
 }
-
 
 /**
   Sets the system wakeup alarm clock time.

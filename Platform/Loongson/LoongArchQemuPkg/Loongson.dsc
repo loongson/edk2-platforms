@@ -1,6 +1,6 @@
 ## @file
 #
-#  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+#  Copyright (c) 2022 Loongson Technology Corporation Limited. All rights reserved.<BR>
 #
 #  SPDX-License-Identifier: BSD-2-Clause-Patent
 #
@@ -256,7 +256,6 @@
   HobLib                           | MdePkg/Library/DxeHobLib/DxeHobLib.inf
   MemoryAllocationLib              | MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
   ExtractGuidedSectionLib          | MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
-
 
 ################################################################################
 #
@@ -515,7 +514,6 @@
   }
 !endif
   OvmfPkg/VirtioNetDxe/VirtioNet.inf
-
 
   #
   # IDE/SCSI

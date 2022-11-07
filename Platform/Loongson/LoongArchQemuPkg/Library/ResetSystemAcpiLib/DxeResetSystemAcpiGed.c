@@ -1,7 +1,7 @@
 /** @file
   Dxe ResetSystem library implementation.
 
-  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+  Copyright (c) 2022 Loongson Technology Corporation Limited. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -90,7 +90,6 @@ SetMemoryAttributesRunTime (
 /**
   Find the power manager related info from ACPI table
 
-
   @retval RETURN_SUCCESS     Successfully find out all the required information.
   @retval RETURN_NOT_FOUND   Failed to find the required info.
 
@@ -132,7 +131,6 @@ GetPowerManagerByParseAcpiInfo (
     }
   }
 
-
   Xsdt = (EFI_ACPI_DESCRIPTION_HEADER *)Rsdp->XsdtAddress;
   Entry32    = (UINT32 *)(Xsdt + 1);
   Entry32Num = (Xsdt->Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) >> 2;
@@ -144,7 +142,6 @@ GetPowerManagerByParseAcpiInfo (
       goto Done;
     }
   }
-
 
   DEBUG ((DEBUG_ERROR, " Fadt Not Found\n"));
   return RETURN_NOT_FOUND;

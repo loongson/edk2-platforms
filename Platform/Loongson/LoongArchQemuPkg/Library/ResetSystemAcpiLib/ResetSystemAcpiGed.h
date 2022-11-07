@@ -1,7 +1,7 @@
 /** @file
   ResetSystem lib head file.
 
-  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+  Copyright (c) 2022 Loongson Technology Corporation Limited. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -17,4 +17,3 @@ typedef struct {
 } POWER_MANAGER;
 
 extern POWER_MANAGER mPowerManager;
-

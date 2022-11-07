@@ -1,7 +1,7 @@
 ## @file
 #  DXE library instance for ResetSystem library class for loongarch.
 #
-#  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+#  Copyright (c) 2022 Loongson Technology Corporation Limited. All rights reserved.<BR>
 #
 #  SPDX-License-Identifier: BSD-2-Clause-Patent
 #
@@ -27,7 +27,6 @@
   DxeResetSystemAcpiGed.c
   ResetSystemAcpiGed.c
 
-
 [Packages]
   MdeModulePkg/MdeModulePkg.dec
   MdePkg/MdePkg.dec
@@ -43,5 +42,3 @@
 [Guids]
   gEfiAcpi10TableGuid                           ## PRODUCES           ## SystemTable
   gEfiAcpiTableGuid                             ## PRODUCES           ## SystemTable
-
-

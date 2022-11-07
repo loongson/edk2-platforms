@@ -1,6 +1,6 @@
 /** @file
 
-  Copyright (c) 2021 Loongson Technology Corporation Limited. All rights reserved.<BR>
+  Copyright (c) 2022 Loongson Technology Corporation Limited. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -178,7 +178,7 @@ typedef struct { UINTN PteVal; } PTE;
 
   @param  Attributes  Specifies the Attributes.
  * */
-#define GET_GLOBALBIT(Attributes) ((Attributes & PAGE_GLOBAL) >> PAGE_GLOBAL_SHIFT)
+#define GET_GLOBALBIT(Attributes)           ((Attributes & PAGE_GLOBAL) >> PAGE_GLOBAL_SHIFT)
 /**
   Calculates the value of the Huge page table entry based on the specified virtual address and properties.
 
