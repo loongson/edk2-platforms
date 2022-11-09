@@ -37,4 +37,4 @@
 #define TOY_MIN_SHIFT         10
 #define TOY_SEC_SHIFT         4
 
-#endif //__LS_REAL_TIME_CLOCK_H__
+#endif // LS_REAL_TIME_CLOCK_H_

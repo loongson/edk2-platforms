@@ -51,7 +51,6 @@ EFI_EXCEPTION_CALLBACK  gDebuggerExceptionHandlers[MAX_LOONGARCH_INTERRUPT + 1];
   @retval EFI_INVALID_PARAMETER InterruptHandler is NULL, and a handler for InteruptNum was not
                                 previously installed.
   @retval EFI_UNSUPPORTED       The interrupt specified by InteruptNum is not supported.
-
 **/
 EFI_STATUS
 RegisterInterruptHandler (
@@ -73,6 +72,7 @@ RegisterInterruptHandler (
 
   return EFI_SUCCESS;
 }
+
 /**
   This function calls the corresponding exception handler based on the exception type.
 
@@ -114,7 +114,6 @@ CommonInterruptHandler (
 
   @retval NULL                 FaultAddress not in a loaded PE/COFF image.
   @retval                      Path and file name of PE/COFF image.
-
 **/
 CHAR8 *
 GetImageName (
@@ -153,7 +152,6 @@ GetImageName (
       }
     }
   }
-
   return NULL;
 }
 
@@ -198,7 +196,8 @@ DefaultHandler (
   )
 {
   CHAR8  *ImageName;
-  UINTN  ImageBase, Epc;
+  UINTN  ImageBase;
+  UINTN  Epc;
   UINTN  PeCoffSizeOfHeader;
 
   DEBUG ((DEBUG_ERROR, "CRMD   0x%llx\n",  SystemContext.SystemContextLoongArch64->CRMD));
@@ -237,7 +236,8 @@ CommonExceptionEntry (
   )
 {
   INT32    ExceptionType;
-  UINT64   CsrEuen, FpuStatus;
+  UINT64   CsrEuen;
+  UINT64   FpuStatus;
 
   ExceptionType = SystemContext.SystemContextLoongArch64->ESTAT & CSR_ESTAT_EXC;
   ExceptionType = ExceptionType >> CSR_ESTAT_EXC_SHIFT;
@@ -331,6 +331,5 @@ InitializeExceptions (
     //
     Status = Cpu->EnableInterrupt (Cpu);
   }
-
   return Status;
 }

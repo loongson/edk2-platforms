@@ -68,7 +68,6 @@ QemuGetFwCfgDataAddress (
   the beginning of the configuration item's data.
 
   @param[in] QemuFwCfgItem - Firmware Configuration item to read
-
 **/
 VOID
 EFIAPI
@@ -147,7 +146,6 @@ MmioWriteBytes (
 
   @param[in] Size - Size in bytes to read
   @param[in] Buffer - Buffer to store data into  (OPTIONAL if Size is 0)
-
 **/
 VOID
 EFIAPI
@@ -266,7 +264,6 @@ QemuFwCfgSkipBytes (
   Reads a UINT8 firmware configuration value
 
   @return    Value of Firmware Configuration item read
-
 **/
 UINT8
 EFIAPI
@@ -285,7 +282,6 @@ QemuFwCfgRead8 (
   Reads a UINT16 firmware configuration value
 
   @return    Value of Firmware Configuration item read
-
 **/
 UINT16
 EFIAPI
@@ -304,7 +300,6 @@ QemuFwCfgRead16 (
   Reads a UINT32 firmware configuration value
 
   @return    Value of Firmware Configuration item read
-
 **/
 UINT32
 EFIAPI
@@ -323,7 +318,6 @@ QemuFwCfgRead32 (
   Reads a UINT64 firmware configuration value
 
   @return    Value of Firmware Configuration item read
-
 **/
 UINT64
 EFIAPI
@@ -349,7 +343,6 @@ QemuFwCfgRead64 (
   @return    RETURN_SUCCESS       If file is found.
              RETURN_NOT_FOUND     If file is not found.
              RETURN_UNSUPPORTED   If firmware configuration is unavailable.
-
 **/
 RETURN_STATUS
 EFIAPI

@@ -30,7 +30,6 @@
   Publish PEI core memory
 
   @return EFI_SUCCESS     The PEIM initialized successfully.
-
 **/
 EFI_STATUS
 PublishPeiMemory (

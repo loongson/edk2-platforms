@@ -54,4 +54,4 @@
 #define CACHE_SUC            (0 << CACHE_SHIFT) /* Strong-ordered UnCached */
 #define CACHE_CC             (1 << CACHE_SHIFT) /* Coherent Cached */
 #define CACHE_WUC            (2 << CACHE_SHIFT) /* Weak-ordered UnCached */
-#endif
+#endif // PTE_H_

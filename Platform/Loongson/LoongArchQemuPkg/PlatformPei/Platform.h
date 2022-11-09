@@ -57,7 +57,6 @@ AddReservedMemoryBaseSizeHob (
   Publish PEI core memory
 
   @return EFI_SUCCESS     The PEIM initialized successfully.
-
 **/
 EFI_STATUS
 PublishPeiMemory (
@@ -66,6 +65,7 @@ PublishPeiMemory (
 /**
   Publish system RAM and reserve memory regions
 
+  @return  VOID
 **/
 VOID
 InitializeRamRegions (
@@ -77,11 +77,10 @@ InitializeRamRegions (
   and DXE know about them.
 
   @retval EFI_SUCCESS   Platform PEI FVs were initialized successfully.
-
 **/
 EFI_STATUS
 PeiFvInitialization (
   VOID
   );
 
-#endif // _PLATFORM_PEI_H_INCLUDED_
+#endif // PLATFORM_H_

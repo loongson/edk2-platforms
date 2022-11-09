@@ -32,7 +32,6 @@
                                 the memory resource range.
   @retval EFI_NOT_AVAILABLE_YET The attributes cannot be set because CPU architectural protocol is
                                 not available yet.
-
 **/
 EFI_STATUS
 SetMemoryAttributesRunTime (
@@ -83,7 +82,6 @@ SetMemoryAttributesRunTime (
       return Status;
     }
   }
-
   return EFI_SUCCESS;
 }
 
@@ -92,7 +90,6 @@ SetMemoryAttributesRunTime (
 
   @retval RETURN_SUCCESS     Successfully find out all the required information.
   @retval RETURN_NOT_FOUND   Failed to find the required info.
-
 **/
 STATIC EFI_STATUS
 GetPowerManagerByParseAcpiInfo (
@@ -151,9 +148,7 @@ Done:
   mPowerManager.ResetValue          = Fadt->ResetValue;
   mPowerManager.SleepControlRegAddr = Fadt->SleepControlReg.Address;
   mPowerManager.SleepStatusRegAddr  = Fadt->SleepStatusReg.Address;
-
   return RETURN_SUCCESS;
-
 }
 
 /**
@@ -183,7 +178,6 @@ ResetSystemLibAddressChangeEvent (
 
   @param  Event        Event whose notification function is being invoked.
   @param  Context      Pointer to the notification function's context.
-
 **/
 STATIC VOID
 AcpiNotificationEvent (
@@ -220,7 +214,6 @@ AcpiNotificationEvent (
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "%a:%d\n",  __FUNCTION__, __LINE__));
   }
-
   return ;
 }
 
@@ -228,7 +221,6 @@ AcpiNotificationEvent (
   The constructor function to Register ACPI Table change event and Address Change Event.
 
   @retval EFI_SUCCESS   The constructor always returns RETURN_SUCCESS.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -261,6 +253,5 @@ ResetSystemLibConstructor (
                   &ResetSystemVirtualNotifyEvent
                   );
   ASSERT_EFI_ERROR (Status);
-
   return Status;
 }

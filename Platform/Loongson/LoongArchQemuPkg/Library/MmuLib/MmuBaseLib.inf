@@ -13,9 +13,13 @@
   MODULE_TYPE                    = BASE
   VERSION_STRING                 = 1.0
   LIBRARY_CLASS                  = MmuLib
-
   CONSTRUCTOR                    = MmuInitialize
-[Sources.common]
+
+#
+#  VALID_ARCHITECTURES           = LOONGARCH64
+#
+
+[Sources]
   MmuLibCore.c
   Mmu.S
 

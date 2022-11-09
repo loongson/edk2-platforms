@@ -12,7 +12,7 @@
 #    - fpu or fp or FP   - Float Point Unit
 #-----------------------------------------------------------------------------
 #ifndef __ASSEMBLY__
-#define  __ASSEMBLY__
+#define __ASSEMBLY__
 #endif
 #include "Library/Cpu.h"
 #include "CpuDxe.h"
@@ -72,9 +72,7 @@ ASM_PFX(InitFpu):
 
 #
 #  Enables  floating-point unit
-#
 #  @param  VOID
-#
 #  @retval  VOID
 #
 
@@ -87,9 +85,7 @@ ASM_PFX(LoongArchEnableFpu):
 
 #
 #  Disable  floating-point unit
-#
 #  @param  VOID
-#
 #  @retval  VOID
 #
 

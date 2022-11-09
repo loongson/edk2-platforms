@@ -109,7 +109,6 @@ TimerInterruptHandler (
 }
 
 /**
-
   This function registers the handler NotifyFunction so it is called every time
   the timer interrupt fires.  It also passes the amount of time since the last
   handler call to the NotifyFunction.  If NotifyFunction is NULL, then the
@@ -136,7 +135,6 @@ TimerInterruptHandler (
   @retval        EFI_INVALID_PARAMETER  NotifyFunction is NULL, and a handler was not
                                         previously registered.
   @retval        EFI_DEVICE_ERROR       The timer handler could not be registered.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -166,7 +164,6 @@ TimerDriverRegisterHandler (
 }
 
 /**
-
   This function adjusts the period of timer interrupts to the value specified
   by TimerPeriod.  If the timer period is updated, then the selected timer
   period is stored in EFI_TIMER.TimerPeriod, and EFI_SUCCESS is returned.  If
@@ -190,7 +187,6 @@ TimerDriverRegisterHandler (
   @retval        EFI_SUCCESS       The timer period was changed.
   @retval        EFI_UNSUPPORTED   The platform cannot change the period of the timer interrupt.
   @retval        EFI_DEVICE_ERROR  The timer period could not be changed due to a device error.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -235,7 +231,6 @@ TimerDriverSetTimerPeriod (
 }
 
 /**
-
   This function retrieves the period of timer interrupts in 100 ns units,
   returns that value in TimerPeriod, and returns EFI_SUCCESS.  If TimerPeriod
   is NULL, then EFI_INVALID_PARAMETER is returned.  If a TimerPeriod of 0 is
@@ -247,7 +242,6 @@ TimerDriverSetTimerPeriod (
 
   @retval EFI_SUCCESS            The timer period was returned in TimerPeriod.
   @retval EFI_INVALID_PARAMETER  TimerPeriod is NULL.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -264,10 +258,6 @@ TimerDriverGetTimerPeriod (
 
   return EFI_SUCCESS;
 }
-
-/**
-    Disable the timer
-**/
 
 /**
   Disable the timer
@@ -290,7 +280,6 @@ ExitBootServicesEvent (
 }
 
 /**
-
   This function generates a soft timer interrupt. If the platform does not support soft
   timer interrupts, then EFI_UNSUPPORTED is returned. Otherwise, EFI_SUCCESS is returned.
   If a handler has been registered through the EFI_TIMER_ARCH_PROTOCOL.RegisterHandler ()
@@ -303,7 +292,6 @@ ExitBootServicesEvent (
 
   @retval EFI_SUCCESS       The soft timer interrupt was generated.
   @retval EFI_UNSUPPORTED   The platform does not support the generation of soft timer interrupts.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -323,7 +311,6 @@ TimerDriverGenerateSoftInterrupt (
   @retval EFI_SUCCESS            Timer Architectural Protocol created
   @retval EFI_OUT_OF_RESOURCES   Not enough resources available to initialize driver.
   @retval EFI_DEVICE_ERROR       A device error occurred attempting to initialize the driver.
-
 **/
 EFI_STATUS
 EFIAPI

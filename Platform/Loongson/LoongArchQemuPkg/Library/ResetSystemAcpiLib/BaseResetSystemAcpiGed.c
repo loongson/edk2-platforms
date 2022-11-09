@@ -20,7 +20,6 @@
   @param[in]  Name - Name of file to look up.
 
   @return    VOID*       The Pointer of Value of Firmware Configuration item read.
-
 **/
 VOID *
 GetFwCfgData(
@@ -54,7 +53,6 @@ CONST CHAR8           *Name
 
   @retval RETURN_SUCCESS     Successfully find out all the required information.
   @retval RETURN_NOT_FOUND   Failed to find the required info.
-
 **/
 STATIC EFI_STATUS
 GetPowerManagerByParseAcpiInfo (VOID)
@@ -119,7 +117,6 @@ Done:
 
   FreePool (Rsdp);
   FreePool (AcpiTables);
-
   return RETURN_SUCCESS;
 }
 
@@ -128,7 +125,6 @@ Done:
 
   @retval EFI_SUCCESS   initialize mPowerManager success.
   @retval RETURN_NOT_FOUND   Failed to initialize mPowerManager.
-
 **/
 EFI_STATUS
 ResetSystemLibConstructor (
@@ -146,6 +142,5 @@ ResetSystemLibConstructor (
   ASSERT (mPowerManager.SleepControlRegAddr);
   ASSERT (mPowerManager.SleepStatusRegAddr);
   ASSERT (mPowerManager.ResetRegAddr);
-
   return Status;
 }

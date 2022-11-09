@@ -233,7 +233,6 @@ SystemMemorySizeInitialization (
   @param  PeiServices     Describes the list of possible PEI Services.
 
   @return EFI_SUCCESS     The PEIM initialized successfully.
-
 **/
 EFI_STATUS
 EFIAPI

@@ -11,7 +11,7 @@
 #define MMU_LIB_H_
 /**
   write operation is performed Count times from the first element of Buffer.
-Convert EFI Attributes to Loongarch Attributes.
+  Convert EFI Attributes to Loongarch Attributes.
   @param[in]  EfiAttributes     Efi Attributes.
 
   @retval  LoongArch Attributes.
@@ -48,7 +48,6 @@ GetLoongArchMemoryRegion (
   @param[in]  Attributes   The Attributes to be set.
 
   @retval  EFI_SUCCESS    The Attributes was set successfully
-
 **/
 EFI_STATUS
 LoongArchSetMemoryAttributes (
@@ -70,6 +69,7 @@ LoongArchSetMemoryRegionNoExec (
   IN  EFI_PHYSICAL_ADDRESS  BaseAddress,
   IN  UINTN                Length
   );
+
 /**
   Create a page table and initialize the MMU.
 
@@ -82,4 +82,4 @@ EFIAPI
 ConfigureMmu (
   VOID
   );
-#endif
+#endif // MMU_LIB_H_

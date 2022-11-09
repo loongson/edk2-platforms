@@ -8,15 +8,15 @@
 #
 #-----------------------------------------------------------------------------
 
-#ifndef _KERNEL
-#define _KERNEL
+#ifndef __ASSEMBLY__
+#define __ASSEMBLY__
 #endif
 
 #include "Library/Cpu.h"
 #include "mmu.h"
 
 ASM_GLOBAL ASM_PFX(HandleTlbRefill)
-ASM_GLOBAL  HandleTlbRefillEnd
+ASM_GLOBAL HandleTlbRefillEnd
 ASM_GLOBAL ASM_PFX(LoongarchInvalidTlb)
 ASM_GLOBAL ASM_PFX(SetTlbRefillFuncBase)
 ASM_GLOBAL ASM_PFX(WriteCsrPageSize)
@@ -28,11 +28,11 @@ ASM_GLOBAL ASM_PFX(LoongArchWriteqCsrPgdl)
 ASM_GLOBAL ASM_PFX(LoongArchWriteqCsrPgdh)
 ASM_GLOBAL ASM_PFX(LoongArchXchgCsrCrmd)
 
+#
 #  Refill the page table.
-#
 #  @param  VOID
-#
 #  @retval  VOID
+#
 
 ASM_PFX(HandleTlbRefill):
   csrwr T0, LOONGARCH_CSR_TLBRSAVE
@@ -95,9 +95,7 @@ ASM_PFX(WriteCsrTlbRefillPageSize):
 
 #
 #  Set Cpu Status Register STLB Page Size.
-#
 #  @param val  Page Size.
-#
 #  @retval  VOID
 #
 
@@ -149,7 +147,6 @@ ASM_PFX(LoongArchWriteqCsrPgdh):
 #  Exchange specified bit data with the Csr CRMD register.
 #  @param[IN]  A0   The value Exchanged with the CSR CRMD register.
 #  @param[IN]  A1   Specifies the mask for swapping bits
-#
 #  @retval  VOID
 #
 

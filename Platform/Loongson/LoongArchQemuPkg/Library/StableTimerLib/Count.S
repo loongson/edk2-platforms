@@ -9,7 +9,7 @@
 #------------------------------------------------------------------------------
 
 #ifndef __ASSEMBLY__
-#define  __ASSEMBLY__
+#define __ASSEMBLY__
 #endif
 
 #include "Library/Cpu.h"
@@ -31,9 +31,7 @@ ASM_PFX(CpuSetIP):
 
 #
 #Gets the timer count value.
-#
 #@param[] VOID
-#
 #@retval  timer count value.
 #
 
@@ -45,7 +43,6 @@ ASM_PFX(LoongArchReadTime):
 #   Read Csr CPUCFG register.
 #   @param   A0 Pointer to the variable used to store the CPUCFG register value.
 #   @param   A1 Specifies the register number of the CPUCFG to read the data.
-#
 #   @retval  none
 #
 

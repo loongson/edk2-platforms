@@ -16,8 +16,6 @@
   LIBRARY_CLASS                  = PlatformBootManagerLib|DXE_DRIVER
 
 #
-# The following information is for reference only and not required by the build tools.
-#
 #  VALID_ARCHITECTURES           = LOONGARCH64
 #
 

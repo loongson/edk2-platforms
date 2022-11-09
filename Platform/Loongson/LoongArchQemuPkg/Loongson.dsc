@@ -205,8 +205,8 @@
   PcdLib                           | MdePkg/Library/PeiPcdLib/PeiPcdLib.inf
   QemuFwCfgS3Lib                   | OvmfPkg/Library/QemuFwCfgS3Lib/PeiQemuFwCfgS3LibFwCfg.inf
   QemuFwCfgLib                     | Platform/Loongson/LoongArchQemuPkg/Library/QemuFwCfgLib/QemuFwCfgPeiLib.inf
+  MmuLib                           | Platform/Loongson/LoongArchQemuPkg/Library/MmuLib/MmuBaseLibPei.inf
 
-  MmuLib                       | Platform/Loongson/LoongArchQemuPkg/Library/MmuLib/MmuBaseLibPei.inf
 [LibraryClasses.common.DXE_CORE]
   HobLib                           | MdePkg/Library/DxeCoreHobLib/DxeCoreHobLib.inf
   DxeCoreEntryPoint                | MdePkg/Library/DxeCoreEntryPoint/DxeCoreEntryPoint.inf

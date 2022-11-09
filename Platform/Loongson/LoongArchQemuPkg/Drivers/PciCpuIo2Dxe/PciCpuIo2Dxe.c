@@ -82,7 +82,6 @@ STATIC CONST UINT8 mOutStride[] = {
   @retval EFI_UNSUPPORTED        The Buffer is not aligned for the given Width.
   @retval EFI_UNSUPPORTED        The address range specified by Address, Width,
                                  and Count is not valid for this PI system.
-
 **/
 EFI_STATUS
 CpuIoCheckParameter (
@@ -214,7 +213,6 @@ CpuIoCheckParameter (
   @retval EFI_UNSUPPORTED        The Buffer is not aligned for the given Width.
   @retval EFI_UNSUPPORTED        The address range specified by Address, Width,
                                  and Count is not valid for this PI system.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -293,7 +291,6 @@ CpuMemoryServiceRead (
   @retval EFI_UNSUPPORTED        The Buffer is not aligned for the given Width.
   @retval EFI_UNSUPPORTED        The address range specified by Address, Width,
                                  and Count is not valid for this PI system.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -373,7 +370,6 @@ CpuMemoryServiceWrite (
   @retval EFI_UNSUPPORTED        The Buffer is not aligned for the given Width.
   @retval EFI_UNSUPPORTED        The address range specified by Address, Width,
                                  and Count is not valid for this PI system.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -413,7 +409,6 @@ CpuIoServiceRead (
       *((UINT32 *)Uint8Buffer) = MmioRead32 ((UINTN)Address);
     }
   }
-
   return EFI_SUCCESS;
 }
 
@@ -454,7 +449,6 @@ CpuIoServiceRead (
   @retval EFI_UNSUPPORTED        The Buffer is not aligned for the given Width.
   @retval EFI_UNSUPPORTED        The address range specified by Address, Width,
                                  and Count is not valid for this PI system.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -498,7 +492,6 @@ CpuIoServiceWrite (
       MmioWrite32 ((UINTN)Address, *((UINT32 *)Uint8Buffer));
     }
   }
-
   return EFI_SUCCESS;
 }
 
@@ -524,7 +517,6 @@ STATIC EFI_CPU_IO2_PROTOCOL mCpuIo2 = {
 
   @retval EFI_SUCCESS       The entry point is executed successfully.
   @retval other             Some error occurs when executing this entry point.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -542,6 +534,5 @@ PciCpuIo2Initialize (
                   NULL
                   );
   ASSERT_EFI_ERROR (Status);
-
   return Status;
 }

@@ -33,8 +33,8 @@
 #define CSR_TLBIDX_PS_SHIFT       24
 #define CSR_TLBIDX_SIZE           CSR_TLBIDX_PS_SHIFT
 
-#define  CSR_TLBREHI_PS_SHIFT    0
-#define  CSR_TLBREHI_PS      0x3f
+#define  CSR_TLBREHI_PS_SHIFT     0
+#define  CSR_TLBREHI_PS           0x3f
 
 #define EFI_MEMORY_CACHETYPE_MASK     (EFI_MEMORY_UC  | \
                                        EFI_MEMORY_WC  | \
@@ -59,6 +59,7 @@ extern CHAR8 HandleTlbRefill[], HandleTlbRefillEnd[];
  Invalid corresponding TLB entries are based on the address given
 
  @param Address The address corresponding to the invalid page table entry
+
  @retval  none
 */
 extern
@@ -71,6 +72,7 @@ LoongarchInvalidTlb (
  Set Tlb Refill function to hardware
 
  @param A0 The address of tlb refill function
+
  @retval  none
 */
 extern
@@ -83,6 +85,7 @@ SetTlbRefillFuncBase (
   Set Cpu Status Register Page Size.
 
   @param  PageSize  Page Size.
+
   @retval  none
 */
 extern
@@ -95,6 +98,7 @@ WriteCsrPageSize (
   Set Cpu Status Register TLBREFILL Page Size.
 
   @param  PageSize  Page Size.
+
   @retval  none
 */
 extern
@@ -120,6 +124,7 @@ WriteCsrStlbPageSize (
   Write Csr PWCTL0 register.
 
   @param  Val  The value used to write to the PWCTL0 register
+
   @retval  none
 */
 extern
@@ -132,6 +137,7 @@ LoongArchWriteqCsrPwctl0 (
   Write Csr PWCTL1 register.
 
   @param  Val  The value used to write to the PWCTL1 register
+
   @retval  none
 */
 extern
@@ -144,6 +150,7 @@ LoongArchWriteqCsrPwctl1 (
   Write Csr PGDL register.
 
   @param  Val  The value used to write to the PGDL register
+
   @retval  none
 */
 extern
@@ -156,6 +163,7 @@ LoongArchWriteqCsrPgdl (
   Write Csr PGDH register.
 
   @param  Val  The value used to write to the PGDH register
+
   @retval  none
 */
 extern
@@ -179,4 +187,4 @@ LoongArchXchgCsrCrmd (
   UINTN Mask
   );
 
-#endif
+#endif // MMU_H_

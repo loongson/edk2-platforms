@@ -100,9 +100,10 @@ typedef struct { UINTN PteVal; } PTE;
 
   @retval   the specified virtual address  of the next block.
  **/
-#define PGD_ADDRESS_END(Address, End)            \
-({  UINTN Boundary = ((Address) + PGD_SIZE) & PGD_MASK;  \
-  (Boundary - 1 < (End) - 1)? Boundary: (End);    \
+#define PGD_ADDRESS_END(Address, End)                  \
+({                                                     \
+  UINTN Boundary = ((Address) + PGD_SIZE) & PGD_MASK;  \
+  (Boundary - 1 < (End) - 1)? Boundary: (End);         \
 })
 /**
   Gets the virtual address of the next block of the specified virtual address
@@ -113,9 +114,10 @@ typedef struct { UINTN PteVal; } PTE;
 
   @retval   the specified virtual address  of the next block.
  **/
-#define PUD_ADDRESS_END(Address, End)            \
-({  UINTN Boundary = ((Address) + PUD_SIZE) & PUD_MASK;  \
-  (Boundary - 1 < (End) - 1)? Boundary: (End);    \
+#define PUD_ADDRESS_END(Address, End)                  \
+({                                                     \
+  UINTN Boundary = ((Address) + PUD_SIZE) & PUD_MASK;  \
+  (Boundary - 1 < (End) - 1)? Boundary: (End);         \
 })
 /**
   Gets the virtual address of the next block of the specified virtual address
@@ -126,9 +128,10 @@ typedef struct { UINTN PteVal; } PTE;
 
   @retval   the specified virtual address  of the next block.
  **/
-#define PMD_ADDRESS_END(Address, End)            \
-({  UINTN Boundary = ((Address) + PMD_SIZE) & PMD_MASK;  \
-  (Boundary - 1 < (End) - 1)? Boundary: (End);    \
+#define PMD_ADDRESS_END(Address, End)                  \
+({                                                     \
+  UINTN Boundary = ((Address) + PMD_SIZE) & PMD_MASK;  \
+  (Boundary - 1 < (End) - 1)? Boundary: (End);         \
 })
 /**
   Get Specifies the virtual address corresponding to the index of the page global directory table entry.
@@ -274,4 +277,4 @@ pte_none (
 {
   return (!(PTE_VAL(pte) & (~PAGE_GLOBAL)));
 }
-#endif
+#endif // PAGE_H_

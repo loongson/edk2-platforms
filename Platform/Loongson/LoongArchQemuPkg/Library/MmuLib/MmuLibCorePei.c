@@ -33,7 +33,6 @@
                                     mapping. This array must be ended by a
                                     zero-filled entry. The allocated memory
                                     will not be freed.
-
 **/
 VOID
 GetMemoryMapFromFwCfg (

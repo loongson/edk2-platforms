@@ -70,6 +70,7 @@ PageDirInit (
 
   return ;
 }
+
 /**
   Gets the virtual address corresponding to the page global directory table entry.
 
@@ -84,6 +85,7 @@ PgdOffset (
 {
   return ((PGD *)PcdGet64 (PcdSwapPageDir)) + PGD_INDEX (Address);
 }
+
 /**
   Gets the virtual address corresponding to the page upper directory table entry.
 
@@ -101,6 +103,7 @@ PudOffset (
   UINTN PgdVal = (UINTN)PGD_VAL (*Pgd);
   return (PUD *)PgdVal + PUD_INDEX (Address);
 }
+
 /**
   Gets the virtual address corresponding to the page middle directory table entry.
 
@@ -118,6 +121,7 @@ PmdOffset (
   UINTN PudVal = PUD_VAL (*Pud);
   return (PMD *)PudVal + PMD_INDEX (Address);
 }
+
 /**
   Gets the virtual address corresponding to the page table entry.
 
@@ -152,6 +156,7 @@ SetPte (
 {
   *Pte = PteVal;
 }
+
 /**
   Sets the value of the page global directory.
 
@@ -202,6 +207,7 @@ SetPmd (
 {
   *Pmd = (PMD) {((UINTN)Pte)};
 }
+
 /**
   Free up memory space occupied by page tables.
 
@@ -216,6 +222,7 @@ PteFree (
 {
   FreePages ((VOID *)Pte, 1);
 }
+
 /**
   Free up memory space occupied by page middle directory.
 
@@ -230,6 +237,7 @@ PmdFree (
 {
   FreePages ((VOID *)Pmd, 1);
 }
+
 /**
   Free up memory space occupied by page upper directory.
 
@@ -244,6 +252,7 @@ PudFree (
 {
   FreePages ((VOID *)Pud, 1);
 }
+
 /**
   Requests the memory space required for the page upper directory,
   initializes it, and places it in the specified page global directory
@@ -273,6 +282,7 @@ PudAlloc (
 
   return EFI_SUCCESS;
 }
+
 /**
   Requests the memory space required for the page middle directory,
   initializes it, and places it in the specified page upper directory
@@ -304,6 +314,7 @@ PmdAlloc (
 
   return EFI_SUCCESS;
 }
+
 /**
   Requests the memory space required for the page table,
   initializes it, and places it in the specified page middle directory
@@ -335,6 +346,7 @@ PteAlloc (
 
   return EFI_SUCCESS;
 }
+
 /**
   Requests the memory space required for the page upper directory,
   initializes it, and places it in the specified page global directory,
@@ -353,6 +365,7 @@ PudAllocGet (
   return ((pgd_none (*(Pgd)) && PudAlloc (Pgd)) ?
            NULL : PudOffset (Pgd, Address));
 }
+
 /**
   Requests the memory space required for the page middle directory,
   initializes it, and places it in the specified page upper directory,
@@ -375,6 +388,7 @@ PmdAllocGet (
 
   return ret;
 }
+
 /**
   Requests the memory space required for the page table,
   initializes it, and places it in the specified page middle directory,
@@ -434,6 +448,7 @@ GetPteAddress (
 
   return PteOffset (Pmd, Address);
 }
+
 /**
   Establishes a page table entry based on the specified memory region.
 
@@ -484,6 +499,7 @@ MemoryMapPteRange (
 
   return EFI_SUCCESS;
 }
+
 /**
   Establishes a page middle directory based on the specified memory region.
 
@@ -554,6 +570,7 @@ MemoryMapPmdRange (
 
   return 0;
 }
+
 /**
   Establishes a page upper directory based on the specified memory region.
 
@@ -589,6 +606,7 @@ MemoryMapPudRange (
   } while (Pud++, Address = Next, Address != End);
   return EFI_SUCCESS;
 }
+
 /**
   Establishes a page global directory based on the specified memory region.
 
@@ -643,7 +661,7 @@ FillTranslationTable (
 
 /**
   write operation is performed Count times from the first element of Buffer.
-Convert EFI Attributes to Loongarch Attributes.
+  Convert EFI Attributes to Loongarch Attributes.
   @param[in]  EfiAttributes     Efi Attributes.
 
   @retval  LoongArch Attributes.
@@ -755,7 +773,6 @@ GetLoongArchMemoryRegion (
   @param[in]  Attributes   The Attributes to be set.
 
   @retval  EFI_SUCCESS    The Attributes was set successfully
-
 **/
 EFI_STATUS
 LoongArchSetMemoryAttributes (

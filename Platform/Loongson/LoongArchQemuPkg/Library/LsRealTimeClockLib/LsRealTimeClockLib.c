@@ -29,7 +29,7 @@
 
 STATIC BOOLEAN                mInitialized = FALSE;
 STATIC EFI_EVENT              mRtcVirtualAddrChangeEvent;
-STATIC UINTN                  mRtcBase = 0X100d0100;
+STATIC UINTN                  mRtcBase = 0x100d0100;
 /*
   Enable Real-time clock.
 
@@ -65,7 +65,6 @@ InitRtc (
   @retval EFI_INVALID_PARAMETER  Time is NULL.
   @retval EFI_DEVICE_ERROR       The time could not be retrieved due to hardware error.
   @retval EFI_SECURITY_VIOLATION The time could not be retrieved due to an authentication failure.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -103,7 +102,6 @@ LibGetTime (
   @retval EFI_SUCCESS           The operation completed successfully.
   @retval EFI_INVALID_PARAMETER A time field is out of range.
   @retval EFI_DEVICE_ERROR      The time could not be set due due to hardware error.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -139,7 +137,6 @@ LibSetTime (
   @retval EFI_SUCCESS           The alarm settings were returned.
   @retval EFI_INVALID_PARAMETER Any parameter is NULL.
   @retval EFI_DEVICE_ERROR      The wakeup time could not be retrieved due to a hardware error.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -164,7 +161,6 @@ LibGetWakeupTime (
   @retval EFI_INVALID_PARAMETER A time field is out of range.
   @retval EFI_DEVICE_ERROR      The wakeup time could not be set due to a hardware error.
   @retval EFI_UNSUPPORTED       A wakeup timer is not supported on this platform.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -289,7 +285,6 @@ KvmtoolRtcMapMemory (
   @param  SystemTable           System Table for this image.
 
   @retval EFI_SUCCESS           The operation completed successfully.
-
 **/
 EFI_STATUS
 EFIAPI

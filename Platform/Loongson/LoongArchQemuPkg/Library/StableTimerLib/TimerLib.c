@@ -81,7 +81,6 @@ GetFreq (
   @param  MicroSeconds  The minimum number of microseconds to delay.
 
   @return MicroSeconds
-
 **/
 UINTN
 EFIAPI
@@ -115,7 +114,6 @@ MicroSecondDelay (
   @param  NanoSeconds The minimum number of nanoseconds to delay.
 
   @return NanoSeconds
-
 **/
 UINTN
 EFIAPI
@@ -145,7 +143,6 @@ NanoSecondDelay (
   GetPerformanceCounterProperties ().
 
   @return The current value of the free running performance counter.
-
 **/
 UINT64
 EFIAPI
@@ -176,7 +173,6 @@ GetPerformanceCounter (
                       it rolls over.
 
   @return The frequency in Hz.
-
 **/
 UINT64
 EFIAPI
@@ -205,7 +201,6 @@ GetPerformanceCounterProperties (
   @param  Ticks     The number of elapsed ticks of running performance counter.
 
   @return The elapsed time in nanoseconds.
-
 **/
 UINT64
 EFIAPI

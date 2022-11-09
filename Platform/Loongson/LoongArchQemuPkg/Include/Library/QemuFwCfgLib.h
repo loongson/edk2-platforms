@@ -37,7 +37,6 @@ typedef struct {
 
   @retval    TRUE   The interface is available
   @retval    FALSE  The interface is not available
-
 **/
 BOOLEAN
 EFIAPI
@@ -52,7 +51,6 @@ QemuFwCfgIsAvailable (
   the beginning of the configuration item's data.
 
   @param[in] QemuFwCfgItem - Firmware Configuration item to read
-
 **/
 VOID
 EFIAPI
@@ -69,7 +67,6 @@ QemuFwCfgSelectItem (
 
   @param[in] Size - Size in bytes to read
   @param[in] Buffer - Buffer to store data into
-
 **/
 VOID
 EFIAPI
@@ -87,7 +84,6 @@ QemuFwCfgReadBytes (
 
   @param[in] Size - Size in bytes to write
   @param[in] Buffer - Buffer to read data from
-
 **/
 VOID
 EFIAPI
@@ -115,7 +111,6 @@ QemuFwCfgSkipBytes (
   Reads a UINT8 firmware configuration value
 
   @retval    Value of Firmware Configuration item read
-
 **/
 UINT8
 EFIAPI
@@ -127,7 +122,6 @@ QemuFwCfgRead8 (
   Reads a UINT16 firmware configuration value
 
   @retval    Value of Firmware Configuration item read
-
 **/
 UINT16
 EFIAPI
@@ -139,7 +133,6 @@ QemuFwCfgRead16 (
   Reads a UINT32 firmware configuration value
 
   @retval    Value of Firmware Configuration item read
-
 **/
 UINT32
 EFIAPI
@@ -151,7 +144,6 @@ QemuFwCfgRead32 (
   Reads a UINT64 firmware configuration value
 
   @retval    Value of Firmware Configuration item read
-
 **/
 UINT64
 EFIAPI
@@ -170,7 +162,6 @@ QemuFwCfgRead64 (
   @retval    RETURN_SUCCESS       If file is found.
              RETURN_NOT_FOUND     If file is not found.
              RETURN_UNSUPPORTED   If firmware configuration is unavailable.
-
 **/
 RETURN_STATUS
 EFIAPI
@@ -180,4 +171,4 @@ QemuFwCfgFindFile (
   OUT  UINTN                 *Size
   );
 
-#endif
+#endif // QEMU_FW_CFG_LIB_

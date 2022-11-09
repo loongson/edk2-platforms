@@ -29,7 +29,6 @@ UINTN   gBps      = UART_BPS;
 
   @retval RETURN_SUCCESS        The serial device was initialized.
   @retval RETURN_DEVICE_ERROR   The serail device could not be initialized.
-
 **/
 RETURN_STATUS
 EFIAPI
@@ -58,10 +57,6 @@ SerialPortInitialize (
 
   MmioWrite8 ((UINTN) (gUartBase + LCR_OFFSET), CFCR_8BITS);
   MmioWrite8 ((UINTN) (gUartBase + MCR_OFFSET), MCR_IENABLE | MCR_DTR | MCR_RTS);
-  //
-  // if enable interrupt the kernel of lemote will error in STR mode during wake up phase.
-  //
-  //MmioWrite8 ((UINTN) (gUartBase + IER_OFFSET), CFCR_8BITS);
 
   return RETURN_SUCCESS;
 }
@@ -83,7 +78,6 @@ SerialPortInitialize (
   @retval 0                NumberOfBytes is 0.
   @retval >0               The number of bytes written to the serial device.
                            If this value is less than NumberOfBytes, then the read operation failed.
-
 **/
 UINTN
 EFIAPI
@@ -111,7 +105,6 @@ UartCtlWrite (
     } while ((Data & LSR_TXRDY) == 0);
     MmioWrite8 (CtlAddr, *Buffer++);
   }
-
   return Result;
 }
 /**
@@ -123,7 +116,6 @@ UartCtlWrite (
   @retval 0                NumberOfBytes is 0.
   @retval >0               The number of bytes write the serial port.
                            If this value is less than NumberOfBytes, then the write operation failed.
-
 **/
 UINTN
 EFIAPI
@@ -143,7 +135,6 @@ SerialPortWrite (
   @retval 0                NumberOfBytes is 0.
   @retval >0               The number of bytes read from the serial device.
                            If this value is less than NumberOfBytes, then the read operation failed.
-
 **/
 UINTN
 EFIAPI
@@ -172,7 +163,6 @@ UartCtlRead (
 
     *Buffer++ = MmioRead8 (CtlAddr);
   }
-
   return Result;
 }
 /**
@@ -184,7 +174,6 @@ UartCtlRead (
   @retval 0                NumberOfBytes is 0.
   @retval >0               The number of bytes read from the serial port.
                            If this value is less than NumberOfBytes, then the read operation failed.
-
 **/
 UINTN
 EFIAPI
@@ -204,7 +193,6 @@ SerialPortRead (
 
   @retval TRUE             Data is waiting to be read from the serial device.
   @retval FALSE            There is no data waiting to be read from the serial device.
-
 **/
 BOOLEAN
 EFIAPI
@@ -241,7 +229,6 @@ GetSerialRegisterBase (
   @param  Offset  The offset of the register to read.
 
   @return The value read from the 16550 register.
-
 **/
 UINT8
 SerialPortReadRegister (
@@ -259,7 +246,6 @@ SerialPortReadRegister (
   @param  Value   The value to write to the register specified by Offset.
 
   @return The value written to the 16550 register.
-
 **/
 UINT8
 SerialPortWriteRegister (
@@ -279,7 +265,6 @@ SerialPortWriteRegister (
   @retval RETURN_SUCCESS        The new control bits were set on the serial device.
   @retval RETURN_UNSUPPORTED    The serial device does not support this operation.
   @retval RETURN_DEVICE_ERROR   The serial device is not functioning correctly.
-
 **/
 RETURN_STATUS
 EFIAPI
@@ -334,7 +319,6 @@ SerialPortSetControl (
   @retval RETURN_SUCCESS        The control bits were read from the serial device.
   @retval RETURN_UNSUPPORTED    The serial device does not support this operation.
   @retval RETURN_DEVICE_ERROR   The serial device is not functioning correctly.
-
 **/
 RETURN_STATUS
 EFIAPI
@@ -439,7 +423,6 @@ SerialPortGetControl (
   @retval RETURN_UNSUPPORTED        The serial device does not support this operation.
   @retval RETURN_INVALID_PARAMETER  One or more of the attributes has an unsupported value.
   @retval RETURN_DEVICE_ERROR       The serial device is not functioning correctly.
-
 **/
 RETURN_STATUS
 EFIAPI
@@ -458,7 +441,6 @@ UartCtlConfig (
   UINT8     LcrData;
   UINT8     LcrParity;
   UINT8     LcrStop;
-
 
   SerialRegisterBase = CtlAddr;
   if (SerialRegisterBase ==0) {

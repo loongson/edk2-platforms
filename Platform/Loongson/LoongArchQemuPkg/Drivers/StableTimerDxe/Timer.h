@@ -31,18 +31,15 @@ extern VOID  EFIAPI ClearC0Status(IN UINT32 val);
   @retval EFI_SUCCESS            Timer Architectural Protocol created
   @retval EFI_OUT_OF_RESOURCES   Not enough resources available to initialize driver.
   @retval EFI_DEVICE_ERROR       A device error occurred attempting to initialize the driver.
-
 **/
 EFI_STATUS
 EFIAPI
 TimerDriverInitialize (
   IN EFI_HANDLE        ImageHandle,
   IN EFI_SYSTEM_TABLE  *SystemTable
-  )
-;
+  );
 
 /**
-
   This function adjusts the period of timer interrupts to the value specified
   by TimerPeriod.  If the timer period is updated, then the selected timer
   period is stored in EFI_TIMER.TimerPeriod, and EFI_SUCCESS is returned.  If
@@ -66,18 +63,15 @@ TimerDriverInitialize (
   @retval        EFI_SUCCESS       The timer period was changed.
   @retval        EFI_UNSUPPORTED   The platform cannot change the period of the timer interrupt.
   @retval        EFI_DEVICE_ERROR  The timer period could not be changed due to a device error.
-
 **/
 EFI_STATUS
 EFIAPI
 TimerDriverRegisterHandler (
   IN EFI_TIMER_ARCH_PROTOCOL  *This,
   IN EFI_TIMER_NOTIFY         NotifyFunction
-  )
-;
+  );
 
 /**
-
   This function adjusts the period of timer interrupts to the value specified
   by TimerPeriod.  If the timer period is updated, then the selected timer
   period is stored in EFI_TIMER.TimerPeriod, and EFI_SUCCESS is returned.  If
@@ -101,18 +95,15 @@ TimerDriverRegisterHandler (
   @retval        EFI_SUCCESS       The timer period was changed.
   @retval        EFI_UNSUPPORTED   The platform cannot change the period of the timer interrupt.
   @retval        EFI_DEVICE_ERROR  The timer period could not be changed due to a device error.
-
 **/
 EFI_STATUS
 EFIAPI
 TimerDriverSetTimerPeriod (
   IN EFI_TIMER_ARCH_PROTOCOL  *This,
   IN UINT64                   TimerPeriod
-  )
-;
+  );
 
 /**
-
   This function retrieves the period of timer interrupts in 100 ns units,
   returns that value in TimerPeriod, and returns EFI_SUCCESS.  If TimerPeriod
   is NULL, then EFI_INVALID_PARAMETER is returned.  If a TimerPeriod of 0 is
@@ -124,18 +115,15 @@ TimerDriverSetTimerPeriod (
 
   @retval EFI_SUCCESS            The timer period was returned in TimerPeriod.
   @retval EFI_INVALID_PARAMETER  TimerPeriod is NULL.
-
 **/
 EFI_STATUS
 EFIAPI
 TimerDriverGetTimerPeriod (
   IN EFI_TIMER_ARCH_PROTOCOL   *This,
   OUT UINT64                   *TimerPeriod
-  )
-;
+  );
 
 /**
-
   This function generates a soft timer interrupt. If the platform does not support soft
   timer interrupts, then EFI_UNSUPPORTED is returned. Otherwise, EFI_SUCCESS is returned.
   If a handler has been registered through the EFI_TIMER_ARCH_PROTOCOL.RegisterHandler()
@@ -148,14 +136,12 @@ TimerDriverGetTimerPeriod (
 
   @retval EFI_SUCCESS       The soft timer interrupt was generated.
   @retval EFI_UNSUPPORTED   The platform does not support the generation of soft timer interrupts.
-
 **/
 EFI_STATUS
 EFIAPI
 TimerDriverGenerateSoftInterrupt (
   IN EFI_TIMER_ARCH_PROTOCOL  *This
-  )
-;
+  );
 
 /**
   Write Csr TMCFG register.
@@ -163,14 +149,12 @@ TimerDriverGenerateSoftInterrupt (
   @param A0 The value used to write to the TMCFG register
 
   @retval none
-
 **/
 extern
 VOID
 LoongarchWriteqTmcfg (
   IN UINT64  Val
-  )
-;
+  );
 
 /**
   Write Csr TINTCLR register.
@@ -178,13 +162,11 @@ LoongarchWriteqTmcfg (
   @param A0 The value used to write to the TINTCLR register
 
   @retval none
-
 **/
 extern
 VOID
 LoongarchWriteqTintclr (
   IN UINT64  Val
-  )
-;
+  );
 
-#endif
+#endif // TIMER_H_

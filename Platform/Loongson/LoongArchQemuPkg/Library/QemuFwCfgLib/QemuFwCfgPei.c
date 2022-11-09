@@ -23,7 +23,6 @@
 
   @retval    TRUE   The interface is available
   @retval    FALSE  The interface is not available
-
 **/
 BOOLEAN
 EFIAPI

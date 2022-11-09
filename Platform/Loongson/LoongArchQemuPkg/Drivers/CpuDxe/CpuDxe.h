@@ -29,7 +29,6 @@
   @retval EFI_INVALID_PARAMETER InterruptHandler is NULL, and a handler for InteruptNum was not
                                 previously installed.
   @retval EFI_UNSUPPORTED       The interrupt specified by InteruptNum is not supported.
-
 **/
 EFI_STATUS
 RegisterInterruptHandler (
@@ -54,7 +53,6 @@ RegisterInterruptHandler (
   @retval EFI_INVALID_PARAMETER InterruptHandler is NULL, and a handler for InteruptNum was not
                                 previously installed.
   @retval EFI_UNSUPPORTED       The interrupt specified by InteruptNum is not supported.
-
 **/
 EFI_STATUS
 RegisterDebuggerInterruptHandler (
@@ -81,7 +79,6 @@ RegisterDebuggerInterruptHandler (
                                 resource range specified by BaseAddress and Length.
                                 The bit mask of attributes is not support for the memory resource
                                 range specified by BaseAddress and Length.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -199,4 +196,4 @@ LoongArchDisableFpu (
   VOID
   );
 
-#endif // __CPU_DXE_H__
+#endif // CPU_DXE_H_

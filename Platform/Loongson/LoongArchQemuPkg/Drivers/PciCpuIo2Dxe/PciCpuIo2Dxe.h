@@ -1,22 +1,14 @@
 /** @file
   Internal include file for the CPU I/O 2 Protocol.
 
-Copyright (c) 2009 - 2018, Intel Corporation. All rights reserved.<BR>
-SPDX-License-Identifier: BSD-2-Clause-Patent
+  Copyright (c) 2022 Loongson Technology Corporation Limited. All rights reserved.<BR>
+
+  SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
 
 #ifndef PCI_CPU_IO2_DXE_H_
 #define PCI_CPU_IO2_DXE_H_
-
-//#include <PiDxe.h>
-//
-//#include <Protocol/CpuIo2.h>
-//
-//#include <Library/BaseLib.h>
-//#include <Library/DebugLib.h>
-//#include <Library/IoLib.h>
-//#include <Library/UefiBootServicesTableLib.h>
 
 #define MAX_IO_PORT_ADDRESS   0xFFFF
 
@@ -57,7 +49,6 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
   @retval EFI_UNSUPPORTED        The Buffer is not aligned for the given Width.
   @retval EFI_UNSUPPORTED        The address range specified by Address, Width,
                                  and Count is not valid for this PI system.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -106,7 +97,6 @@ CpuMemoryServiceRead (
   @retval EFI_UNSUPPORTED        The Buffer is not aligned for the given Width.
   @retval EFI_UNSUPPORTED        The address range specified by Address, Width,
                                  and Count is not valid for this PI system.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -155,7 +145,6 @@ CpuMemoryServiceWrite (
   @retval EFI_UNSUPPORTED        The Buffer is not aligned for the given Width.
   @retval EFI_UNSUPPORTED        The address range specified by Address, Width,
                                  and Count is not valid for this PI system.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -204,7 +193,6 @@ CpuIoServiceRead (
   @retval EFI_UNSUPPORTED        The Buffer is not aligned for the given Width.
   @retval EFI_UNSUPPORTED        The address range specified by Address, Width,
                                  and Count is not valid for this PI system.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -216,4 +204,4 @@ CpuIoServiceWrite (
   IN VOID                       *Buffer
   );
 
-#endif
+#endif // PCI_CPU_IO2_DXE_H_

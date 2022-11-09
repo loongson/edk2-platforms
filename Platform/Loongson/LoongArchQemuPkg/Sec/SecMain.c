@@ -71,7 +71,6 @@ EFI_PEI_PPI_DESCRIPTOR mPrivateDispatchTable[] = {
   @retval EFI_SUCCESS           The file and section was found
   @retval EFI_NOT_FOUND         The file and section was not found
   @retval EFI_VOLUME_CORRUPTED  The firmware volume was corrupted
-
 **/
 EFI_STATUS
 FindFfsSectionInstance (
@@ -142,7 +141,6 @@ FindFfsSectionInstance (
   @retval EFI_SUCCESS           The file and section was found
   @retval EFI_NOT_FOUND         The file and section was not found
   @retval EFI_VOLUME_CORRUPTED  The firmware volume was corrupted
-
 **/
 EFI_STATUS
 FindFfsSectionInSections (
@@ -173,7 +171,6 @@ FindFfsSectionInSections (
   @retval EFI_SUCCESS           The file and section was found
   @retval EFI_NOT_FOUND         The file and section was not found
   @retval EFI_VOLUME_CORRUPTED  The firmware volume was corrupted
-
 **/
 EFI_STATUS
 FindFfsFileAndSection (
@@ -249,7 +246,6 @@ FindFfsFileAndSection (
   @retval EFI_SUCCESS           The file and section was found
   @retval EFI_NOT_FOUND         The file and section was not found
   @retval EFI_VOLUME_CORRUPTED  The firmware volume was corrupted
-
 **/
 EFI_STATUS
 FindPeiCoreImageBaseInFv (
@@ -288,7 +284,6 @@ FindPeiCoreImageBaseInFv (
 
   It also find SEC and PEI Core file debug information. It will report them if
   remote debug is enabled.
-
 **/
 VOID
 FindAndReportEntryPoints (
@@ -327,7 +322,6 @@ FindAndReportEntryPoints (
   Find the peicore entry point and jump to the entry point to execute.
 
   @param[in] Context    The first input parameter of InitializeDebugAgent().
-
 **/
 VOID
 EFIAPI
@@ -479,14 +473,6 @@ TemporaryRamMigration (
   OldStack = (VOID*) ((UINTN)TemporaryMemoryBase + (CopySize >> 1));
   NewStack = (VOID*) (UINTN)PermanentMemoryBase;
 
-#if 0
-  DebugAgentContext.HeapMigrateOffset = (UINTN)NewHeap - (UINTN)OldHeap;
-  DebugAgentContext.StackMigrateOffset = (UINTN)NewStack - (UINTN)OldStack;
-
-  OldStatus = SaveAndSetDebugTimerInterrupt (FALSE);
-  InitializeDebugAgent (DEBUG_AGENT_INIT_POSTMEM_SEC, (VOID *) &DebugAgentContext, NULL);
-#endif
-
   //
   // Migrate Heap
   //
@@ -503,8 +489,6 @@ TemporaryRamMigration (
     JumpBuffer.SP = JumpBuffer.SP - (UINTN)OldStack + (UINTN)NewStack ;
     LongJump (&JumpBuffer, (UINTN)-1);
   }
-
-  //SaveAndSetDebugTimerInterrupt (OldStatus);
 
   return EFI_SUCCESS;
 }

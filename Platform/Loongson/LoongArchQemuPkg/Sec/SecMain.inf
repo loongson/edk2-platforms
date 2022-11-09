@@ -14,7 +14,11 @@
   MODULE_TYPE                    = SEC
   VERSION_STRING                 = 1.0
 
-[Sources.LOONGARCH64]
+#
+#  VALID_ARCHITECTURES           = LOONGARCH64
+#
+
+[Sources]
   LoongArch64/Start.S
   SecMain.c
 

@@ -14,8 +14,11 @@
   MODULE_TYPE                    = BASE
   VERSION_STRING                 = 1.0
   LIBRARY_CLASS                  = QemuFwCfgLib|PEIM
-
   CONSTRUCTOR                    = QemuFwCfgInitialize
+
+#
+#  VALID_ARCHITECTURES           = LOONGARCH64
+#
 
 [Sources]
   QemuFwCfgLibInternal.h

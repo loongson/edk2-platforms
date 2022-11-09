@@ -1,4 +1,3 @@
-
 ## @file
 #  Platform PEI driver
 #
@@ -16,13 +15,16 @@
   VERSION_STRING                 = 1.0
   ENTRY_POINT                    = InitializePlatform
 
+#
+#  VALID_ARCHITECTURES           = LOONGARCH64
+#
+
 [Sources]
   Fv.c
   MemDetect.c
   Platform.c
 
 [Packages]
-  ArmVirtPkg/ArmVirtPkg.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   EmbeddedPkg/EmbeddedPkg.dec

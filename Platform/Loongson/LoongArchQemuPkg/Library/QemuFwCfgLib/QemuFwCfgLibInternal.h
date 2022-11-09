@@ -60,4 +60,4 @@ InternalQemuFwCfgDmaBytes (
   IN     UINT32   Control
   );
 
-#endif
+#endif // QEMU_FW_CFG_LIB_INTERNAL_H_

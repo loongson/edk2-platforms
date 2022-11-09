@@ -57,7 +57,7 @@ IA32                | i?86-linux-gnu-* _or_ x86_64-linux-gnu-
 IPF                 | ia64-linux-gnu
 X64                 | x86_64-linux-gnu-
 RISCV64             | riscv64-unknown-elf-
-LOONGARCH64         | loongarch64-linux-gnu-
+LOONGARCH64         | loongarch64-unknown-linux-
 
 \* i386, i486, i586 or i686
 
@@ -76,6 +76,7 @@ compiled to run on x86 Linux.
 Loonson open source community provides GCC toolchains for
 [loongarch64-unknown-elf](https://github.com/loongson/build-tools)
 compiled to run on x86 Linux
+
 ### clang
 Clang does not require separate cross compilers, but it does need a
 target-specific binutils. These are included with any prepackaged GCC toolchain
@@ -261,6 +262,7 @@ For more information, see the
 * [Galileo](Platform/Intel/QuarkPlatformPkg)
 ##### Minnowboard Max/Turbot based on Intel Valleyview2 SoC
 * [Minnowboard Max](Platform/Intel/Vlv2TbltDevicePkg)
+
 ## Loongson
 * [LoongArchQemu](Platform/Loongson/LoongArchQemuPkg)
 

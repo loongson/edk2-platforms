@@ -13,8 +13,16 @@
   FILE_GUID                      = AEBE2648-47A9-40FA-83FD-06AA88443BB2
   MODULE_TYPE                    = DXE_DRIVER
   VERSION_STRING                 = 1.0
-
   ENTRY_POINT                    = StableTimerDriverInitialize
+
+#
+#  VALID_ARCHITECTURES           = LOONGARCH64
+#
+
+[Sources]
+  Timer.h
+  Timer.c
+  TimerConfig.S
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -27,11 +35,6 @@
   UefiDriverEntryPoint
   IoLib
   TimerLib
-
-[Sources]
-  Timer.h
-  Timer.c
-  TimerConfig.S
 
 [Protocols]
   gEfiCpuArchProtocolGuid       ## CONSUMES

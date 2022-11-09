@@ -19,7 +19,6 @@
   and DXE know about them.
 
   @retval EFI_SUCCESS   Platform PEI FVs were initialized successfully.
-
 **/
 EFI_STATUS
 PeiFvInitialization (

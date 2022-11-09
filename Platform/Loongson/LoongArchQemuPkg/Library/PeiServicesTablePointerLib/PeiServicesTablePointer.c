@@ -68,8 +68,7 @@ For Itanium and ARM CPUs, a the PEI Services Table Pointer is stored in
 a dedicated CPU register.  This means that there is no memory storage
 associated with storing the PEI Services Table pointer, so no additional
 migration actions are required for Itanium or ARM CPUs.
-
-**/
+*/
 VOID
 EFIAPI
 MigratePeiServicesTablePointer (

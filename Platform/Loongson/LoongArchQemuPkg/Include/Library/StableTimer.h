@@ -56,4 +56,4 @@ LoongArchReadCpuCfg (
   UINT64   reg
   );
 
-#endif
+#endif // STABLE_TIMER_H_

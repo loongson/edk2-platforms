@@ -215,23 +215,23 @@
 #define LOONGARCH_CSR_TMCFG_EN      (1ULL << 0)
 #define LOONGARCH_CSR_TMCFG_PERIOD  (1ULL << 1)
 #define LOONGARCH_CSR_TMCFG_TIMEVAL (0x3fffffffffffULL << 2)
-#define LOONGARCH_CSR_TVAL           0x42    /* Timer value */
-#define LOONGARCH_CSR_CNTC           0x43    /* Timer offset */
-#define LOONGARCH_CSR_TINTCLR        0x44    /* Timer interrupt clear */
+#define LOONGARCH_CSR_TVAL          0x42    /* Timer value */
+#define LOONGARCH_CSR_CNTC          0x43    /* Timer offset */
+#define LOONGARCH_CSR_TINTCLR       0x44    /* Timer interrupt clear */
 
 /* TLB refill exception base address */
-#define LOONGARCH_CSR_TLBREBASE      0x88
-#define LOONGARCH_CSR_TLBRSAVE       0x8b    /* KScratch for TLB refill exception */
-#define LOONGARCH_CSR_PGD            0x1b    /* Page table base */
+#define LOONGARCH_CSR_TLBREBASE     0x88
+#define LOONGARCH_CSR_TLBRSAVE      0x8b    /* KScratch for TLB refill exception */
+#define LOONGARCH_CSR_PGD           0x1b    /* Page table base */
 
 /* Invalid addr with global=1 or matched asid in current tlb */
-#define INVTLB_ADDR_GTRUE_OR_ASID    0x6
+#define INVTLB_ADDR_GTRUE_OR_ASID   0x6
 
 /* Bits 8 and 9 of FPU Status Register specify the rounding mode */
-#define FPU_CSR_RM                   0x300
-#define FPU_CSR_RN                   0x000   /* nearest */
-#define FPU_CSR_RZ                   0x100   /* towards zero */
-#define FPU_CSR_RU                   0x200   /* towards +Infinity */
-#define FPU_CSR_RD                   0x300   /* towards -Infinity */
+#define FPU_CSR_RM                  0x300
+#define FPU_CSR_RN                  0x000   /* nearest */
+#define FPU_CSR_RZ                  0x100   /* towards zero */
+#define FPU_CSR_RU                  0x200   /* towards +Infinity */
+#define FPU_CSR_RD                  0x300   /* towards -Infinity */
 
 #endif

@@ -92,4 +92,4 @@
 #define UART_BASE_ADDRESS             (0x1fe001e0)
 #define UART_BPS                      (115200)
 #define UART_WAIT_TIMOUT              (1000000)
-#endif
+#endif // LOONGARCH_QEMU_PLATFORM_H_

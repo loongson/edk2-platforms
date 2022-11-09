@@ -44,7 +44,6 @@ BOOLEAN mInterruptState   = FALSE;
                                 by FlushType.
   @retval EFI_DEVICE_ERROR      The address range from Start to Start+Length could not be flushed
                                 from the processor's data cache.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -55,7 +54,6 @@ CpuFlushCpuDataCache (
   IN EFI_CPU_FLUSH_TYPE              FlushType
   )
 {
-
   switch (FlushType) {
     case EfiCpuFlushTypeWriteBack:
       WriteBackDataCacheRange ((VOID *) (UINTN)Start, (UINTN)Length);
@@ -69,7 +67,6 @@ CpuFlushCpuDataCache (
     default:
       return EFI_INVALID_PARAMETER;
   }
-
   return EFI_SUCCESS;
 }
 
@@ -80,7 +77,6 @@ CpuFlushCpuDataCache (
 
   @retval EFI_SUCCESS           Interrupts are enabled on the processor.
   @retval EFI_DEVICE_ERROR      Interrupts could not be enabled on the processor.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -101,7 +97,6 @@ CpuEnableInterrupt (
 
   @retval EFI_SUCCESS           Interrupts are disabled on the processor.
   @retval EFI_DEVICE_ERROR      Interrupts could not be disabled on the processor.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -126,7 +121,6 @@ CpuDisableInterrupt (
 
   @retval EFI_SUCCESS           The processor's current interrupt state was returned in State.
   @retval EFI_INVALID_PARAMETER State is NULL.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -157,7 +151,6 @@ CpuGetInterruptState (
   @retval EFI_UNSUPPORTED       The processor INIT operation specified by InitType is not supported
                                 by this processor.
   @retval EFI_DEVICE_ERROR      The processor INIT failed.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -195,7 +188,6 @@ CpuRegisterInterruptHandler (
   IN EFI_CPU_INTERRUPT_HANDLER      InterruptHandler
   )
 {
-
   return RegisterInterruptHandler (InterruptType, InterruptHandler);
 }
 
@@ -232,6 +224,7 @@ CpuGetTimerValue (
 {
   return EFI_UNSUPPORTED;
 }
+
 /**
   This function modifies the attributes for the memory region specified by BaseAddress and
   Length from their current attributes to the attributes specified by Attributes.
@@ -251,7 +244,6 @@ CpuGetTimerValue (
                                 resource range specified by BaseAddress and Length.
                                 The bit mask of attributes is not support for the memory resource
                                 range specified by BaseAddress and Length.
-
 **/
 EFI_STATUS
 EFIAPI
@@ -371,6 +363,5 @@ CpuDxeInitialize (
                   &IdleLoopEvent
                   );
   ASSERT_EFI_ERROR (Status);
-
   return Status;
 }

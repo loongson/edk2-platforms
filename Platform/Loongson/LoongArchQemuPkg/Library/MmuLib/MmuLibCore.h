@@ -24,6 +24,7 @@ PageDirInit (
   IN UINTN Count,
   IN VOID *src
   );
+
 /**
   Page tables are established from memory-mapped tables.
 
@@ -36,4 +37,4 @@ EFI_STATUS
 FillTranslationTable (
   IN  MEMORY_REGION_DESCRIPTOR  *MemoryRegion
   );
-#endif
+#endif // MMU_LIB_CORE_H_

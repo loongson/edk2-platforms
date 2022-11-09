@@ -109,4 +109,4 @@ TryRunningQemuKernel (
   VOID
   );
 
-#endif // _PLATFORM_BM_H_
+#endif // PLATFORM_BM_H_

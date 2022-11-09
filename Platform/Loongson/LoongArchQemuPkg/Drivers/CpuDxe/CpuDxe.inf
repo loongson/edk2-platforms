@@ -13,8 +13,11 @@
   FILE_GUID                      = bf954921-25c1-48c0-9bfb-8d0cd7ee92da
   MODULE_TYPE                    = DXE_DRIVER
   VERSION_STRING                 = 1.0
-
   ENTRY_POINT                    = CpuDxeInitialize
+
+#
+#  VALID_ARCHITECTURES           = LOONGARCH64
+#
 
 [Sources.Common]
   CpuDxe.c

@@ -16,14 +16,12 @@
  @param A0 The value used to write to the KS0 register
 
   @retval none
-
 **/
 extern
 VOID
 LoongarchWriteqKs0 (
   IN UINT64  Val
-  )
-;
+  );
 
 /**
   Read Csr KS0 register.
@@ -31,13 +29,11 @@ LoongarchWriteqKs0 (
  @param  Val Pointer to the variable used to store the KS0 register value
 
   @retval none
-
 **/
 extern
 VOID
 LoongarchReadqKs0 (
   IN UINT64  *Val
-  )
-;
+  );
 
-#endif
+#endif // PEISERVICESTABLEPOINTER_H_
