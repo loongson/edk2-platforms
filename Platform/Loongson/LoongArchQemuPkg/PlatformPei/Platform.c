@@ -143,7 +143,158 @@ MemMapInitialization (
     sizeof (mDefaultMemoryTypeInformation)
     );
 }
+/** Get the UART base address of the console serial-port from the DT.
 
+  This function fetches the node referenced in the "stdout-path"
+  property of the "chosen" node and returns the base address of
+  the console UART.
+
+  @param [in]   Fdt                   Pointer to a Flattened Device Tree (Fdt).
+  @param [out]  SerialConsoleAddress  If success, contains the base address
+                                      of the console serial-port.
+
+  @retval EFI_SUCCESS             The function completed successfully.
+  @retval EFI_NOT_FOUND           Console serial-port info not found in DT.
+  @retval EFI_INVALID_PARAMETER   Invalid parameter.
+**/
+STATIC
+EFI_STATUS
+EFIAPI
+GetSerialConsolePortAddress (
+  IN  CONST VOID    *Fdt,
+  OUT       UINT64  *SerialConsoleAddress
+  )
+{
+  CONST CHAR8   *Prop;
+  INT32         PropSize;
+  CONST CHAR8   *Path;
+  INT32         PathLen;
+  INT32         ChosenNode;
+  INT32         SerialConsoleNode;
+  INT32         Len;
+  CONST CHAR8   *NodeStatus;
+  CONST UINT64  *RegProperty;
+
+  if ((Fdt == NULL) || (fdt_check_header (Fdt) != 0)) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  // The "chosen" node resides at the root of the DT. Fetch it.
+  ChosenNode = fdt_path_offset (Fdt, "/chosen");
+  if (ChosenNode < 0) {
+    return EFI_NOT_FOUND;
+  }
+
+  Prop = fdt_getprop (Fdt, ChosenNode, "stdout-path", &PropSize);
+  if (PropSize < 0) {
+    return EFI_NOT_FOUND;
+  }
+
+  // Determine the actual path length, as a colon terminates the path.
+  Path = ScanMem8 (Prop, ':', PropSize);
+  if (Path == NULL) {
+    PathLen = AsciiStrLen (Prop);
+  } else {
+    PathLen = Path - Prop;
+  }
+
+  // Aliases cannot start with a '/', so it must be the actual path.
+  if (Prop[0] == '/') {
+    SerialConsoleNode = fdt_path_offset_namelen (Fdt, Prop, PathLen);
+  } else {
+    // Lookup the alias, as this contains the actual path.
+    Path = fdt_get_alias_namelen (Fdt, Prop, PathLen);
+    if (Path == NULL) {
+      return EFI_NOT_FOUND;
+    }
+
+    SerialConsoleNode = fdt_path_offset (Fdt, Path);
+  }
+
+  NodeStatus = fdt_getprop (Fdt, SerialConsoleNode, "status", &Len);
+  if ((NodeStatus != NULL) && (AsciiStrCmp (NodeStatus, "okay") != 0)) {
+    return EFI_NOT_FOUND;
+  }
+
+  RegProperty = fdt_getprop (Fdt, SerialConsoleNode, "reg", &Len);
+  if (Len != 16) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  *SerialConsoleAddress = fdt64_to_cpu (ReadUnaligned64 (RegProperty));
+
+  return EFI_SUCCESS;
+}
+
+/** Get the Rtc base address from the DT.
+
+  This function fetches the node referenced in the "loongson,ls7a-rtc"
+  property of the "reg" node and returns the base address of
+  the RTC.
+
+  @param [in]   Fdt                   Pointer to a Flattened Device Tree (Fdt).
+  @param [out]  RtcBaseAddress  If success, contains the base address
+                                      of the Rtc.
+
+  @retval EFI_SUCCESS             The function completed successfully.
+  @retval EFI_NOT_FOUND           RTC info not found in DT.
+  @retval EFI_INVALID_PARAMETER   Invalid parameter.
+**/
+STATIC
+EFI_STATUS
+EFIAPI
+GetRtcAddress (
+  IN  CONST VOID    *Fdt,
+  OUT       UINT64  *RtcBaseAddress
+  )
+{
+  INT32             Node;
+  INT32             Prev;
+  CONST CHAR8       *Type;
+  INT32             Len;
+  CONST UINT64      *RegProp;
+  EFI_STATUS         Status;
+
+  if ((Fdt == NULL) || (fdt_check_header (Fdt) != 0)) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  Status = EFI_NOT_FOUND;
+  for (Prev = 0;; Prev = Node) {
+    Node = fdt_next_node (Fdt, Prev, NULL);
+    if (Node < 0) {
+      break;
+    }
+
+    //
+    // Check for memory node
+    //
+    Type = fdt_getprop (Fdt, Node, "compatible", &Len);
+    if ((Type)
+      && (AsciiStrnCmp (Type, "loongson,ls7a-rtc", Len) == 0))
+    {
+      //
+      // Get the 'reg' property of this node. For now, we will assume
+      // two 8 byte quantities for base and size, respectively.
+      //
+      RegProp = fdt_getprop (Fdt, Node, "reg", &Len);
+      if ((RegProp != 0)
+        && (Len == (2 * sizeof (UINT64))))
+      {
+       *RtcBaseAddress = SwapBytes64 (RegProp[0]);
+        Status = RETURN_SUCCESS;
+        DEBUG ((DEBUG_INFO, "%a Len %d RtcBase %llx\n",__func__, Len, *RtcBaseAddress));
+        break;
+      } else {
+        DEBUG ((DEBUG_ERROR, "%a: Failed to parse FDT rtc node\n",
+          __FUNCTION__));
+        break;
+      }
+    }
+  }
+
+  return Status;
+}
 /**
   Misc Initialization.
 
@@ -177,9 +328,30 @@ AddFdtHob (VOID)
   UINTN   FdtSize;
   UINTN   FdtPages;
   UINT64  *FdtHobData;
+  UINT64  *UartHobData;
+  UINT64  SerialConsoleAddress;
+  UINT64  RtcBaseAddress;
+  RETURN_STATUS  Status;
 
   Base = (VOID*)(UINTN)PcdGet64 (PcdDeviceTreeBase);
   ASSERT (Base != NULL);
+
+  Status = GetSerialConsolePortAddress (Base, &SerialConsoleAddress);
+  if (RETURN_ERROR (Status)) {
+    return;
+  }
+  UartHobData = BuildGuidHob (&gEarly16550UartBaseAddressGuid, sizeof *UartHobData);
+  ASSERT (UartHobData != NULL);
+  *UartHobData = SerialConsoleAddress;
+
+  Status = GetRtcAddress(Base, &RtcBaseAddress);
+  if (RETURN_ERROR (Status)) {
+    return;
+  }
+  Status =  PcdSet64S (PcdRtcBaseAddress, RtcBaseAddress);
+  if (RETURN_ERROR (Status)) {
+    return;
+  }
 
   FdtSize = fdt_totalsize (Base) + PcdGet32 (PcdDeviceTreePadding);
   FdtPages = EFI_SIZE_TO_PAGES (FdtSize);

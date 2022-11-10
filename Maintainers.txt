@@ -328,7 +328,7 @@ Loongson platforms
 F: Platform/Loongson/
 M: Bibo Mao <maobibo@loongson.cn> 
 M: Xianglai li <lixianglai@loongson.cn>
-R: Chao Li <lichao@loongson.cn>
+M: Chao Li <lichao@loongson.cn>
  
 Marvell platforms and silicon
 F: Platform/Marvell/

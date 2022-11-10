@@ -84,7 +84,7 @@
 !include MdePkg/MdeLibs.dsc.inc
 
 [LibraryClasses.common]
-  PcdLib                           | MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
+  PcdLib                           | MdePkg/Library/DxePcdLib/DxePcdLib.inf
   TimerLib                         | Platform/Loongson/LoongArchQemuPkg/Library/StableTimerLib/TimerLib.inf
   PrintLib                         | MdePkg/Library/BasePrintLib/BasePrintLib.inf
   BaseMemoryLib                    | MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
@@ -118,7 +118,8 @@
   PciCapPciIoLib                   | OvmfPkg/Library/UefiPciCapPciIoLib/UefiPciCapPciIoLib.inf
   DxeHardwareInfoLib               | OvmfPkg/Library/HardwareInfoLib/DxeHardwareInfoLib.inf
   IoLib                            | MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic.inf
-  SerialPortLib                    | Platform/Loongson/LoongArchQemuPkg/Library/SerialPortLib/SerialPortLib.inf
+  PlatformHookLib                  | Platform/Loongson/LoongArchQemuPkg/Library/Fdt16550SerialPortHookLib/Fdt16550SerialPortHookLib.inf
+  SerialPortLib                    | MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
   EfiResetSystemLib                | Platform/Loongson/LoongArchQemuPkg/Library/ResetSystemAcpiLib/BaseResetSystemAcpiGedLib.inf
   ResetSystemLib                   | Platform/Loongson/LoongArchQemuPkg/Library/ResetSystemAcpiLib/BaseResetSystemAcpiGedLib.inf
 
@@ -141,7 +142,6 @@
   VariablePolicyHelperLib          | MdeModulePkg/Library/VariablePolicyHelperLib/VariablePolicyHelperLib.inf
   SortLib                          | MdeModulePkg/Library/UefiSortLib/UefiSortLib.inf
   FdtLib                           | EmbeddedPkg/Library/FdtLib/FdtLib.inf
-  PciPcdProducerLib                | OvmfPkg/Fdt/FdtPciPcdProducerLib/FdtPciPcdProducerLib.inf
   PciSegmentLib                    | MdePkg/Library/BasePciSegmentLibPci/BasePciSegmentLibPci.inf
   PciHostBridgeLib                 | OvmfPkg/Fdt/FdtPciHostBridgeLib/FdtPciHostBridgeLib.inf
   PciHostBridgeUtilityLib          | OvmfPkg/Library/PciHostBridgeUtilityLib/PciHostBridgeUtilityLib.inf
@@ -177,11 +177,14 @@
   VariableFlashInfoLib             | MdeModulePkg/Library/BaseVariableFlashInfoLib/BaseVariableFlashInfoLib.inf
 
 [LibraryClasses.common.SEC]
+  PcdLib                           | MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
   ReportStatusCodeLib              | MdeModulePkg/Library/PeiReportStatusCodeLib/PeiReportStatusCodeLib.inf
   HobLib                           | MdePkg/Library/PeiHobLib/PeiHobLib.inf
   MemoryAllocationLib              | MdePkg/Library/PeiMemoryAllocationLib/PeiMemoryAllocationLib.inf
+  SerialPortLib                    | Platform/Loongson/LoongArchQemuPkg/Library/SerialPortLib/EarlySerialPortLib16550.inf
 
 [LibraryClasses.common.PEI_CORE]
+  PcdLib                           | MdePkg/Library/PeiPcdLib/PeiPcdLib.inf
   HobLib                           | MdePkg/Library/PeiHobLib/PeiHobLib.inf
   PeiServicesTablePointerLib       | Platform/Loongson/LoongArchQemuPkg/Library/PeiServicesTablePointerLib/PeiServicesTablePointerLib.inf
   MemoryAllocationLib              | MdePkg/Library/PeiMemoryAllocationLib/PeiMemoryAllocationLib.inf
@@ -191,6 +194,7 @@
   PeCoffGetEntryPointLib           | MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
   QemuFwCfgLib                     | Platform/Loongson/LoongArchQemuPkg/Library/QemuFwCfgLib/QemuFwCfgPeiLib.inf
   MmuLib                           | Platform/Loongson/LoongArchQemuPkg/Library/MmuLib/MmuBaseLibPei.inf
+  SerialPortLib                    | Platform/Loongson/LoongArchQemuPkg/Library/SerialPortLib/EarlySerialPortLib16550.inf
 
 [LibraryClasses.common.PEIM]
   HobLib                           | MdePkg/Library/PeiHobLib/PeiHobLib.inf
@@ -206,16 +210,19 @@
   QemuFwCfgS3Lib                   | OvmfPkg/Library/QemuFwCfgS3Lib/PeiQemuFwCfgS3LibFwCfg.inf
   QemuFwCfgLib                     | Platform/Loongson/LoongArchQemuPkg/Library/QemuFwCfgLib/QemuFwCfgPeiLib.inf
   MmuLib                           | Platform/Loongson/LoongArchQemuPkg/Library/MmuLib/MmuBaseLibPei.inf
+  SerialPortLib                    | Platform/Loongson/LoongArchQemuPkg/Library/SerialPortLib/EarlySerialPortLib16550.inf
 
 [LibraryClasses.common.DXE_CORE]
   HobLib                           | MdePkg/Library/DxeCoreHobLib/DxeCoreHobLib.inf
   DxeCoreEntryPoint                | MdePkg/Library/DxeCoreEntryPoint/DxeCoreEntryPoint.inf
   MemoryAllocationLib              | MdeModulePkg/Library/DxeCoreMemoryAllocationLib/DxeCoreMemoryAllocationLib.inf
   ReportStatusCodeLib              | MdeModulePkg/Library/DxeReportStatusCodeLib/DxeReportStatusCodeLib.inf
+  PciExpressLib                    | MdePkg/Library/BasePciExpressLib/BasePciExpressLib.inf
+  PciPcdProducerLib                | OvmfPkg/Fdt/FdtPciPcdProducerLib/FdtPciPcdProducerLib.inf
 
 [LibraryClasses.common.DXE_RUNTIME_DRIVER]
   PcdLib                           | MdePkg/Library/DxePcdLib/DxePcdLib.inf
-  HobLib                           | MdePkg/Library/DxeHobLib/DxeHobLib.inf
+  HobLib                           | Platform/Loongson/LoongArchQemuPkg/Library/VirtDxeHobLib/VirtDxeHobLib.inf
   DxeCoreEntryPoint                | MdePkg/Library/DxeCoreEntryPoint/DxeCoreEntryPoint.inf
   MemoryAllocationLib              | MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
   ReportStatusCodeLib              | MdeModulePkg/Library/RuntimeDxeReportStatusCodeLib/RuntimeDxeReportStatusCodeLib.inf
@@ -227,23 +234,25 @@
   QemuFwCfgLib                     | Platform/Loongson/LoongArchQemuPkg/Library/QemuFwCfgLib/QemuFwCfgPeiLib.inf
   EfiResetSystemLib                | Platform/Loongson/LoongArchQemuPkg/Library/ResetSystemAcpiLib/DxeResetSystemAcpiGedLib.inf
   ResetSystemLib                   | Platform/Loongson/LoongArchQemuPkg/Library/ResetSystemAcpiLib/DxeResetSystemAcpiGedLib.inf
+  PciExpressLib                    | MdePkg/Library/BasePciExpressLib/BasePciExpressLib.inf
 !if $(TARGET) != RELEASE
   DebugLib                         | MdePkg/Library/DxeRuntimeDebugLibSerialPort/DxeRuntimeDebugLibSerialPort.inf
 !endif
 
 [LibraryClasses.common.UEFI_DRIVER]
   PcdLib                           | MdePkg/Library/DxePcdLib/DxePcdLib.inf
-  HobLib                           | MdePkg/Library/DxeHobLib/DxeHobLib.inf
+  HobLib                           | Platform/Loongson/LoongArchQemuPkg/Library/VirtDxeHobLib/VirtDxeHobLib.inf
   DxeCoreEntryPoint                | MdePkg/Library/DxeCoreEntryPoint/DxeCoreEntryPoint.inf
   MemoryAllocationLib              | MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
   ReportStatusCodeLib              | MdeModulePkg/Library/DxeReportStatusCodeLib/DxeReportStatusCodeLib.inf
   UefiScsiLib                      | MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
   ExtractGuidedSectionLib          | MdePkg/Library/PeiExtractGuidedSectionLib/PeiExtractGuidedSectionLib.inf
   QemuFwCfgLib                     | OvmfPkg/Library/QemuFwCfgLib/QemuFwCfgLibMmio.inf
+  PciPcdProducerLib                | OvmfPkg/Fdt/FdtPciPcdProducerLib/FdtPciPcdProducerLib.inf
 
 [LibraryClasses.common.DXE_DRIVER]
   PcdLib                           | MdePkg/Library/DxePcdLib/DxePcdLib.inf
-  HobLib                           | MdePkg/Library/DxeHobLib/DxeHobLib.inf
+  HobLib                           | Platform/Loongson/LoongArchQemuPkg/Library/VirtDxeHobLib/VirtDxeHobLib.inf
   MemoryAllocationLib              | MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
   ReportStatusCodeLib              | MdeModulePkg/Library/DxeReportStatusCodeLib/DxeReportStatusCodeLib.inf
   UefiScsiLib                      | MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
@@ -251,12 +260,16 @@
   ExtractGuidedSectionLib          | MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
   QemuFwCfgS3Lib                   | OvmfPkg/Library/QemuFwCfgS3Lib/DxeQemuFwCfgS3LibFwCfg.inf
   QemuFwCfgLib                     | OvmfPkg/Library/QemuFwCfgLib/QemuFwCfgLibMmio.inf
+  PciPcdProducerLib                | OvmfPkg/Fdt/FdtPciPcdProducerLib/FdtPciPcdProducerLib.inf
+  PciExpressLib                    | MdePkg/Library/BasePciExpressLib/BasePciExpressLib.inf
 
 [LibraryClasses.common.UEFI_APPLICATION]
   PcdLib                           | MdePkg/Library/DxePcdLib/DxePcdLib.inf
-  HobLib                           | MdePkg/Library/DxeHobLib/DxeHobLib.inf
+  HobLib                           | Platform/Loongson/LoongArchQemuPkg/Library/VirtDxeHobLib/VirtDxeHobLib.inf
   MemoryAllocationLib              | MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
   ExtractGuidedSectionLib          | MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
+  PciPcdProducerLib                | OvmfPkg/Fdt/FdtPciPcdProducerLib/FdtPciPcdProducerLib.inf
+  PciExpressLib                    | MdePkg/Library/BasePciExpressLib/BasePciExpressLib.inf
 
 ################################################################################
 #
@@ -290,6 +303,12 @@
   gEmbeddedTokenSpaceGuid.PcdPrePiCpuIoSize                            | 32
   gEfiMdePkgTokenSpaceGuid.PcdReportStatusCodePropertyMask             | 0x07
   gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel                     | 0x8000004F
+
+  # Use MMIO for accessing Serial port registers.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialUseMmio                      | TRUE
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialPciDeviceInfo                | {0xFF}
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialBaudRate                     | 115200
+
   # DEBUG_INIT      0x00000001  // Initialization
   # DEBUG_WARN      0x00000002  // Warnings
   # DEBUG_LOAD      0x00000004  // Load events
@@ -325,7 +344,7 @@
 #######################################################################################
   gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamBase                 | 0x10000
   gLoongArchQemuPkgTokenSpaceGuid.PcdSecPeiTempRamSize                 | 0x10000
-  gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceTreeBase                    | 0x200000
+  gLoongArchQemuPkgTokenSpaceGuid.PcdDeviceTreeBase                    | 0x100000
   #
   # minimal memory for uefi bios should be 512M
   # 0x00000000 - 0x10000000
@@ -340,6 +359,11 @@
   # Network Pcds
   #
 !include NetworkPkg/NetworkPcds.dsc.inc
+
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize         | 0x10000
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareSize         | 0x20000
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingSize       | 0x10000
+
 ################################################################################
 #
 # Pcd Dynamic Section - list of all EDK II PCD Entries defined by this Platform
@@ -386,6 +410,9 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0300
   gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosDocRev|0x0
   gUefiOvmfPkgTokenSpaceGuid.PcdQemuSmbiosValidated|TRUE
+
+[PcdsPatchableInModule.common]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSerialRegisterBase|0x0
 
 [Components]
 
@@ -464,7 +491,7 @@
   OvmfPkg/VirtioRngDxe/VirtioRng.inf
 
   #
-  # File system
+  # FAT filesystem + GPT/MBR partitioning + UDF filesystem + virtio-fs
   #
   MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
   MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
@@ -520,8 +547,6 @@
   # IDE/SCSI
   #
   OvmfPkg/SataControllerDxe/SataControllerDxe.inf
-  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
-  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
   MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
   MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
 
@@ -537,10 +562,22 @@
   #
   # PCI
   #
-  Platform/Loongson/LoongArchQemuPkg/Drivers/PciCpuIo2Dxe/PciCpuIo2Dxe.inf
+  Platform/Loongson/LoongArchQemuPkg/Drivers/PciCpuIo2Dxe/PciCpuIo2Dxe.inf {
+    <LibraryClasses>
+      NULL|OvmfPkg/Fdt/FdtPciPcdProducerLib/FdtPciPcdProducerLib.inf
+      NULL|OvmfPkg/Library/BaseCachingPciExpressLib/BaseCachingPciExpressLib.inf
+  }
   EmbeddedPkg/Drivers/FdtClientDxe/FdtClientDxe.inf
-  MdeModulePkg/Bus/Pci/PciHostBridgeDxe/PciHostBridgeDxe.inf
-  MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
+  MdeModulePkg/Bus/Pci/PciHostBridgeDxe/PciHostBridgeDxe.inf {
+    <LibraryClasses>
+      NULL|OvmfPkg/Fdt/FdtPciPcdProducerLib/FdtPciPcdProducerLib.inf
+      NULL|OvmfPkg/Library/BaseCachingPciExpressLib/BaseCachingPciExpressLib.inf
+  }
+  MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf {
+    <LibraryClasses>
+      NULL|OvmfPkg/Fdt/FdtPciPcdProducerLib/FdtPciPcdProducerLib.inf
+      NULL|OvmfPkg/Library/BaseCachingPciExpressLib/BaseCachingPciExpressLib.inf
+  }
   OvmfPkg/VirtioPciDeviceDxe/VirtioPciDeviceDxe.inf
   OvmfPkg/Virtio10Dxe/Virtio10.inf
 
@@ -579,7 +616,10 @@
   #
   MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
   MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResourceTableDxe.inf
-  OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe.inf
+  OvmfPkg/AcpiPlatformDxe/AcpiPlatformDxe.inf {
+    <LibraryClasses>
+      NULL|OvmfPkg/Fdt/FdtPciPcdProducerLib/FdtPciPcdProducerLib.inf
+  }
 
   #
   #app

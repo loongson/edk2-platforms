@@ -29,7 +29,7 @@
 
 STATIC BOOLEAN                mInitialized = FALSE;
 STATIC EFI_EVENT              mRtcVirtualAddrChangeEvent;
-STATIC UINTN                  mRtcBase = 0x100d0100;
+STATIC UINTN                  mRtcBase;
 /*
   Enable Real-time clock.
 
@@ -46,6 +46,7 @@ InitRtc (
 
   if (!mInitialized) {
     /* enable rtc */
+    mRtcBase = (UINTN)PcdGet64 (PcdRtcBaseAddress);
     Val  = MmioRead32 (mRtcBase + RTC_CTRL_REG);
     Val |= TOY_ENABLE_BIT | OSC_ENABLE_BIT;
     MmioWrite32 (mRtcBase + RTC_CTRL_REG, Val);
@@ -80,7 +81,6 @@ LibGetTime (
     return EFI_INVALID_PARAMETER;
   }
 
-  InitRtc ();
   Val = MmioRead32 (mRtcBase + TOY_READ1_REG);
   Time->Year = Val + 1900;
 
@@ -112,7 +112,6 @@ LibSetTime (
   UINT32      Val;
 
   // Initialize the hardware if not already done
-  InitRtc ();
 
   Val = 0;
   Val |= (Time->Second << TOY_SEC_SHIFT);
@@ -296,6 +295,7 @@ LibRtcInitialize (
   EFI_STATUS    Status;
   EFI_HANDLE    Handle;
 
+  InitRtc ();
   Status = KvmtoolRtcMapMemory (ImageHandle, (mRtcBase & ~EFI_PAGE_MASK));
   if (EFI_ERROR (Status)) {
     DEBUG ((
